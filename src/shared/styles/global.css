@@ -1,0 +1,43 @@
+/* ========================================= */
+/* 4. 전역 스타일 초기화 (@layer base) */
+/* 태그 자체에 기본 스타일을 입힙니다. */
+/* ========================================= */
+
+@layer base {
+  /* 전체 리셋 및 박스 모델 설정 */
+  *, ::after, ::before, html, body {
+    box-sizing: border-box;
+    border-color: var(--border); /* 테두리 기본색 설정 */
+  }
+
+  html {
+    font-size: 62.5%; /* 1rem = 10px로 계산하기 쉽게 설정 (선택사항) */
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-size: 1.6rem; /* 기본 폰트 크기 16px */
+    line-height: 1.5;
+  }
+
+  /* Typography 기본값 */
+  h1 { @apply text-4xl font-extrabold tracking-tight; }
+  h2 { @apply text-3xl font-bold tracking-tight; }
+  h3 { @apply text-2xl font-bold tracking-tight; }
+  h4 { @apply text-xl font-bold tracking-tight; }
+  p { @apply leading-7; }
+
+  /* 폼 요소 리셋 */
+  input, textarea, select, button {
+    @apply font-sans outline-none;
+  }
+  
+  button {
+    @apply cursor-pointer;
+  }
+
+  /* 링크 리셋 */
+  a {
+    @apply no-underline text-foreground transition-colors hover:text-primary;
+  }
+}

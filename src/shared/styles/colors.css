@@ -1,0 +1,85 @@
+/* ========================================= */
+/* 2. 컬러 팔레트 정의 (Design Tokens) */
+/* 실제 색상 값(HSL 숫자)은 여기서만 관리합니다. */
+/* ========================================= */
+
+:root {
+  /* -------------------------------- */
+  /* Global Settings */
+  /* -------------------------------- */
+  --radius: 0.5rem; /* 기본 둥글기 (8px) */
+
+  /* -------------------------------- */
+  /* Light Mode (Clean White Style) */
+  /* -------------------------------- */
+  
+  /* 배경: 완전한 흰색 */
+  --background: 0 0% 100%;
+  /* 글씨: 짙은 남색 (가독성 최적화) */
+  --foreground: 222 47% 11%;
+
+  /* Primary: 토스 블루 (쨍한 파랑) */
+  --primary: 217 91% 60%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary: 연한 회색 배경 */
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222 47% 11%;
+
+  /* Muted: 비활성/설명 텍스트용 배경 */
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215 16% 47%;
+
+  /* Card: 흰색 */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+
+  /* UI 요소 (테두리, 입력창) */
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 217 91% 60%;
+
+  /* 상태 (Destructive: 경고/삭제) */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+}
+
+/* -------------------------------- */
+/* Dark Mode (Deep Navy Style) */
+/* 요청하신 #101C22, #18232D 적용됨 */
+/* -------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* [Background] #101C22 -> HSL 변환 */
+    /* 앱의 메인 배경색 (깊은 네이비) */
+    --background: 200 36% 10%;
+    --foreground: 210 20% 98%;     /* 밝은 회색 텍스트 */
+
+    /* [Card] #18232D -> HSL 변환 */
+    /* 카드, 모달, 컨테이너 배경색 (배경보다 아주 조금 밝음) */
+    --card: 210 30% 14%;
+    --card-foreground: 210 20% 98%;
+
+    /* [Primary] #0064FF (토스 브랜드 블루) */
+    --primary: 216 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* [Secondary] #2C353E (보조 버튼) */
+    --secondary: 210 17% 21%;
+    --secondary-foreground: 210 20% 98%;
+
+    /* [Muted] #18232D (설명 텍스트/비활성) */
+    /* 카드 배경색과 동일하게 가져가거나 살짝 다르게 설정 */
+    --muted: 210 30% 14%;
+    --muted-foreground: 213 13% 59%; /* #8B95A1 (회색 텍스트) */
+
+    /* [Border/Input] #232B34 (구분선) */
+    --border: 212 19% 17%;
+    --input: 212 19% 17%;
+    --ring: 216 100% 50%;
+
+    /* [Destructive] #FF3B30 (경고 빨강) */
+    --destructive: 3 100% 59%;
+    --destructive-foreground: 0 0% 100%;
+  }
+}
