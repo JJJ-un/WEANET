@@ -1,6 +1,6 @@
 /* ========================================= */
 /* 2. 컬러 팔레트 정의 (Design Tokens) */
-/* 실제 색상 값(HSL 숫자)은 여기서만 관리합니다. */
+/* 실제 색상 값(HEX)은 여기서만 관리합니다. */
 /* ========================================= */
 
 :root {
@@ -9,77 +9,63 @@
   /* -------------------------------- */
   --radius: 0.5rem; /* 기본 둥글기 (8px) */
 
+
   /* -------------------------------- */
-  /* Light Mode (Clean White Style) */
+  /* Light Mode (기본) */
   /* -------------------------------- */
   
-  /* 배경: 완전한 흰색 */
-  --background: 0 0% 100%;
-  /* 글씨: 짙은 남색 (가독성 최적화) */
-  --foreground: 222 47% 11%;
+  /* 배경 및 텍스트 */
+  --background: #ffffff;       /* 흰색 */
+  --foreground: #020817;       /* 진한 남색 (Slate-950) */
 
-  /* Primary: 토스 블루 (쨍한 파랑) */
-  --primary: 217 91% 60%;
-  --primary-foreground: 0 0% 100%;
+  /* Primary (브랜드 컬러: Blue-600) */
+  --primary: #2563eb;
+  --primary-foreground: #f8fafc; /* Slate-50 */
 
-  /* Secondary: 연한 회색 배경 */
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222 47% 11%;
+  /* Secondary (보조 버튼 등: Slate-100) */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a; /* Slate-900 */
 
-  /* Muted: 비활성/설명 텍스트용 배경 */
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215 16% 47%;
+  /* Muted (비활성, 설명 텍스트: Slate-100) */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b; /* Slate-500 */
 
-  /* Card: 흰색 */
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  /* UI 요소 (테두리, 입력창: Slate-200) */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2563eb;             /* Primary와 동일 */
+  --card: #ffffff;
+  --card-foreground: #18232D;
 
-  /* UI 요소 (테두리, 입력창) */
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 217 91% 60%;
-
-  /* 상태 (Destructive: 경고/삭제) */
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
+  /* 상태 (Destructive: Red-500) */
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
 }
 
 /* -------------------------------- */
-/* Dark Mode (Deep Navy Style) */
-/* 요청하신 #101C22, #18232D 적용됨 */
+/* Dark Mode (다크 모드 오버라이드) */
 /* -------------------------------- */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* [Background] #101C22 -> HSL 변환 */
-    /* 앱의 메인 배경색 (깊은 네이비) */
-    --background: 200 36% 10%;
-    --foreground: 210 20% 98%;     /* 밝은 회색 텍스트 */
+    --background: #020817;       /* Slate-950 */
+    --foreground: #f8fafc;       /* Slate-50 */
 
-    /* [Card] #18232D -> HSL 변환 */
-    /* 카드, 모달, 컨테이너 배경색 (배경보다 아주 조금 밝음) */
-    --card: 210 30% 14%;
-    --card-foreground: 210 20% 98%;
+    --primary: #3b82f6;          /* Blue-500 (다크모드용 밝은 블루) */
+    --primary-foreground: #0f172a;
 
-    /* [Primary] #0064FF (토스 브랜드 블루) */
-    --primary: 216 100% 50%;
-    --primary-foreground: 0 0% 100%;
+    --secondary: #1e293b;        /* Slate-800 */
+    --secondary-foreground: #f8fafc;
 
-    /* [Secondary] #2C353E (보조 버튼) */
-    --secondary: 210 17% 21%;
-    --secondary-foreground: 210 20% 98%;
+    --muted: #1e293b;            /* Slate-800 */
+    --muted-foreground: #94a3b8; /* Slate-400 */
 
-    /* [Muted] #18232D (설명 텍스트/비활성) */
-    /* 카드 배경색과 동일하게 가져가거나 살짝 다르게 설정 */
-    --muted: 210 30% 14%;
-    --muted-foreground: 213 13% 59%; /* #8B95A1 (회색 텍스트) */
+    --border: #1e293b;           /* Slate-800 */
+    --input: #1e293b;
+    --ring: #1d4ed8;             /* Blue-700 (다크모드 포커스링) */
+    --card: #020817;
+    --card-foreground: #f8fafc;
 
-    /* [Border/Input] #232B34 (구분선) */
-    --border: 212 19% 17%;
-    --input: 212 19% 17%;
-    --ring: 216 100% 50%;
-
-    /* [Destructive] #FF3B30 (경고 빨강) */
-    --destructive: 3 100% 59%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: #7f1d1d;      /* Red-900 */
+    --destructive-foreground: #f8fafc;
   }
 }
