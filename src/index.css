@@ -4,16 +4,16 @@
 /* ========================================= */
 
 /* 1. 폰트 로드 */
-@import "./styles/typography.css";
+@import "@/shared/styles/typography.css";
 
 /* 2. Tailwind 엔진 구동 */
 @import "tailwindcss";
 
 /* 3. 변수 정의 (Colors) */
-@import "./styles/colors.css";
+@import "@/shared/styles/colors.css";
 
 /* 4. 테마 매핑 (@theme) */
-@import "./styles/theme.css";
+@import "@/shared/styles/theme.css";
 
 /* 5. 전역 스타일 적용 (Base) */
-@import "./styles/global.css";
+@import "@/shared/styles/global.css";
