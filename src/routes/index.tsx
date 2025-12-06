@@ -6,5 +6,5 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
-  return <Button>Hello /!</Button>;
+  return <Button>시작하기</Button>;
 }
