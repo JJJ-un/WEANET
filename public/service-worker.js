@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
 
 const CACHE_NAME = 'my-pwa-cache-v1';
