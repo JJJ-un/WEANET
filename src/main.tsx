@@ -21,6 +21,19 @@ declare module "@tanstack/react-router" {
   }
 }
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then((registration) => {
+        console.log("SW 등록 성공:", registration);
+      })
+      .catch((error) => {
+        console.log("SW 등록 실패:", error);
+      });
+  });
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
