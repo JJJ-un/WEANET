@@ -1,20 +1,20 @@
 import * as S from "@/shared/ui/card";
-import { Input } from "@/shared/ui/input";
 import WeatherIcon from "@/shared/assets/icons/weather.svg?react";
 
 const CurrentWeather = () => {
   // wiget은 피그마 ui 컴포넌트와 제일 가깝나?
   return (
-    <S.Card className="w-[400px]">
-      <S.CardHeader>
+    <S.Card className="w-[400px] h-[91px] flex justify-center items-center gap-8">
+      <S.CardContent className="flex justify-between items-center w-full">
         <WeatherIcon />
-        <S.CardTitle>카드 제목</S.CardTitle>
-        <S.CardDescription>카드 설명</S.CardDescription>
-      </S.CardHeader>
-      <S.CardContent>
-        <Input placeholder="입력하세요" />
+        <div>
+          <S.CardTitle>강남구 현재 날씨</S.CardTitle>
+          <S.CardDescription>맑음, 25°C</S.CardDescription>
+        </div>
+        <div>
+          <S.CardDescription>강수 10%</S.CardDescription>
+        </div>
       </S.CardContent>
-      <S.CardFooter>카드 푸터</S.CardFooter>
     </S.Card>
   );
 };
