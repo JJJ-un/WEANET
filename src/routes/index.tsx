@@ -1,8 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+<<<<<<< HEAD
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import * as S from "@/shared/ui/card";
 import GroupInfo from "@/widget/group-info/ui/GroupInfo";
+=======
+import CurrentWeather from "@/widget/current-weather/ui/CurrentWeather";
+import DailyForecast from "@/widget/current-weather/ui/DailyForecast";
+>>>>>>> develop
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -10,6 +15,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   return (
+<<<<<<< HEAD
     <div>
       <Button>시작하기</Button>
       <div>구분선</div>
@@ -24,6 +30,11 @@ function RouteComponent() {
         <S.CardFooter>카드 푸터</S.CardFooter>
       </S.Card>
       <GroupInfo />
+=======
+    <div className="flex flex-col gap-4">
+      <CurrentWeather />
+      <DailyForecast />
+>>>>>>> develop
     </div>
   );
 }
