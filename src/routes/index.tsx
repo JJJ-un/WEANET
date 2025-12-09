@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import * as S from "@/shared/ui/card";
+import GroupInfo from "@/widget/group-info/ui/GroupInfo";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -22,6 +23,7 @@ function RouteComponent() {
         </S.CardContent>
         <S.CardFooter>카드 푸터</S.CardFooter>
       </S.Card>
+      <GroupInfo />
     </div>
   );
 }
