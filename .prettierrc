@@ -1,5 +1,12 @@
 {
-  "tabWidth": 4,
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "jsxSingleQuote": false,
+  "singleQuote": false,
+  "printWidth": 120,
+  "tabWidth": 2,
   "semi": true,
-  "singleQuote": true
+  "trailingComma": "es5",
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": false
 }
