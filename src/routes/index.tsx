@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import CurrentWeather from "@/widget/current-weather/ui/CurrentWeather";
 import DailyForecast from "@/widget/current-weather/ui/DailyForecast";
-import * as S from "@/shared/ui/card";
+import * as S from "@/shared/ui/Card";
 import InfoIcon from "@/shared/assets/icons/info.svg?react";
 import SubwayIcon from "@/shared/assets/icons/subway.svg?react";
 import KebabMenuIcon from "@/shared/assets/icons/kebab-menu.svg?react";
