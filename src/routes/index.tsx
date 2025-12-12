@@ -5,6 +5,7 @@ import * as S from "@/shared/ui/card";
 import InfoIcon from "@/shared/assets/icons/info.svg?react";
 import SubwayIcon from "@/shared/assets/icons/subway.svg?react";
 import KebabMenuIcon from "@/shared/assets/icons/kebab-menu.svg?react";
+import WarningIcon from "@/shared/assets/icons/warning.svg?react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -22,7 +23,7 @@ function RouteComponent() {
         <DailyForecast />
         <DailyForecast />
       </div>
-      <S.Card className="p-6">
+      <S.Card className="p-6 mb-8">
         <S.CardHeader className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-6">
             <SubwayIcon />
@@ -52,6 +53,40 @@ function RouteComponent() {
           <div className="text-xs text-muted-foreground">[34명 참여]</div>
         </S.CardContent>
       </S.Card>
+      <div>
+        <p className="text-lg text-background mb-4">날씨 뉴스 피드</p>
+
+        {/* 날씨 뉴스 피드 */}
+        <div>
+          <div className="flex items-center gap-4 mt-8">
+            <WarningIcon className="inline" />
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-background">
+                서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
+              </span>
+              <span className="text-xs text-muted-foreground">연합뉴스</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 mt-8">
+            <WarningIcon className="inline" />
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-background">
+                서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
+              </span>
+              <span className="text-xs text-muted-foreground">연합뉴스</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 mt-8">
+            <WarningIcon className="inline" />
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-background">
+                서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
+              </span>
+              <span className="text-xs text-muted-foreground">연합뉴스</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
