@@ -12,9 +12,16 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
       <CurrentWeather />
-      <DailyForecast />
+      <div className="flex gap-4">
+        <DailyForecast />
+        <DailyForecast />
+        <DailyForecast />
+        <DailyForecast />
+        <DailyForecast />
+        <DailyForecast />
+      </div>
       <S.Card className="p-6">
         <S.CardHeader className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-6">
