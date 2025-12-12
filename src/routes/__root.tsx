@@ -6,7 +6,7 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 export const Route = createRootRoute({
     component: () => (
         <div className="flex justify-center items-center min-h-[48rem] h-full">
-            <div className="max-w-3xl w-full bg-foreground">
+            <div className="max-w-[39rem] w-full bg-foreground px-6">
                 <Outlet />
             </div>
             <TanStackRouterDevtools initialIsOpen={false} />
