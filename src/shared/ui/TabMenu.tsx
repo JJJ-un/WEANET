@@ -8,23 +8,19 @@ import { cn } from "@/shared/lib/utils";
 
 const Tab = [
   { to: "/", label: "홈", icon: HomeIcon },
-  { to: "/map", label: "지도", icon: MapIcon },
-  { to: "/community", label: "커뮤니티", icon: CommunityIcon },
-  { to: "/my", label: "My", icon: ProfileIcon },
+  { to: "/map/", label: "지도", icon: MapIcon },
+  { to: "/community/", label: "커뮤니티", icon: CommunityIcon },
+  { to: "/my/", label: "My", icon: ProfileIcon },
 ];
 
-const TavMenu = () => {
+const TabMenu = () => {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
-  console.log("Current Path:", currentPath);
 
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[39rem] w-full flex justify-around items-center py-4">
       {Tab.map((tab) => {
-        const isActive =
-          currentPath === tab.to ||
-          (tab.to === "/" && currentPath === "__root__");
-
+        const isActive = currentPath === tab.to;
         return (
           <Link
             key={tab.to}
@@ -45,4 +41,4 @@ const TavMenu = () => {
   );
 };
 
-export default TavMenu;
+export default TabMenu;
