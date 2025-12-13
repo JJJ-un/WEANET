@@ -3,6 +3,8 @@ import HomeIcon from "@/shared/assets/icons/home.svg?react";
 import MapIcon from "@/shared/assets/icons/map.svg?react";
 import CommunityIcon from "@/shared/assets/icons/community.svg?react";
 import ProfileIcon from "@/shared/assets/icons/profile.svg?react";
+import { useRouterState } from "@tanstack/react-router";
+import { cn } from "@/shared/lib/utils";
 
 const Tab = [
   { to: "/", label: "홈", icon: HomeIcon },
@@ -12,18 +14,33 @@ const Tab = [
 ];
 
 const TavMenu = () => {
+  const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+  console.log("Current Path:", currentPath);
+
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[39rem] w-full flex justify-around items-center py-4">
-      {Tab.map((tab) => (
-        <Link
-          key={tab.to}
-          to={tab.to}
-          className="flex flex-col justify-center items-center gap-2"
-        >
-          <tab.icon />
-          <span className="text-muted-foreground text-xs">{tab.label}</span>
-        </Link>
-      ))}
+      {Tab.map((tab) => {
+        const isActive =
+          currentPath === tab.to ||
+          (tab.to === "/" && currentPath === "__root__");
+
+        return (
+          <Link
+            key={tab.to}
+            to={tab.to}
+            className={cn("flex flex-col justify-center items-center gap-2", {
+              "text-muted-foreground hover:text-gray-700 hover:text-gray-700":
+                !isActive,
+              "text-background font-semibold": isActive,
+            })}
+          >
+            {/* Icon 파일 currentColor로 수정 */}
+            <tab.icon />
+            <span className="text-xs font-medium">{tab.label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 };
