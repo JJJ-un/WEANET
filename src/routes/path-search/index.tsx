@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import PathsSearchHeader from "@/widget/path-search-header/ui/PathSearchHeader";
 
 export const Route = createFileRoute("/path-search/")({
   component: PathSearchPage,
@@ -9,8 +10,7 @@ function PathSearchPage() {
     <div>
       {/* 헤더 컴포넌트 */}
       <div>
-        <div>아이콘</div>
-        <h1>경로 검색</h1>
+        <PathsSearchHeader />
       </div>
       {/* 검색 바 및 최근 검색어 컴포넌트 */}
       <div>

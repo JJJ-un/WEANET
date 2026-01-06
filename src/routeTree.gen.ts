@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
-import { Route as PathIndexRouteImport } from './routes/path-search/index'
+import { Route as PathSearchIndexRouteImport } from './routes/path-search/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -24,7 +24,7 @@ const ProfileIndexRoute = ProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PathIndexRoute = PathIndexRouteImport.update({
+const PathSearchIndexRoute = PathSearchIndexRouteImport.update({
   id: '/path-search/',
   path: '/path-search/',
   getParentRoute: () => rootRouteImport,
@@ -38,20 +38,20 @@ const CommunityIndexRoute = CommunityIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/community': typeof CommunityIndexRoute
-  '/map': typeof MapIndexRoute
+  '/path-search': typeof PathSearchIndexRoute
   '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/community': typeof CommunityIndexRoute
-  '/map': typeof MapIndexRoute
+  '/path-search': typeof PathSearchIndexRoute
   '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/community/': typeof CommunityIndexRoute
-  '/map/': typeof MapIndexRoute
+  '/path-search/': typeof PathSearchIndexRoute
   '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
@@ -65,7 +65,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CommunityIndexRoute: typeof CommunityIndexRoute
-  MapIndexRoute: typeof MapIndexRoute
+  PathSearchIndexRoute: typeof PathSearchIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
@@ -89,7 +89,7 @@ declare module '@tanstack/react-router' {
       id: '/path-search/'
       path: '/path-search'
       fullPath: '/path-search'
-      preLoaderRoute: typeof PathIndexRouteImport
+      preLoaderRoute: typeof PathSearchIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community/': {
@@ -105,7 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CommunityIndexRoute: CommunityIndexRoute,
-  PathIndexRoute: PathIndexRoute,
+  PathSearchIndexRoute: PathSearchIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
 }
 export const routeTree = rootRouteImport
