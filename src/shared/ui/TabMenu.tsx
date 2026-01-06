@@ -8,7 +8,7 @@ import { cn } from "@/shared/lib/utils";
 
 const Tab = [
   { to: "/", label: "홈", icon: HomeIcon },
-  { to: "/map/", label: "지도", icon: MapIcon },
+  { to: "/path-search/", label: "경로 검색", icon: MapIcon },
   { to: "/community/", label: "커뮤니티", icon: CommunityIcon },
   { to: "/my/", label: "My", icon: ProfileIcon },
 ];
