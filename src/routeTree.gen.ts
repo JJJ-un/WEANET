@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
-import { Route as MapIndexRouteImport } from './routes/map/index'
+import { Route as PathSearchIndexRouteImport } from './routes/path-search/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -24,9 +24,9 @@ const ProfileIndexRoute = ProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MapIndexRoute = MapIndexRouteImport.update({
-  id: '/map/',
-  path: '/map/',
+const PathSearchIndexRoute = PathSearchIndexRouteImport.update({
+  id: '/path-search/',
+  path: '/path-search/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityIndexRoute = CommunityIndexRouteImport.update({
@@ -38,34 +38,34 @@ const CommunityIndexRoute = CommunityIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/community': typeof CommunityIndexRoute
-  '/map': typeof MapIndexRoute
+  '/path-search': typeof PathSearchIndexRoute
   '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/community': typeof CommunityIndexRoute
-  '/map': typeof MapIndexRoute
+  '/path-search': typeof PathSearchIndexRoute
   '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/community/': typeof CommunityIndexRoute
-  '/map/': typeof MapIndexRoute
+  '/path-search/': typeof PathSearchIndexRoute
   '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/community' | '/map' | '/profile'
+  fullPaths: '/' | '/community' | '/path-search' | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/community' | '/map' | '/profile'
-  id: '__root__' | '/' | '/community/' | '/map/' | '/profile/'
+  to: '/' | '/community' | '/path-search' | '/profile'
+  id: '__root__' | '/' | '/community/' | '/path-search/' | '/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CommunityIndexRoute: typeof CommunityIndexRoute
-  MapIndexRoute: typeof MapIndexRoute
+  PathSearchIndexRoute: typeof PathSearchIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
@@ -85,11 +85,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/map/': {
-      id: '/map/'
-      path: '/map'
-      fullPath: '/map'
-      preLoaderRoute: typeof MapIndexRouteImport
+    '/path-search/': {
+      id: '/path-search/'
+      path: '/path-search'
+      fullPath: '/path-search'
+      preLoaderRoute: typeof PathSearchIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community/': {
@@ -105,7 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CommunityIndexRoute: CommunityIndexRoute,
-  MapIndexRoute: MapIndexRoute,
+  PathSearchIndexRoute: PathSearchIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
 }
 export const routeTree = rootRouteImport
