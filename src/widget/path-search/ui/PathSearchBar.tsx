@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Input } from "@/shared/ui/input";
 import DestinationIcon from "@/shared/assets/icons/destination.svg?react";
 import DepartureIcon from "@/shared/assets/icons/departure.svg?react";
@@ -52,6 +52,18 @@ const PathsSearchBar = () => {
     setActiveField(null);
   };
 
+  const isReady = useMemo(() => {
+    return paths.departure.trim().length > 0 && paths.destination.trim().length > 0;
+  }, [paths]);
+
+  // 2. 자동 실행 로직 (Side Effect)
+  useEffect(() => {
+    if (isReady && !activeField) {
+      console.log("자동 검색 실행!", paths);
+    }
+  }, [isReady, activeField, paths]);
+  // activeField를 의존성에 넣어, 입력을 마친 후(Blur) 실행되도록 조절
+
   return (
     <div className="flex flex-col gap-4 p-4 bg-background border-2 rounded-[10px] relative w-full max-w-md">
       {/* 출발지 섹션 */}
@@ -63,7 +75,7 @@ const PathsSearchBar = () => {
             value={paths.departure}
             onChange={(e) => handleInputChange("departure", e.target.value)}
             onFocus={() => setActiveField("departure")}
-            onBlur={() => setTimeout(() => setActiveField(null), 200)}
+            onBlur={() => setActiveField(null)}
             placeholder="출발지를 입력하세요"
             className="w-full"
           />
@@ -79,7 +91,7 @@ const PathsSearchBar = () => {
             value={paths.destination}
             onChange={(e) => handleInputChange("destination", e.target.value)}
             onFocus={() => setActiveField("destination")}
-            onBlur={() => setTimeout(() => setActiveField(null), 200)}
+            onBlur={() => setActiveField(null)}
             placeholder="도착지를 입력하세요"
             className="w-full"
           />
