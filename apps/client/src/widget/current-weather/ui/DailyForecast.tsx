@@ -1,4 +1,4 @@
-import * as S from "@/shared/ui/Card";
+import * as S from "@/shared/ui/card";
 import WeatherIcon from "@/shared/assets/icons/weather.svg?react";
 
 const DailyForecast = () => {
