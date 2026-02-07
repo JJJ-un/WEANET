@@ -2,8 +2,7 @@
   "name": "weanet-monorepo",
   "private": true,
   "workspaces": [
-    "apps/client",
-    "packages/*"
+    "apps/client"
   ],
   "scripts": {
     "dev": "yarn workspace @weanet/client dev",
