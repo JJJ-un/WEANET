@@ -23,9 +23,8 @@ public class WeatherService {
     private String apiUrl;
 
     public WeatherResponse getWeather(String city) {
-        // API Key가 설정되지 않은 경우 Mock 데이터 반환
         if ("YOUR_OPENWEATHERMAP_API_KEY".equals(apiKey) || apiKey.isEmpty()) {
-            return getMockWeather();
+            return getMockWeather(12.0, 0.3);
         }
 
         String url = UriComponentsBuilder.fromUriString(apiUrl)
@@ -34,6 +33,25 @@ public class WeatherService {
                 .queryParam("units", "metric")
                 .toUriString();
 
+        return fetchWeatherData(url);
+    }
+
+    public WeatherResponse getWeatherByCoordinates(double lat, double lng) {
+        if ("YOUR_OPENWEATHERMAP_API_KEY".equals(apiKey) || apiKey.isEmpty()) {
+            return getMockWeather(15.0 + (lat % 5), 0.1 + (lng % 0.5));
+        }
+
+        String url = UriComponentsBuilder.fromUriString(apiUrl)
+                .queryParam("lat", lat)
+                .queryParam("lon", lng)
+                .queryParam("appid", apiKey)
+                .queryParam("units", "metric")
+                .toUriString();
+
+        return fetchWeatherData(url);
+    }
+
+    private WeatherResponse fetchWeatherData(String url) {
         try {
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
             if (response != null && response.containsKey("list")) {
@@ -55,23 +73,39 @@ public class WeatherService {
                         .minTemp(minTemp)
                         .maxTemp(maxTemp)
                         .precipitationProbability(pop)
+                        .advice(generateAdvice(weatherDescription, currentTemp, pop))
                         .build();
             }
         } catch (Exception e) {
-            // 에러 발생 시 로그를 남기고 Mock 데이터 혹은 에러 응답
             System.err.println("Error fetching weather data: " + e.getMessage());
         }
-
-        return getMockWeather();
+        return getMockWeather(12.0, 0.3);
     }
 
-    private WeatherResponse getMockWeather() {
+    private String generateAdvice(String weather, double temp, double pop) {
+        if (pop > 0.5 || weather.toLowerCase().contains("rain")) {
+            return "비 소식이 있어요. 우산 꼭 챙기세요! ☂️";
+        }
+        if (temp < 5) {
+            return "날씨가 많이 추워요. 두꺼운 외투를 입으세요! 🧥";
+        }
+        if (temp < 15) {
+            return "조금 쌀쌀할 수 있어요. 가벼운 겉옷을 추천해요. 🧣";
+        }
+        if (temp > 28) {
+            return "날씨가 더워요! 시원한 옷차림과 수분 섭취 잊지 마세요. ☀️";
+        }
+        return "활동하기 적당한 날씨예요. 기분 좋은 하루 되세요! 😊";
+    }
+
+    private WeatherResponse getMockWeather(double temp, double pop) {
         return WeatherResponse.builder()
                 .weather("Cloudy (Mock)")
-                .currentTemp(12.0)
-                .maxTemp(18.0)
-                .minTemp(8.0)
-                .precipitationProbability(0.3)
+                .currentTemp(temp)
+                .maxTemp(temp + 5)
+                .minTemp(temp - 5)
+                .precipitationProbability(pop)
+                .advice(generateAdvice("Cloudy", temp, pop))
                 .build();
     }
 }
