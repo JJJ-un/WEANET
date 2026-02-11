@@ -64,22 +64,22 @@ public class WeatherService {
     private WeatherResponse fetchWeatherData(String url) {
         try {
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-            if (response != null && response.containsKey("list")) {
-                List<Map<String, Object>> list = (List<Map<String, Object>>) response.get("list");
-                if (!list.isEmpty()) {
-                    Map<String, Object> firstForecast = list.get(0);
+            if (response != null && response.get("list") instanceof List<?> list && !list.isEmpty()) {
+                Map<String, Object> firstForecast = (Map<String, Object>) list.get(0);
+                
+                if (firstForecast.get("main") instanceof Map<?, ?> main &&
+                    firstForecast.get("weather") instanceof List<?> weatherList && !weatherList.isEmpty()) {
                     
-                    Map<String, Object> main = (Map<String, Object>) firstForecast.get("main");
-                    List<Map<String, Object>> weatherList = (List<Map<String, Object>>) firstForecast.get("weather");
-                    String weatherDescription = (String) weatherList.get(0).get("main");
+                    Map<String, Object> weatherMap = (Map<String, Object>) weatherList.get(0);
+                    String weatherDescription = (String) weatherMap.get("main");
                     
                     double currentTemp = ((Number) main.get("temp")).doubleValue();
                     double minTemp = ((Number) main.get("temp_min")).doubleValue();
                     double maxTemp = ((Number) main.get("temp_max")).doubleValue();
-                    double pop = firstForecast.containsKey("pop") ? ((Number) firstForecast.get("pop")).doubleValue() : 0.0;
+                    double pop = firstForecast.get("pop") instanceof Number p ? p.doubleValue() : 0.0;
 
                     return WeatherResponse.builder()
-                            .weather(weatherDescription)
+                            .weather(weatherDescription != null ? weatherDescription : "Unknown")
                             .currentTemp(currentTemp)
                             .minTemp(minTemp)
                             .maxTemp(maxTemp)
@@ -89,10 +89,9 @@ public class WeatherService {
                 }
             }
         } catch (Exception e) {
-            // 실제 서비스 시에는 로그 프레임워크(SLF4J 등)를 사용하는 것이 좋으나 우선 콘솔 로그 유지
-            System.err.println("Error fetching weather data from external API: " + e.getMessage());
+            System.err.println("Critical error fetching weather data: " + e.getMessage());
         }
-        return getMockWeather(12.0, 0.3); // 에러 발생 시 최후의 수단으로 Mock 반환
+        return getMockWeather(12.0, 0.3);
     }
 
     private String generateAdvice(String weather, double temp, double pop) {
