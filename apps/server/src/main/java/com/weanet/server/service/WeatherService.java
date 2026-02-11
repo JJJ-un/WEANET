@@ -22,8 +22,11 @@ public class WeatherService {
     @Value("${weather.api.url}")
     private String apiUrl;
 
+    /**
+     * 도시 이름을 기반으로 날씨 정보를 조회합니다.
+     */
     public WeatherResponse getWeather(String city) {
-        if ("YOUR_OPENWEATHERMAP_API_KEY".equals(apiKey) || apiKey.isEmpty()) {
+        if (isMockMode()) {
             return getMockWeather(12.0, 0.3);
         }
 
@@ -36,8 +39,11 @@ public class WeatherService {
         return fetchWeatherData(url);
     }
 
+    /**
+     * 좌표(위도, 경도)를 기반으로 날씨 정보를 조회합니다.
+     */
     public WeatherResponse getWeatherByCoordinates(double lat, double lng) {
-        if ("YOUR_OPENWEATHERMAP_API_KEY".equals(apiKey) || apiKey.isEmpty()) {
+        if (isMockMode()) {
             return getMockWeather(15.0 + (lat % 5), 0.1 + (lng % 0.5));
         }
 
@@ -51,33 +57,39 @@ public class WeatherService {
         return fetchWeatherData(url);
     }
 
+    private boolean isMockMode() {
+        return "YOUR_OPENWEATHERMAP_API_KEY".equals(apiKey) || apiKey.isEmpty();
+    }
+
     private WeatherResponse fetchWeatherData(String url) {
         try {
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-            if (response != null && response.containsKey("list")) {
-                List<Map<String, Object>> list = (List<Map<String, Object>>) response.get("list");
-                Map<String, Object> firstForecast = list.get(0);
+            if (response != null && response.get("list") instanceof List<?> list && !list.isEmpty()) {
+                Map<String, Object> firstForecast = (Map<String, Object>) list.get(0);
                 
-                Map<String, Object> main = (Map<String, Object>) firstForecast.get("main");
-                List<Map<String, Object>> weatherList = (List<Map<String, Object>>) firstForecast.get("weather");
-                String weatherDescription = (String) weatherList.get(0).get("main");
-                
-                double currentTemp = ((Number) main.get("temp")).doubleValue();
-                double minTemp = ((Number) main.get("temp_min")).doubleValue();
-                double maxTemp = ((Number) main.get("temp_max")).doubleValue();
-                double pop = firstForecast.containsKey("pop") ? ((Number) firstForecast.get("pop")).doubleValue() : 0.0;
+                if (firstForecast.get("main") instanceof Map<?, ?> main &&
+                    firstForecast.get("weather") instanceof List<?> weatherList && !weatherList.isEmpty()) {
+                    
+                    Map<String, Object> weatherMap = (Map<String, Object>) weatherList.get(0);
+                    String weatherDescription = (String) weatherMap.get("main");
+                    
+                    double currentTemp = ((Number) main.get("temp")).doubleValue();
+                    double minTemp = ((Number) main.get("temp_min")).doubleValue();
+                    double maxTemp = ((Number) main.get("temp_max")).doubleValue();
+                    double pop = firstForecast.get("pop") instanceof Number p ? p.doubleValue() : 0.0;
 
-                return WeatherResponse.builder()
-                        .weather(weatherDescription)
-                        .currentTemp(currentTemp)
-                        .minTemp(minTemp)
-                        .maxTemp(maxTemp)
-                        .precipitationProbability(pop)
-                        .advice(generateAdvice(weatherDescription, currentTemp, pop))
-                        .build();
+                    return WeatherResponse.builder()
+                            .weather(weatherDescription != null ? weatherDescription : "Unknown")
+                            .currentTemp(currentTemp)
+                            .minTemp(minTemp)
+                            .maxTemp(maxTemp)
+                            .precipitationProbability(pop)
+                            .advice(generateAdvice(weatherDescription, currentTemp, pop))
+                            .build();
+                }
             }
         } catch (Exception e) {
-            System.err.println("Error fetching weather data: " + e.getMessage());
+            System.err.println("Critical error fetching weather data: " + e.getMessage());
         }
         return getMockWeather(12.0, 0.3);
     }
