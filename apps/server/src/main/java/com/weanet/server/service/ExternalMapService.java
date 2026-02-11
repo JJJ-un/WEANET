@@ -28,13 +28,12 @@ public class ExternalMapService {
      * Tmap 대중교통 경로 검색 API를 호출합니다.
      */
     public List<RouteSearchResponse> searchRoutes(double startLat, double startLng, double endLat, double endLng) {
-        if (isMockMode()) {
-            return getMockRoutes();
-        }
-
         try {
-            // Tmap API는 POST 요청을 권장하는 경우가 많으나, Transit API 스펙에 맞춰 구현 필요
-            // 여기서는 표준적인 Transit API 호출 구조를 따릅니다.
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("appKey", apiKey);
+            headers.set("accept", "application/json");
+            headers.set("content-type", "application/json");
+
             Map<String, Object> requestBody = Map.of(
                     "startX", String.valueOf(startLng),
                     "startY", String.valueOf(startLat),
@@ -45,17 +44,15 @@ public class ExternalMapService {
                     "count", 5 // 5개의 추천 경로
             );
 
-            Map<String, Object> response = restTemplate.postForObject(apiUrl, requestBody, Map.class);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+            Map<String, Object> response = restTemplate.postForObject(apiUrl, entity, Map.class);
+            
             return parseTmapResponse(response);
 
         } catch (Exception e) {
             System.err.println("Error calling Tmap API: " + e.getMessage());
-            return getMockRoutes();
+            return new ArrayList<>();
         }
-    }
-
-    private boolean isMockMode() {
-        return "YOUR_TMAP_API_KEY".equals(apiKey) || apiKey.isEmpty();
     }
 
     private List<RouteSearchResponse> parseTmapResponse(Map<String, Object> response) {
@@ -72,11 +69,17 @@ public class ExternalMapService {
 
             for (Map<String, Object> itinerary : itineraries) {
                 int totalTime = ((Number) itinerary.get("totalTime")).intValue() / 60;
-                Map<String, Object> fare = (Map<String, Object>) itinerary.get("fare");
+                
+                // Fare 정보 파싱
                 int totalFare = 0;
-                if (fare != null && fare.get("regular") instanceof Map<?, ?> regular) {
-                    totalFare = ((Number) regular.get("totalFare")).intValue();
+                Object fareObj = itinerary.get("fare");
+                if (fareObj instanceof Map<?, ?> fareMap) {
+                    Object regularObj = fareMap.get("regular");
+                    if (regularObj instanceof Map<?, ?> regularMap) {
+                        totalFare = ((Number) regularMap.get("totalFare")).intValue();
+                    }
                 }
+
                 int transferCount = ((Number) itinerary.get("transferCount")).intValue();
                 
                 List<Map<String, Object>> legs = (List<Map<String, Object>>) itinerary.get("legs");
@@ -86,13 +89,15 @@ public class ExternalMapService {
                 int seq = 1;
                 for (Map<String, Object> leg : legs) {
                     String mode = (String) leg.get("mode");
+                    // 도보 구간은 요약에 포함하지 않지만 정보는 필요할 수 있음
                     if ("WALK".equals(mode)) continue;
 
                     Map<String, Object> routeInfo = (Map<String, Object>) leg.get("routeInfo");
                     if (routeInfo == null) continue;
                     
                     String lineName = (String) routeInfo.get("name");
-                    String lineId = (String) routeInfo.get("routeId"); // 실시간 조회용 ID
+                    // 실시간 혼잡도 조회를 위한 ID (노선 ID 또는 버스 번호)
+                    String lineId = (String) routeInfo.get("routeId"); 
                     
                     if (summary.length() > 0) summary.append(" -> ");
                     summary.append(lineName);
@@ -101,9 +106,14 @@ public class ExternalMapService {
                             .sequence(seq++)
                             .transportType(mode)
                             .lineName(lineName)
+                            .lineId(lineId)
                             .startStationName((String) leg.get("startName"))
+                            .startStationId((String) ((Map<String, Object>) leg.get("start")).get("stationId"))
                             .endStationName((String) leg.get("endName"))
+                            .endStationId((String) ((Map<String, Object>) leg.get("end")).get("stationId"))
                             .sectionTime(((Number) leg.get("sectionTime")).intValue() / 60)
+                            .lat(((Number) ((Map<String, Object>) leg.get("start")).get("lat")).doubleValue())
+                            .lng(((Number) ((Map<String, Object>) leg.get("start")).get("lon")).doubleValue())
                             .build());
                 }
 
@@ -120,38 +130,5 @@ public class ExternalMapService {
         }
 
         return results;
-    }
-
-    private List<RouteSearchResponse> getMockRoutes() {
-        List<RouteSearchResponse> results = new ArrayList<>();
-        results.add(RouteSearchResponse.builder()
-                .totalTime(45)
-                .totalFare(1250)
-                .transferCount(1)
-                .summary("지하철 2호선 -> 신분당선 (Mock)")
-                .steps(createMockStepsForRoute1())
-                .build());
-        return results;
-    }
-
-    private List<RouteStepResponse> createMockStepsForRoute1() {
-        List<RouteStepResponse> steps = new ArrayList<>();
-        steps.add(RouteStepResponse.builder()
-                .sequence(1)
-                .transportType("SUBWAY")
-                .lineName("2호선")
-                .startStationName("강남역")
-                .endStationName("양재역")
-                .sectionTime(10)
-                .build());
-        steps.add(RouteStepResponse.builder()
-                .sequence(2)
-                .transportType("SUBWAY")
-                .lineName("신분당선")
-                .startStationName("양재역")
-                .endStationName("판교역")
-                .sectionTime(15)
-                .build());
-        return steps;
     }
 }
