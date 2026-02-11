@@ -61,7 +61,7 @@ public class DashboardService {
         String congestion = "보통";
         
         if ("SUBWAY".equals(step.getTransportType()) || "BUS".equals(step.getTransportType())) {
-            congestion = congestionService.getCongestion(step.getLineId(), step.getStartStationId());
+            congestion = congestionService.getCongestion(step.getTransportType(), step.getLineId(), step.getStartStationId());
         }
 
         return RouteIntegratedReportResponse.StepSummary.builder()

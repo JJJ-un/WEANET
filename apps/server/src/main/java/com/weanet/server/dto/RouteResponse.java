@@ -16,25 +16,21 @@ public class RouteResponse {
     private String name;
 
     @Schema(description = "출발지", example = "강남역")
-    private String departure;
+    private String departureName;
 
     @Schema(description = "도착지", example = "판교역")
-    private String destination;
+    private String destinationName;
 
-    @Schema(description = "대중교통 타입", example = "SUBWAY")
-    private String transportType;
-
-    @Schema(description = "노선 번호", example = "신분당선")
-    private String routeNumber;
+    @Schema(description = "총 소요 시간", example = "45")
+    private int totalTime;
 
     public static RouteResponse from(Route route) {
         return RouteResponse.builder()
                 .id(route.getId())
                 .name(route.getName())
-                .departure(route.getDeparture())
-                .destination(route.getDestination())
-                .transportType(route.getTransportType())
-                .routeNumber(route.getRouteNumber())
+                .departureName(route.getDepartureName())
+                .destinationName(route.getDestinationName())
+                .totalTime(route.getTotalTime())
                 .build();
     }
 }
