@@ -130,7 +130,7 @@ public class RouteService {
     private void enrichStepWithRealTimeData(RouteStepResponse step, double lat, double lng, String lineId, String stationId) {
         step.setWeather(weatherService.getWeatherByCoordinates(lat, lng));
         if ("SUBWAY".equals(step.getTransportType()) || "BUS".equals(step.getTransportType())) {
-            step.setCongestion(congestionService.getCongestion(lineId, stationId));
+            step.setCongestion(congestionService.getCongestion(step.getTransportType(), lineId, stationId));
         }
     }
 }
