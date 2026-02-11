@@ -25,13 +25,16 @@ public class RouteService {
      * 경로 검색: 외부 맵 서비스를 통해 경로 후보를 가져오고, 각 구간에 실시간 정보를 결합합니다.
      */
     public List<RouteSearchResponse> searchRoutes(RouteSearchRequest request) {
-        // 1. 외부 맵 서비스 호출 (좌표는 우선 Mock으로 0,0 처리)
-        List<RouteSearchResponse> searchResults = externalMapService.searchRoutes(0, 0, 0, 0);
+        // 1. 외부 맵 서비스 호출 (실제 좌표 사용)
+        List<RouteSearchResponse> searchResults = externalMapService.searchRoutes(
+                request.getDepartureLat(), request.getDepartureLng(),
+                request.getDestinationLat(), request.getDestinationLng());
 
         // 2. 각 경로의 구간별 실시간 정보(날씨, 혼잡도) 결합
         for (RouteSearchResponse route : searchResults) {
             for (RouteStepResponse step : route.getSteps()) {
-                enrichStepWithRealTimeData(step);
+                // step 내부의 실제 좌표와 ID를 사용하여 데이터 보강
+                enrichStepWithRealTimeData(step, step.getLat(), step.getLng(), step.getLineId(), step.getStartStationId());
             }
         }
         return searchResults;
@@ -118,12 +121,6 @@ public class RouteService {
     @Transactional
     public void deleteRoute(Long id) {
         routeRepository.deleteById(id);
-    }
-
-    // Helper: 구간에 실시간 데이터를 채웁니다 (검색용)
-    private void enrichStepWithRealTimeData(RouteStepResponse step) {
-        // 검색 단계에서는 좌표 정보가 없을 수 있으므로 기본값 혹은 임의값 사용
-        enrichStepWithRealTimeData(step, 37.5, 127.0, "MOCK_LINE", "MOCK_STATION");
     }
 
     // Helper: 구간에 실시간 데이터를 채웁니다 (좌표/ID 기반)
