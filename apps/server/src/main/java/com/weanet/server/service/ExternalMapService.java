@@ -61,49 +61,62 @@ public class ExternalMapService {
     private List<RouteSearchResponse> parseTmapResponse(Map<String, Object> response) {
         List<RouteSearchResponse> results = new ArrayList<>();
         
-        if (response == null || !response.containsKey("metaData")) return results;
-        
-        Map<String, Object> metaData = (Map<String, Object>) response.get("metaData");
-        Map<String, Object> plan = (Map<String, Object>) metaData.get("plan");
-        List<Map<String, Object>> itineraries = (List<Map<String, Object>>) plan.get("itineraries");
-
-        for (Map<String, Object> itinerary : itineraries) {
-            int totalTime = ((Number) itinerary.get("totalTime")).intValue() / 60; // 초 -> 분 변환
-            int totalFare = ((Number) ((Map<String, Object>) itinerary.get("fare")).get("regular")).get("totalFare").intValue();
-            int transferCount = ((Number) itinerary.get("transferCount")).intValue();
+        try {
+            if (response == null || !response.containsKey("metaData")) return results;
             
-            List<Map<String, Object>> legs = (List<Map<String, Object>>) itinerary.get("legs");
-            List<RouteStepResponse> steps = new ArrayList<>();
-            StringBuilder summary = new StringBuilder();
+            Map<String, Object> metaData = (Map<String, Object>) response.get("metaData");
+            Map<String, Object> plan = (Map<String, Object>) metaData.get("plan");
+            if (plan == null || !plan.containsKey("itineraries")) return results;
+            
+            List<Map<String, Object>> itineraries = (List<Map<String, Object>>) plan.get("itineraries");
 
-            int seq = 1;
-            for (Map<String, Object> leg : legs) {
-                String mode = (String) leg.get("mode");
-                if ("WALK".equals(mode)) continue; // 대시보드용으로는 대중교통 구간 위주로 구성
-
-                Map<String, Object> routeInfo = (Map<String, Object>) leg.get("routeInfo");
-                String lineName = (String) routeInfo.get("name");
+            for (Map<String, Object> itinerary : itineraries) {
+                int totalTime = ((Number) itinerary.get("totalTime")).intValue() / 60;
+                Map<String, Object> fare = (Map<String, Object>) itinerary.get("fare");
+                int totalFare = 0;
+                if (fare != null && fare.get("regular") instanceof Map<?, ?> regular) {
+                    totalFare = ((Number) regular.get("totalFare")).intValue();
+                }
+                int transferCount = ((Number) itinerary.get("transferCount")).intValue();
                 
-                if (summary.length() > 0) summary.append(" -> ");
-                summary.append(lineName);
+                List<Map<String, Object>> legs = (List<Map<String, Object>>) itinerary.get("legs");
+                List<RouteStepResponse> steps = new ArrayList<>();
+                StringBuilder summary = new StringBuilder();
 
-                steps.add(RouteStepResponse.builder()
-                        .sequence(seq++)
-                        .transportType(mode)
-                        .lineName(lineName)
-                        .startStationName((String) leg.get("startName"))
-                        .endStationName((String) leg.get("endName"))
-                        .sectionTime(((Number) leg.get("sectionTime")).intValue() / 60)
+                int seq = 1;
+                for (Map<String, Object> leg : legs) {
+                    String mode = (String) leg.get("mode");
+                    if ("WALK".equals(mode)) continue;
+
+                    Map<String, Object> routeInfo = (Map<String, Object>) leg.get("routeInfo");
+                    if (routeInfo == null) continue;
+                    
+                    String lineName = (String) routeInfo.get("name");
+                    String lineId = (String) routeInfo.get("routeId"); // 실시간 조회용 ID
+                    
+                    if (summary.length() > 0) summary.append(" -> ");
+                    summary.append(lineName);
+
+                    steps.add(RouteStepResponse.builder()
+                            .sequence(seq++)
+                            .transportType(mode)
+                            .lineName(lineName)
+                            .startStationName((String) leg.get("startName"))
+                            .endStationName((String) leg.get("endName"))
+                            .sectionTime(((Number) leg.get("sectionTime")).intValue() / 60)
+                            .build());
+                }
+
+                results.add(RouteSearchResponse.builder()
+                        .totalTime(totalTime)
+                        .totalFare(totalFare)
+                        .transferCount(transferCount)
+                        .summary(summary.toString())
+                        .steps(steps)
                         .build());
             }
-
-            results.add(RouteSearchResponse.builder()
-                    .totalTime(totalTime)
-                    .totalFare(totalFare)
-                    .transferCount(transferCount)
-                    .summary(summary.toString())
-                    .steps(steps)
-                    .build());
+        } catch (Exception e) {
+            System.err.println("Error parsing Tmap response: " + e.getMessage());
         }
 
         return results;
