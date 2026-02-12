@@ -91,31 +91,29 @@ public class ExternalMapService {
                 int seq = 1;
                 for (Map<String, Object> leg : legs) {
                     String mode = (String) leg.get("mode");
-                    // 도보 구간은 요약에 포함하지 않지만 정보는 필요할 수 있음
-                    if ("WALK".equals(mode)) continue;
+                    String lineName = (String) leg.get("route"); // Tmap은 route 필드에 노선명을 담습니다.
+                    String lineId = (String) leg.get("routeId");
+                    
+                    if (lineName != null && !"WALK".equals(mode)) {
+                        if (summary.length() > 0) summary.append(" -> ");
+                        summary.append(lineName);
+                    }
 
-                    Map<String, Object> routeInfo = (Map<String, Object>) leg.get("routeInfo");
-                    if (routeInfo == null) continue;
-                    
-                    String lineName = (String) routeInfo.get("name");
-                    // 실시간 혼잡도 조회를 위한 ID (노선 ID 또는 버스 번호)
-                    String lineId = (String) routeInfo.get("routeId"); 
-                    
-                    if (summary.length() > 0) summary.append(" -> ");
-                    summary.append(lineName);
+                    Map<String, Object> start = (Map<String, Object>) leg.get("start");
+                    Map<String, Object> end = (Map<String, Object>) leg.get("end");
 
                     steps.add(RouteStepResponse.builder()
                             .sequence(seq++)
                             .transportType(mode)
-                            .lineName(lineName)
+                            .lineName(lineName != null ? lineName : ("WALK".equals(mode) ? "도보" : "정보 없음"))
                             .lineId(lineId)
-                            .startStationName((String) leg.get("startName"))
-                            .startStationId((String) ((Map<String, Object>) leg.get("start")).get("stationId"))
-                            .endStationName((String) leg.get("endName"))
-                            .endStationId((String) ((Map<String, Object>) leg.get("end")).get("stationId"))
+                            .startStationName(start != null ? (String) start.get("name") : "출발지")
+                            .startStationId(start != null ? (String) start.get("stationId") : null)
+                            .endStationName(end != null ? (String) end.get("name") : "도착지")
+                            .endStationId(end != null ? (String) end.get("stationId") : null)
                             .sectionTime(((Number) leg.get("sectionTime")).intValue() / 60)
-                            .lat(((Number) ((Map<String, Object>) leg.get("start")).get("lat")).doubleValue())
-                            .lng(((Number) ((Map<String, Object>) leg.get("start")).get("lon")).doubleValue())
+                            .lat(start != null ? ((Number) start.get("lat")).doubleValue() : 0.0)
+                            .lng(start != null ? ((Number) start.get("lon")).doubleValue() : 0.0)
                             .build());
                 }
 

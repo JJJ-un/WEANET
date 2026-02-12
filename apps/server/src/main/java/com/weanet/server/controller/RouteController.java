@@ -17,10 +17,16 @@ public class RouteController {
 
     private final RouteService routeService;
 
-    @GetMapping("/search")
-    @Operation(summary = "경로 검색", description = "출발지와 도착지를 기반으로 실시간 정보가 포함된 추천 경로를 검색합니다.")
-    public List<RouteSearchResponse> searchRoutes(RouteSearchRequest request) {
+    @PostMapping("/search")
+    @Operation(summary = "경로 검색", description = "출발지와 도착지를 기반으로 추천 경로를 검색합니다. (실시간 정보 제외)")
+    public List<RouteSearchResponse> searchRoutes(@RequestBody RouteSearchRequest request) {
         return routeService.searchRoutes(request);
+    }
+
+    @PostMapping("/preview")
+    @Operation(summary = "경로 미리보기", description = "검색 결과에서 선택한 특정 경로에 대해 실시간 날씨, 혼잡도 정보를 채워줍니다.")
+    public RouteSearchResponse previewRoute(@RequestBody RouteSearchResponse request) {
+        return routeService.enrichRoutePreview(request);
     }
 
     @PostMapping

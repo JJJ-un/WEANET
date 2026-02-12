@@ -22,22 +22,13 @@ public class RouteService {
     private final CongestionService congestionService;
 
     /**
-     * 경로 검색: 외부 맵 서비스를 통해 경로 후보를 가져오고, 각 구간에 실시간 정보를 결합합니다.
+     * 경로 검색: 외부 맵 서비스(Tmap)를 통해 경로 후보만 빠르게 가져옵니다.
      */
     public List<RouteSearchResponse> searchRoutes(RouteSearchRequest request) {
-        // 1. 외부 맵 서비스 호출 (실제 좌표 사용)
-        List<RouteSearchResponse> searchResults = externalMapService.searchRoutes(
+        // 1. 외부 맵 서비스 호출 (순수 Tmap 경로 데이터)
+        return externalMapService.searchRoutes(
                 request.getDepartureLat(), request.getDepartureLng(),
                 request.getDestinationLat(), request.getDestinationLng());
-
-        // 2. 각 경로의 구간별 실시간 정보(날씨, 혼잡도) 결합
-        for (RouteSearchResponse route : searchResults) {
-            for (RouteStepResponse step : route.getSteps()) {
-                // step 내부의 실제 좌표와 ID를 사용하여 데이터 보강
-                enrichStepWithRealTimeData(step, step.getLat(), step.getLng(), step.getLineId(), step.getStartStationId());
-            }
-        }
-        return searchResults;
     }
 
     /**
@@ -121,6 +112,37 @@ public class RouteService {
     @Transactional
     public void deleteRoute(Long id) {
         routeRepository.deleteById(id);
+    }
+
+    /**
+     * 경로 미리보기: 선택한 경로에 대해 실시간 데이터(날씨, 혼잡도)와 통합 조언을 채웁니다.
+     */
+    public RouteSearchResponse enrichRoutePreview(RouteSearchResponse route) {
+        for (RouteStepResponse step : route.getSteps()) {
+            enrichStepWithRealTimeData(step, step.getLat(), step.getLng(), step.getLineId(), step.getStartStationId());
+        }
+
+        // 통합 조언 생성 (날씨와 혼잡도 기반)
+        route.setIntegratedAdvice(generateAdvice(route.getSteps()));
+        
+        return route;
+    }
+
+    private String generateAdvice(List<RouteStepResponse> steps) {
+        boolean isRainy = steps.stream()
+                .anyMatch(s -> s.getWeather() != null && s.getWeather().getAdvice() != null && s.getWeather().getAdvice().contains("비"));
+        boolean isCongested = steps.stream()
+                .anyMatch(s -> "혼잡".equals(s.getCongestion()));
+
+        if (isRainy && isCongested) {
+            return "현재 경로에 비가 오고 대중교통이 매우 혼잡합니다. 평소보다 15분 일찍 출발하시고 우산을 꼭 챙기세요! ☔️🔴";
+        } else if (isRainy) {
+            return "경로 구간에 비 소식이 있습니다. 이동 시 우산을 챙기시고 발밑 조심하세요! ☔️";
+        } else if (isCongested) {
+            return "현재 이용하실 노선이 많이 혼잡합니다. 여유가 있다면 다음 열차/버스를 이용해 보세요. 🔴";
+        }
+        
+        return "현재 경로의 상태가 대체로 양호합니다. 즐거운 이동 되세요! 😊";
     }
 
     // Helper: 구간에 실시간 데이터를 채웁니다 (좌표/ID 기반)
