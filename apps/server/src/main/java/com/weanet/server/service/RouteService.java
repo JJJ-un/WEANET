@@ -129,9 +129,13 @@ public class RouteService {
     }
 
     private String generateAdvice(List<RouteStepResponse> steps) {
+        if (steps == null) return "현재 경로의 상태가 대체로 양호합니다. 즐거운 이동 되세요! 😊";
+
         boolean isRainy = steps.stream()
-                .anyMatch(s -> s.getWeather() != null && s.getWeather().getAdvice() != null && s.getWeather().getAdvice().contains("비"));
+                .filter(s -> s.getWeather() != null && s.getWeather().getAdvice() != null)
+                .anyMatch(s -> s.getWeather().getAdvice().contains("비"));
         boolean isCongested = steps.stream()
+                .filter(s -> s.getCongestion() != null)
                 .anyMatch(s -> "혼잡".equals(s.getCongestion()));
 
         if (isRainy && isCongested) {
