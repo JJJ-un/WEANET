@@ -17,9 +17,9 @@ public class RouteController {
 
     private final RouteService routeService;
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     @Operation(summary = "경로 검색", description = "출발지와 도착지를 기반으로 추천 경로를 검색합니다. (실시간 정보 제외)")
-    public List<RouteSearchResponse> searchRoutes(RouteSearchRequest request) {
+    public List<RouteSearchResponse> searchRoutes(@RequestBody RouteSearchRequest request) {
         return routeService.searchRoutes(request);
     }
 
