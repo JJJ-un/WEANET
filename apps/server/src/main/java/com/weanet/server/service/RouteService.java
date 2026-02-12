@@ -20,6 +20,7 @@ public class RouteService {
     private final ExternalMapService externalMapService;
     private final WeatherService weatherService;
     private final CongestionService congestionService;
+    private final SubwayService subwayService;
 
     /**
      * 경로 검색: 외부 맵 서비스(Tmap)를 통해 경로 후보만 빠르게 가져옵니다.
@@ -137,7 +138,13 @@ public class RouteService {
         boolean isCongested = steps.stream()
                 .filter(s -> s.getCongestion() != null)
                 .anyMatch(s -> "혼잡".equals(s.getCongestion()));
+        boolean isDelayed = steps.stream()
+                .filter(s -> s.getArrivalMessage() != null)
+                .anyMatch(s -> s.getArrivalMessage().contains("지연") || s.getArrivalMessage().contains("장애") || s.getArrivalMessage().contains("점검"));
 
+        if (isDelayed) {
+            return "현재 이용하실 지하철 노선에 공식 지연/장애 공지가 있습니다. 상세 정보를 확인해 주세요! ⚠️🚇";
+        }
         if (isRainy && isCongested) {
             return "현재 경로에 비가 오고 대중교통이 매우 혼잡합니다. 평소보다 15분 일찍 출발하시고 우산을 꼭 챙기세요! ☔️🔴";
         } else if (isRainy) {
@@ -152,7 +159,16 @@ public class RouteService {
     // Helper: 구간에 실시간 데이터를 채웁니다 (좌표/ID 기반)
     private void enrichStepWithRealTimeData(RouteStepResponse step, double lat, double lng, String lineId, String stationId) {
         step.setWeather(weatherService.getWeatherByCoordinates(lat, lng));
-        if ("SUBWAY".equals(step.getTransportType()) || "BUS".equals(step.getTransportType())) {
+        if ("SUBWAY".equals(step.getTransportType())) {
+            step.setCongestion(congestionService.getCongestion(step.getTransportType(), lineId, stationId));
+            
+            // 서울교통공사 공식 알림 조회 (노선 이름 기준)
+            List<SubwayRealtimeResponse> alerts = subwayService.getSubwayAlerts(step.getLineName());
+            if (!alerts.isEmpty()) {
+                // 여러 공지 중 가장 중요한 것(지연 관련) 하나를 선택하여 메시지로 설정
+                step.setArrivalMessage(alerts.get(0).getArrivalMessage());
+            }
+        } else if ("BUS".equals(step.getTransportType())) {
             step.setCongestion(congestionService.getCongestion(step.getTransportType(), lineId, stationId));
         }
     }

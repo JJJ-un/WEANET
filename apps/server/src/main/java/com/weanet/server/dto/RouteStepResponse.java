@@ -52,4 +52,7 @@ public class RouteStepResponse {
 
     @Schema(description = "실시간 혼잡도 정보", example = "보통")
     private String congestion;
+
+    @Schema(description = "실시간 도착 안내 메시지", example = "3분 45초 후 도착")
+    private String arrivalMessage;
 }
