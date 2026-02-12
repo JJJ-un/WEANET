@@ -46,29 +46,44 @@ public class CongestionService {
 
     private String getSubwayCongestion(String lineId, String stationId) {
         if (isTmapMockMode()) return getMockCongestion();
+        
+        // 필수 파라미터가 없으면 호출하지 않고 정보 없음 반환 (500 에러 방지)
+        if (lineId == null || stationId == null || lineId.isEmpty() || stationId.isEmpty()) {
+            return "정보 없음";
+        }
 
         try {
-            // SKT 지하철 혼잡도 API 호출 (실제로는 열차 번호 등이 필요할 수 있으나 간소화)
+            // Tmap의 1002 형식을 Puzzle의 2 형식으로 변환 (예: 1002 -> 2)
+            String formattedLineId = lineId.length() == 4 && lineId.startsWith("10") ? lineId.substring(2, 4) : lineId;
+            if (formattedLineId.startsWith("0")) formattedLineId = formattedLineId.substring(1);
+
+            // SKT Puzzle 실시간 역 기준 혼잡도 API URL로 변경
+            // https://apis.openapi.sk.com/puzzle/subway/congestion/rltm/stat/stations/{stationCode}
+            String url = UriComponentsBuilder.fromUriString("https://apis.openapi.sk.com/puzzle/subway/congestion/rltm/stat/stations")
+                    .pathSegment(stationId)
+                    .toUriString();
+
             HttpHeaders headers = new HttpHeaders();
             headers.set("appKey", tmapApiKey);
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            String url = UriComponentsBuilder.fromUriString(subwayApiUrl)
-                    .pathSegment(lineId)
-                    .pathSegment(stationId)
-                    .toUriString();
+            System.out.println("Calling Subway Congestion API: " + url);
 
             Map<String, Object> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
             return parseSubwayCongestion(response);
 
         } catch (Exception e) {
-            System.err.println("Error calling Subway Congestion API: " + e.getMessage());
-            return getMockCongestion();
+            System.err.println("Subway API Error (lineId=" + lineId + ", stationId=" + stationId + "): " + e.getMessage());
+            return getMockCongestion(); // 에러 발생 시 Mock 데이터로 대체하여 500 에러 방지
         }
     }
 
     private String getBusCongestion(String stationId) {
         if (isPublicMockMode()) return getMockCongestion();
+        
+        if (stationId == null || stationId.isEmpty()) {
+            return "정보 없음";
+        }
 
         try {
             // 공공데이터 버스 도착 정보 API 호출
@@ -82,7 +97,7 @@ public class CongestionService {
             return parseBusCongestion(response);
 
         } catch (Exception e) {
-            System.err.println("Error calling Bus Congestion API: " + e.getMessage());
+            System.err.println("Error calling Bus Congestion API (stationId=" + stationId + "): " + e.getMessage());
             return getMockCongestion();
         }
     }
