@@ -25,6 +25,23 @@ public class WeatherService {
     private String apiUrl;
 
     /**
+     * 도시 이름을 기반으로 날씨 정보를 조회합니다 (기상청용 좌표 매핑).
+     */
+    public WeatherResponse getWeather(String city) {
+        // 간단한 도시별 좌표 매핑 (기상청은 좌표 기반이므로)
+        double lat = 37.5665; // 기본 서울 위도
+        double lng = 126.9780; // 기본 서울 경도
+
+        if ("Busan".equalsIgnoreCase(city)) {
+            lat = 35.1796; lng = 129.0756;
+        } else if ("Incheon".equalsIgnoreCase(city)) {
+            lat = 37.4563; lng = 126.7052;
+        }
+
+        return getWeatherByCoordinates(lat, lng);
+    }
+
+    /**
      * 좌표(위도, 경도)를 기반으로 기상청 날씨 정보를 조회합니다.
      */
     public WeatherResponse getWeatherByCoordinates(double lat, double lng) {

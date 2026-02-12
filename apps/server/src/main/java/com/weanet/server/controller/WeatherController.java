@@ -20,10 +20,18 @@ public class WeatherController {
     private final WeatherService weatherService;
 
     @GetMapping
-    @Operation(summary = "현재 날씨 조회", description = "도시 이름을 기반으로 현재 기온, 최고/최저 기온, 강수 확률을 조회합니다.")
+    @Operation(summary = "도시 기반 날씨 조회", description = "도시 이름을 기반으로 해당 지역의 날씨 정보를 조회합니다.")
     public WeatherResponse getWeather(
             @Parameter(description = "도시 이름 (영문)", example = "Seoul")
             @RequestParam(defaultValue = "Seoul") String city) {
         return weatherService.getWeather(city);
+    }
+
+    @GetMapping("/coordinates")
+    @Operation(summary = "좌표 기반 날씨 조회", description = "위도와 경도를 기반으로 해당 지역의 기상청 날씨 정보를 조회합니다.")
+    public WeatherResponse getWeatherByCoordinates(
+            @RequestParam double lat,
+            @RequestParam double lng) {
+        return weatherService.getWeatherByCoordinates(lat, lng);
     }
 }
