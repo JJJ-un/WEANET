@@ -78,8 +78,8 @@ public class WeatherService {
     }
 
     private WeatherResponse buildWeatherResponse(List<KmaWeatherApiResponse.Item> items) {
-        double currentTemp = 0.0;
-        double pop = 0.0;
+        double currentTemp = Double.NaN;
+        double pop = Double.NaN;
         double minTemp = Double.NaN;
         double maxTemp = Double.NaN;
         String skyStatus = "1";
@@ -91,16 +91,31 @@ public class WeatherService {
             String value = item.getFcstValue();
 
             switch (category) {
-                case "TMP" -> { if (currentTemp == 0.0) currentTemp = Double.parseDouble(value); }
-                case "POP" -> { if (pop == 0.0) pop = Double.parseDouble(value) / 100.0; }
-                case "SKY" -> { if (skyStatus.equals("1")) skyStatus = value; }
-                case "PTY" -> { if (ptyStatus.equals("0")) ptyStatus = value; }
-                case "TMN" -> { if (today.equals(item.getFcstDate())) minTemp = Double.parseDouble(value); }
-                case "TMX" -> { if (today.equals(item.getFcstDate())) maxTemp = Double.parseDouble(value); }
+                case "TMP" -> {
+                    // 첫 번째로 만나는 TMP(현재 시각과 가장 가까운 예보)를 선택
+                    if (Double.isNaN(currentTemp)) currentTemp = Double.parseDouble(value);
+                }
+                case "POP" -> {
+                    if (Double.isNaN(pop)) pop = Double.parseDouble(value) / 100.0;
+                }
+                case "SKY" -> {
+                    if (skyStatus.equals("1")) skyStatus = value;
+                }
+                case "PTY" -> {
+                    if (ptyStatus.equals("0")) ptyStatus = value;
+                }
+                case "TMN" -> {
+                    if (today.equals(item.getFcstDate())) minTemp = Double.parseDouble(value);
+                }
+                case "TMX" -> {
+                    if (today.equals(item.getFcstDate())) maxTemp = Double.parseDouble(value);
+                }
             }
         }
 
-        // 데이터 보완
+        // 데이터 보완 (기본값 설정)
+        if (Double.isNaN(currentTemp)) currentTemp = 0.0;
+        if (Double.isNaN(pop)) pop = 0.0;
         if (Double.isNaN(minTemp)) minTemp = currentTemp - 2;
         if (Double.isNaN(maxTemp)) maxTemp = currentTemp + 5;
 

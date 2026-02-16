@@ -123,6 +123,7 @@ public class RouteService {
                 .startStationName(step.getStartStationName())
                 .startStationId(step.getStartStationId())
                 .endStationName(step.getEndStationName())
+                .endStationId(step.getEndStationId())
                 .lat(step.getLat())
                 .lng(step.getLng())
                 .build();

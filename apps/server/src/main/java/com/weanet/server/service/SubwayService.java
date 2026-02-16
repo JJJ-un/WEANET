@@ -58,6 +58,9 @@ public class SubwayService {
                 String content = (String) item.get("cont");
                 String title = (String) item.get("title");
                 
+                // title이나 content가 null인 경우 안전하게 건너뜀
+                if (title == null || content == null) continue;
+                
                 if (title.contains(lineName) || content.contains(lineName)) {
                     results.add(SubwayRealtimeResponse.builder()
                             .lineName(lineName)
