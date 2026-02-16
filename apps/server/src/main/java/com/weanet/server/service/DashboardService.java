@@ -4,6 +4,8 @@ import com.weanet.server.domain.Route;
 import com.weanet.server.dto.ReportResponse;
 import com.weanet.server.dto.RouteIntegratedReportResponse;
 import com.weanet.server.dto.RouteStepResponse;
+import com.weanet.server.exception.BusinessException;
+import com.weanet.server.exception.ErrorCode;
 import com.weanet.server.repository.ReportRepository;
 import com.weanet.server.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class DashboardService {
      */
     public RouteIntegratedReportResponse getIntegratedReport(Long routeId) {
         Route route = routeRepository.findById(routeId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 경로를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
         // 1. 구간별 실시간 정보 보강을 위한 DTO 변환
         List<RouteStepResponse> steps = route.getSteps().stream()

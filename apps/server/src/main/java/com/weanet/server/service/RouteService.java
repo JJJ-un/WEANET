@@ -3,6 +3,8 @@ package com.weanet.server.service;
 import com.weanet.server.domain.Route;
 import com.weanet.server.domain.RouteStep;
 import com.weanet.server.dto.*;
+import com.weanet.server.exception.BusinessException;
+import com.weanet.server.exception.ErrorCode;
 import com.weanet.server.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -75,7 +77,7 @@ public class RouteService {
      */
     public RouteDetailResponse getRouteDetail(Long id) {
         Route route = routeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 경로를 찾을 수 없습니다. id=" + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
         List<RouteStepResponse> stepResponses = route.getSteps().stream()
                 .map(this::convertToResponse)
