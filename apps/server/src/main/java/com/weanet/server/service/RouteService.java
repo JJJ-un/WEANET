@@ -47,7 +47,7 @@ public class RouteService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 경로를 찾을 수 없습니다. id=" + id));
 
         List<RouteStepResponse> stepResponses = route.getSteps().stream()
-                .map(this::convertToResponse)
+                .map(RouteStep::toResponse)
                 .collect(Collectors.toList());
 
         // 실시간 정보 보강
@@ -79,27 +79,9 @@ public class RouteService {
      */
     public RouteSearchResponse enrichRoutePreview(RouteSearchResponse routeResponse) {
         enrichmentService.enrichRoute(routeResponse.getSteps());
-        
-        // 도메인 로직(조언 생성)을 위해 임시 객체나 정적 메소드 활용 가능
-        // 여기서는 가독성을 위해 Route 엔티티의 비즈니스 로직을 활용하는 방향으로 개선
-        Route tempRoute = Route.builder().build(); 
-        routeResponse.setIntegratedAdvice(tempRoute.generateAdvice(routeResponse.getSteps()));
-        
+        routeResponse.setIntegratedAdvice(Route.generateAdvice(routeResponse.getSteps()));
         return routeResponse;
     }
 
-    private RouteStepResponse convertToResponse(RouteStep step) {
-        return RouteStepResponse.builder()
-                .sequence(step.getSequence())
-                .transportType(step.getTransportType())
-                .lineName(step.getLineName())
-                .lineId(step.getLineId())
-                .startStationName(step.getStartStationName())
-                .startStationId(step.getStartStationId())
-                .endStationName(step.getEndStationName())
-                .endStationId(step.getEndStationId())
-                .lat(step.getLat())
-                .lng(step.getLng())
-                .build();
-    }
+    // convertToResponse 메소드 삭제됨 (RouteStep.toResponse로 대체)
 }

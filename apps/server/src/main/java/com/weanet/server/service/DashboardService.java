@@ -29,35 +29,19 @@ public class DashboardService {
         Route route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 경로를 찾을 수 없습니다."));
 
-        // 1. 구간별 실시간 정보 보강을 위한 DTO 변환
+        // 1. 구간별 실시간 정보 보강을 위한 DTO 변환 (엔티티 메소드 사용)
         List<RouteStepResponse> steps = route.getSteps().stream()
-                .map(step -> RouteStepResponse.builder()
-                        .lineName(step.getLineName())
-                        .transportType(step.getTransportType())
-                        .lineId(step.getLineId())
-                        .startStationId(step.getStartStationId())
-                        .lat(step.getLat())
-                        .lng(step.getLng())
-                        .build())
+                .map(com.weanet.server.domain.RouteStep::toResponse)
                 .collect(Collectors.toList());
 
         // 2. 실시간 데이터 보강
         enrichmentService.enrichRoute(steps);
 
-        // 3. 통합 조언 생성 (엔티티 내 비즈니스 로직 사용)
-        String integratedAdvice = route.generateAdvice(steps);
+        // 3. 통합 조언 및 요약 정보 생성 (엔티티 내 비즈니스 로직 사용)
+        String integratedAdvice = Route.generateAdvice(steps);
+        List<RouteIntegratedReportResponse.StepSummary> stepSummaries = route.getStepSummaries(steps);
 
-        // 4. 리포트용 요약 정보로 변환
-        List<RouteIntegratedReportResponse.StepSummary> stepSummaries = steps.stream()
-                .map(step -> RouteIntegratedReportResponse.StepSummary.builder()
-                        .lineName(step.getLineName())
-                        .status(step.getCongestion() != null ? step.getCongestion() : "정보 없음")
-                        .weatherIcon(step.getWeather() != null ? step.getWeather().getWeather() : "Unknown")
-                        .advice(step.getWeather() != null ? step.getWeather().getAdvice() : "")
-                        .build())
-                .collect(Collectors.toList());
-
-        // 5. 해당 노선들에 대한 최신 제보 조회
+        // 4. 해당 노선들에 대한 최신 제보 조회
         List<ReportResponse> recentReports = reportRepository.findByRouteIdOrderByCreatedAtDesc(routeId).stream()
                 .distinct()
                 .limit(5)

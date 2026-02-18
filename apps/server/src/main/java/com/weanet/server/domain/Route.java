@@ -1,5 +1,6 @@
 package com.weanet.server.domain;
 
+import com.weanet.server.dto.RouteIntegratedReportResponse;
 import com.weanet.server.dto.RouteStepResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -68,7 +69,7 @@ public class Route extends BaseEntity {
     /**
      * 경로 내에 혼잡한 구간이 있는지 확인합니다.
      */
-    public boolean hasCongestion(List<RouteStepResponse> enrichedSteps) {
+    public static boolean hasCongestion(List<RouteStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
                 .filter(s -> s.getCongestion() != null)
                 .anyMatch(s -> "혼잡".equals(s.getCongestion()));
@@ -77,7 +78,7 @@ public class Route extends BaseEntity {
     /**
      * 경로 내에 비 소식이 있는 구간이 있는지 확인합니다.
      */
-    public boolean hasRainySection(List<RouteStepResponse> enrichedSteps) {
+    public static boolean hasRainySection(List<RouteStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
                 .filter(s -> s.getWeather() != null && s.getWeather().getAdvice() != null)
                 .anyMatch(s -> s.getWeather().getAdvice().contains("비"));
@@ -86,7 +87,7 @@ public class Route extends BaseEntity {
     /**
      * 경로 내에 지연/장애 공지가 있는 구간이 있는지 확인합니다.
      */
-    public boolean hasDelay(List<RouteStepResponse> enrichedSteps) {
+    public static boolean hasDelay(List<RouteStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
                 .filter(s -> s.getArrivalMessage() != null)
                 .anyMatch(s -> s.getArrivalMessage().contains("지연") || 
@@ -97,7 +98,7 @@ public class Route extends BaseEntity {
     /**
      * 보강된 실시간 데이터를 바탕으로 통합 조언 메시지를 생성합니다.
      */
-    public String generateAdvice(List<RouteStepResponse> enrichedSteps) {
+    public static String generateAdvice(List<RouteStepResponse> enrichedSteps) {
         if (enrichedSteps == null || enrichedSteps.isEmpty()) {
             return "현재 경로의 상태가 대체로 양호합니다. 즐거운 이동 되세요! 😊";
         }
@@ -112,5 +113,19 @@ public class Route extends BaseEntity {
         if (isCongested) return "현재 이용하실 노선이 많이 혼잡합니다. 여유가 있다면 다음 열차/버스를 이용해 보세요. 🔴";
         
         return "현재 경로의 상태가 대체로 양호합니다. 즐거운 이동 되세요! 😊";
+    }
+
+    /**
+     * 보강된 데이터를 바탕으로 리포트용 요약 정보 리스트를 생성합니다.
+     */
+    public List<RouteIntegratedReportResponse.StepSummary> getStepSummaries(List<RouteStepResponse> enrichedSteps) {
+        return enrichedSteps.stream()
+                .map(step -> RouteIntegratedReportResponse.StepSummary.builder()
+                        .lineName(step.getLineName())
+                        .status(step.getCongestion() != null ? step.getCongestion() : "정보 없음")
+                        .weatherIcon(step.getWeather() != null ? step.getWeather().getWeather() : "Unknown")
+                        .advice(step.getWeather() != null ? step.getWeather().getAdvice() : "")
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
     }
 }

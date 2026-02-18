@@ -1,5 +1,6 @@
 package com.weanet.server.domain;
 
+import com.weanet.server.dto.RouteStepResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -61,5 +62,20 @@ public class RouteStep extends BaseEntity {
 
     public void assignRoute(Route route) {
         this.route = route;
+    }
+
+    public RouteStepResponse toResponse() {
+        return RouteStepResponse.builder()
+                .sequence(this.sequence)
+                .transportType(this.transportType)
+                .lineName(this.lineName)
+                .lineId(this.lineId)
+                .startStationName(this.startStationName)
+                .startStationId(this.startStationId)
+                .endStationName(this.endStationName)
+                .endStationId(this.endStationId)
+                .lat(this.lat)
+                .lng(this.lng)
+                .build();
     }
 }
