@@ -1,5 +1,6 @@
 package com.weanet.server.service;
 
+import com.weanet.server.domain.TransportType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,10 +33,10 @@ public class CongestionService {
     /**
      * 지하철 또는 버스의 실시간 혼잡도를 반환합니다.
      */
-    public String getCongestion(String transportType, String lineId, String stationId) {
-        if ("SUBWAY".equals(transportType)) {
+    public String getCongestion(TransportType transportType, String lineId, String stationId) {
+        if (TransportType.SUBWAY.equals(transportType)) {
             return getSubwayCongestion(lineId, stationId);
-        } else if ("BUS".equals(transportType)) {
+        } else if (TransportType.BUS.equals(transportType)) {
             return getBusCongestion(stationId);
         }
         return "정보 없음";

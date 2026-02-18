@@ -10,25 +10,25 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Report {
+public class Report extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "route_id")
+    @JoinColumn(name = "route_id", nullable = false)
     private Route route;
 
+    @Column(nullable = false)
     private String content; // 제보 내용
+
     private String reporter; // 제보자
-    private LocalDateTime createdAt;
 
     @Builder
     public Report(Route route, String content, String reporter) {
         this.route = route;
         this.content = content;
         this.reporter = reporter;
-        this.createdAt = LocalDateTime.now();
     }
 }

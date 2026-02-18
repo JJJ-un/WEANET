@@ -11,20 +11,27 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Route {
+public class Route extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name; // 경로 별명 (예: 집-회사)
     
+    @Column(nullable = false)
     private String departureName; // 출발지 명칭
+    @Column(nullable = false)
     private double departureLat; // 출발지 위도
+    @Column(nullable = false)
     private double departureLng; // 출발지 경도
     
+    @Column(nullable = false)
     private String destinationName; // 도착지 명칭
+    @Column(nullable = false)
     private double destinationLat; // 도착지 위도
+    @Column(nullable = false)
     private double destinationLng; // 도착지 경도
 
     private int totalTime; // 총 소요 시간 (분)
@@ -52,5 +59,8 @@ public class Route {
 
     public void addStep(RouteStep step) {
         this.steps.add(step);
+        if (step.getRoute() != this) {
+            step.assignRoute(this);
+        }
     }
 }

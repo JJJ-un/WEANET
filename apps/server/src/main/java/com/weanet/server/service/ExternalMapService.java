@@ -1,5 +1,6 @@
 package com.weanet.server.service;
 
+import com.weanet.server.domain.TransportType;
 import com.weanet.server.dto.RouteSearchResponse;
 import com.weanet.server.dto.RouteStepResponse;
 import lombok.RequiredArgsConstructor;
@@ -91,10 +92,11 @@ public class ExternalMapService {
                 int seq = 1;
                 for (Map<String, Object> leg : legs) {
                     String mode = (String) leg.get("mode");
+                    TransportType transportType = convertToTransportType(mode);
                     String lineName = (String) leg.get("route"); // Tmap은 route 필드에 노선명을 담습니다.
                     String lineId = (String) leg.get("routeId");
                     
-                    if (lineName != null && !"WALK".equals(mode)) {
+                    if (lineName != null && transportType != TransportType.WALK) {
                         if (summary.length() > 0) summary.append(" -> ");
                         summary.append(lineName);
                     }
@@ -104,8 +106,8 @@ public class ExternalMapService {
 
                     steps.add(RouteStepResponse.builder()
                             .sequence(seq++)
-                            .transportType(mode)
-                            .lineName(lineName != null ? lineName : ("WALK".equals(mode) ? "도보" : "정보 없음"))
+                            .transportType(transportType)
+                            .lineName(lineName != null ? lineName : (transportType == TransportType.WALK ? "도보" : "정보 없음"))
                             .lineId(lineId)
                             .startStationName(start != null ? (String) start.get("name") : "출발지")
                             .startStationId(start != null ? (String) start.get("stationId") : null)
@@ -130,5 +132,14 @@ public class ExternalMapService {
         }
 
         return results;
+    }
+
+    private TransportType convertToTransportType(String mode) {
+        if (mode == null) return TransportType.WALK;
+        try {
+            return TransportType.valueOf(mode.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return TransportType.WALK;
+        }
     }
 }

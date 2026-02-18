@@ -1,5 +1,6 @@
 package com.weanet.server.dto;
 
+import com.weanet.server.domain.TransportType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RouteStepSaveRequest {
     private int sequence;
-    private String transportType;
+    private TransportType transportType;
     private String lineName;
     private String lineId;
     private String startStationName;

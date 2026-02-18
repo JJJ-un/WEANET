@@ -1,5 +1,6 @@
 package com.weanet.server.service;
 
+import com.weanet.server.domain.TransportType;
 import com.weanet.server.dto.RouteStepResponse;
 import com.weanet.server.dto.SubwayRealtimeResponse;
 import com.weanet.server.dto.WeatherResponse;
@@ -52,14 +53,14 @@ public class RouteEnrichmentService {
         }
 
         // 2. 교통수단별 혼잡도 및 알림 보강
-        if ("SUBWAY".equals(step.getTransportType())) {
+        if (TransportType.SUBWAY.equals(step.getTransportType())) {
             step.setCongestion(congestionService.getCongestion(step.getTransportType(), step.getLineId(), step.getStartStationId()));
             
             List<SubwayRealtimeResponse> alerts = subwayService.getSubwayAlerts(step.getLineName());
             if (!alerts.isEmpty()) {
                 step.setArrivalMessage(alerts.get(0).getArrivalMessage());
             }
-        } else if ("BUS".equals(step.getTransportType())) {
+        } else if (TransportType.BUS.equals(step.getTransportType())) {
             step.setCongestion(congestionService.getCongestion(step.getTransportType(), step.getLineId(), step.getStartStationId()));
         }
     }
