@@ -21,6 +21,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final ExternalMapService externalMapService;
     private final RouteEnrichmentService enrichmentService;
+    private final RouteAdviceService adviceService;
 
     /**
      * 경로 검색: 외부 맵 서비스(Tmap)를 통해 경로 후보만 빠르게 가져옵니다.
@@ -36,38 +37,7 @@ public class RouteService {
      */
     @Transactional
     public RouteResponse createRoute(RouteSaveRequest request) {
-        Route route = Route.builder()
-                .name(request.getName())
-                .departureName(request.getDepartureName())
-                .departureLat(request.getDepartureLat())
-                .departureLng(request.getDepartureLng())
-                .destinationName(request.getDestinationName())
-                .destinationLat(request.getDestinationLat())
-                .destinationLng(request.getDestinationLng())
-                .totalTime(request.getTotalTime())
-                .totalFare(request.getTotalFare())
-                .transferCount(request.getTransferCount())
-                .build();
-
-        if (request.getSteps() != null) {
-            for (RouteStepSaveRequest stepReq : request.getSteps()) {
-                RouteStep step = RouteStep.builder()
-                        .route(route)
-                        .sequence(stepReq.getSequence())
-                        .transportType(stepReq.getTransportType())
-                        .lineName(stepReq.getLineName())
-                        .lineId(stepReq.getLineId())
-                        .startStationName(stepReq.getStartStationName())
-                        .startStationId(stepReq.getStartStationId())
-                        .endStationName(stepReq.getEndStationName())
-                        .endStationId(stepReq.getEndStationId())
-                        .lat(stepReq.getLat())
-                        .lng(stepReq.getLng())
-                        .build();
-                route.addStep(step);
-            }
-        }
-
+        Route route = request.toEntity();
         Route savedRoute = routeRepository.save(route);
         return RouteResponse.from(savedRoute);
     }
@@ -80,7 +50,18 @@ public class RouteService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
         List<RouteStepResponse> stepResponses = route.getSteps().stream()
-                .map(this::convertToResponse)
+                .map(step -> RouteStepResponse.builder()
+                        .sequence(step.getSequence())
+                        .transportType(step.getTransportType())
+                        .lineName(step.getLineName())
+                        .lineId(step.getLineId())
+                        .startStationName(step.getStartStationName())
+                        .startStationId(step.getStartStationId())
+                        .endStationName(step.getEndStationName())
+                        .endStationId(step.getEndStationId())
+                        .lat(step.getLat())
+                        .lng(step.getLng())
+                        .build())
                 .collect(Collectors.toList());
 
         // 실시간 정보 보강
@@ -110,24 +91,9 @@ public class RouteService {
     /**
      * 경로 미리보기: 실시간 데이터와 통합 조언을 보강합니다.
      */
-    public RouteSearchResponse enrichRoutePreview(RouteSearchResponse route) {
-        enrichmentService.enrichRoute(route.getSteps());
-        route.setIntegratedAdvice(enrichmentService.generateIntegratedAdvice(route.getSteps()));
-        return route;
-    }
-
-    private RouteStepResponse convertToResponse(RouteStep step) {
-        return RouteStepResponse.builder()
-                .sequence(step.getSequence())
-                .transportType(step.getTransportType())
-                .lineName(step.getLineName())
-                .lineId(step.getLineId())
-                .startStationName(step.getStartStationName())
-                .startStationId(step.getStartStationId())
-                .endStationName(step.getEndStationName())
-                .endStationId(step.getEndStationId())
-                .lat(step.getLat())
-                .lng(step.getLng())
-                .build();
+    public RouteSearchResponse enrichRoutePreview(RouteSearchResponse routeResponse) {
+        enrichmentService.enrichRoute(routeResponse.getSteps());
+        routeResponse.setIntegratedAdvice(adviceService.generateAdvice(routeResponse.getSteps()));
+        return routeResponse;
     }
 }

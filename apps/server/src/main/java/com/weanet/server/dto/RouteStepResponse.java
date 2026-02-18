@@ -1,5 +1,6 @@
 package com.weanet.server.dto;
 
+import com.weanet.server.domain.TransportType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ public class RouteStepResponse {
     private int sequence;
 
     @Schema(description = "교통수단 (WALK, BUS, SUBWAY)", example = "SUBWAY")
-    private String transportType;
+    private TransportType transportType;
 
     @Schema(description = "노선명", example = "2호선")
     private String lineName;

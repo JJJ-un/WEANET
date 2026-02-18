@@ -1,5 +1,6 @@
 package com.weanet.server.dto;
 
+import com.weanet.server.domain.TransportType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,7 @@ public class RouteRequest {
     private String destination;
 
     @Schema(description = "대중교통 타입 (BUS, SUBWAY)", example = "SUBWAY")
-    private String transportType;
+    private TransportType transportType;
 
     @Schema(description = "노선 번호 (예: 2호선, 143번 버스)", example = "신분당선")
     private String routeNumber;

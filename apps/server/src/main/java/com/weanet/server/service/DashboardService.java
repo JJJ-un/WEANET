@@ -23,6 +23,7 @@ public class DashboardService {
     private final RouteRepository routeRepository;
     private final ReportRepository reportRepository;
     private final RouteEnrichmentService enrichmentService;
+    private final RouteAdviceService adviceService;
 
     /**
      * 특정 경로의 실시간 데이터를 종합하여 통합 리포트를 생성합니다.
@@ -31,13 +32,17 @@ public class DashboardService {
         Route route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
-        // 1. 구간별 실시간 정보 보강을 위한 DTO 변환
+        // 1. 구간별 실시간 정보 보강을 위한 DTO 변환 (서비스 레이어에서 수행)
         List<RouteStepResponse> steps = route.getSteps().stream()
                 .map(step -> RouteStepResponse.builder()
-                        .lineName(step.getLineName())
+                        .sequence(step.getSequence())
                         .transportType(step.getTransportType())
+                        .lineName(step.getLineName())
                         .lineId(step.getLineId())
+                        .startStationName(step.getStartStationName())
                         .startStationId(step.getStartStationId())
+                        .endStationName(step.getEndStationName())
+                        .endStationId(step.getEndStationId())
                         .lat(step.getLat())
                         .lng(step.getLng())
                         .build())
@@ -46,20 +51,11 @@ public class DashboardService {
         // 2. 실시간 데이터 보강
         enrichmentService.enrichRoute(steps);
 
-        // 3. 통합 조언 생성 (공통 엔진 사용)
-        String integratedAdvice = enrichmentService.generateIntegratedAdvice(steps);
+        // 3. 통합 조언 및 요약 정보 생성 (도메인 서비스 사용)
+        String integratedAdvice = adviceService.generateAdvice(steps);
+        List<RouteIntegratedReportResponse.StepSummary> stepSummaries = adviceService.getStepSummaries(steps);
 
-        // 4. 리포트용 요약 정보로 변환
-        List<RouteIntegratedReportResponse.StepSummary> stepSummaries = steps.stream()
-                .map(step -> RouteIntegratedReportResponse.StepSummary.builder()
-                        .lineName(step.getLineName())
-                        .status(step.getCongestion() != null ? step.getCongestion() : "정보 없음")
-                        .weatherIcon(step.getWeather() != null ? step.getWeather().getWeather() : "Unknown")
-                        .advice(step.getWeather() != null ? step.getWeather().getAdvice() : "")
-                        .build())
-                .collect(Collectors.toList());
-
-        // 5. 해당 노선들에 대한 최신 제보 조회
+        // 4. 해당 노선들에 대한 최신 제보 조회
         List<ReportResponse> recentReports = reportRepository.findByRouteIdOrderByCreatedAtDesc(routeId).stream()
                 .distinct()
                 .limit(5)
