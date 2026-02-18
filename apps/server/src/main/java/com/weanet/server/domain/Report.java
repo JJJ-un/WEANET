@@ -10,10 +10,12 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@lombok.EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class Report extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @lombok.EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,8 +29,15 @@ public class Report extends BaseEntity {
 
     @Builder
     public Report(Route route, String content, String reporter) {
+        validate(route, content);
         this.route = route;
         this.content = content;
         this.reporter = reporter;
+    }
+
+    private void validate(Route route, String content) {
+        if (route == null) throw new IllegalArgumentException("대상 경로는 필수입니다.");
+        if (content == null || content.isBlank()) throw new IllegalArgumentException("제보 내용은 필수입니다.");
+        if (content.length() > 500) throw new IllegalArgumentException("제보 내용은 500자 이내로 작성 가능합니다.");
     }
 }

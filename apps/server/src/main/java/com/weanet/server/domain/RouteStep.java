@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@lombok.EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class RouteStep extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @lombok.EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,6 +49,7 @@ public class RouteStep extends BaseEntity {
     public RouteStep(Route route, int sequence, TransportType transportType, String lineName, String lineId, 
                      String startStationName, String startStationId, String endStationName, String endStationId,
                      double lat, double lng) {
+        validate(sequence, transportType, startStationName, endStationName, lat, lng);
         this.route = route;
         this.sequence = sequence;
         this.transportType = transportType;
@@ -58,6 +61,21 @@ public class RouteStep extends BaseEntity {
         this.endStationId = endStationId;
         this.lat = lat;
         this.lng = lng;
+    }
+
+    private void validate(int sequence, TransportType transportType, String startStationName, String endStationName, 
+                          double lat, double lng) {
+        if (sequence <= 0) throw new IllegalArgumentException("구간 순서는 0보다 커야 합니다.");
+        if (transportType == null) throw new IllegalArgumentException("교통수단 타입은 필수입니다.");
+        if (startStationName == null || startStationName.isBlank()) throw new IllegalArgumentException("구간 시작점 이름은 필수입니다.");
+        if (endStationName == null || endStationName.isBlank()) throw new IllegalArgumentException("구간 종료점 이름은 필수입니다.");
+        
+        validateCoordinates(lat, lng);
+    }
+
+    private void validateCoordinates(double lat, double lng) {
+        if (lat < -90 || lat > 90) throw new IllegalArgumentException("위도 범위가 올바르지 않습니다 (-90 ~ 90).");
+        if (lng < -180 || lng > 180) throw new IllegalArgumentException("경도 범위가 올바르지 않습니다 (-180 ~ 180).");
     }
 
     public void assignRoute(Route route) {
