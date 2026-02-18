@@ -44,8 +44,8 @@ public class DashboardService {
         // 2. 실시간 데이터 보강
         enrichmentService.enrichRoute(steps);
 
-        // 3. 통합 조언 생성 (공통 엔진 사용)
-        String integratedAdvice = enrichmentService.generateIntegratedAdvice(steps);
+        // 3. 통합 조언 생성 (엔티티 내 비즈니스 로직 사용)
+        String integratedAdvice = route.generateAdvice(steps);
 
         // 4. 리포트용 요약 정보로 변환
         List<RouteIntegratedReportResponse.StepSummary> stepSummaries = steps.stream()

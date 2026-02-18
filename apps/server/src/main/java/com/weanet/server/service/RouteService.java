@@ -77,10 +77,15 @@ public class RouteService {
     /**
      * 경로 미리보기: 실시간 데이터와 통합 조언을 보강합니다.
      */
-    public RouteSearchResponse enrichRoutePreview(RouteSearchResponse route) {
-        enrichmentService.enrichRoute(route.getSteps());
-        route.setIntegratedAdvice(enrichmentService.generateIntegratedAdvice(route.getSteps()));
-        return route;
+    public RouteSearchResponse enrichRoutePreview(RouteSearchResponse routeResponse) {
+        enrichmentService.enrichRoute(routeResponse.getSteps());
+        
+        // 도메인 로직(조언 생성)을 위해 임시 객체나 정적 메소드 활용 가능
+        // 여기서는 가독성을 위해 Route 엔티티의 비즈니스 로직을 활용하는 방향으로 개선
+        Route tempRoute = Route.builder().build(); 
+        routeResponse.setIntegratedAdvice(tempRoute.generateAdvice(routeResponse.getSteps()));
+        
+        return routeResponse;
     }
 
     private RouteStepResponse convertToResponse(RouteStep step) {

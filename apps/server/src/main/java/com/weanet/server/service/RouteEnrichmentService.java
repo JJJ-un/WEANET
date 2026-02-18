@@ -71,30 +71,4 @@ public class RouteEnrichmentService {
     public void enrichStep(RouteStepResponse step) {
         enrichStepWithCache(step, new HashMap<>());
     }
-
-    /**
-     * 보강된 데이터를 바탕으로 통합 조언 메시지를 생성합니다.
-     */
-    public String generateIntegratedAdvice(List<RouteStepResponse> steps) {
-        if (steps == null || steps.isEmpty()) return "현재 경로의 상태가 대체로 양호합니다. 즐거운 이동 되세요! 😊";
-
-        boolean isRainy = steps.stream()
-                .filter(s -> s.getWeather() != null && s.getWeather().getAdvice() != null)
-                .anyMatch(s -> s.getWeather().getAdvice().contains("비"));
-        
-        boolean isCongested = steps.stream()
-                .filter(s -> s.getCongestion() != null)
-                .anyMatch(s -> "혼잡".equals(s.getCongestion()));
-        
-        boolean isDelayed = steps.stream()
-                .filter(s -> s.getArrivalMessage() != null)
-                .anyMatch(s -> s.getArrivalMessage().contains("지연") || s.getArrivalMessage().contains("장애") || s.getArrivalMessage().contains("점검"));
-
-        if (isDelayed) return "현재 이용하실 지하철 노선에 공식 지연/장애 공지가 있습니다. 상세 정보를 확인해 주세요! ⚠️🚇";
-        if (isRainy && isCongested) return "현재 경로에 비가 오고 대중교통이 매우 혼잡합니다. 평소보다 15분 일찍 출발하시고 우산을 꼭 챙기세요! ☔️🔴";
-        if (isRainy) return "경로 구간에 비 소식이 있습니다. 이동 시 우산을 챙기시고 발밑 조심하세요! ☔️";
-        if (isCongested) return "현재 이용하실 노선이 많이 혼잡합니다. 여유가 있다면 다음 열차/버스를 이용해 보세요. 🔴";
-        
-        return "현재 경로의 상태가 대체로 양호합니다. 즐거운 이동 되세요! 😊";
-    }
 }
