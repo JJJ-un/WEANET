@@ -34,38 +34,7 @@ public class RouteService {
      */
     @Transactional
     public RouteResponse createRoute(RouteSaveRequest request) {
-        Route route = Route.builder()
-                .name(request.getName())
-                .departureName(request.getDepartureName())
-                .departureLat(request.getDepartureLat())
-                .departureLng(request.getDepartureLng())
-                .destinationName(request.getDestinationName())
-                .destinationLat(request.getDestinationLat())
-                .destinationLng(request.getDestinationLng())
-                .totalTime(request.getTotalTime())
-                .totalFare(request.getTotalFare())
-                .transferCount(request.getTransferCount())
-                .build();
-
-        if (request.getSteps() != null) {
-            for (RouteStepSaveRequest stepReq : request.getSteps()) {
-                RouteStep step = RouteStep.builder()
-                        .route(route)
-                        .sequence(stepReq.getSequence())
-                        .transportType(stepReq.getTransportType())
-                        .lineName(stepReq.getLineName())
-                        .lineId(stepReq.getLineId())
-                        .startStationName(stepReq.getStartStationName())
-                        .startStationId(stepReq.getStartStationId())
-                        .endStationName(stepReq.getEndStationName())
-                        .endStationId(stepReq.getEndStationId())
-                        .lat(stepReq.getLat())
-                        .lng(stepReq.getLng())
-                        .build();
-                route.addStep(step);
-            }
-        }
-
+        Route route = request.toEntity();
         Route savedRoute = routeRepository.save(route);
         return RouteResponse.from(savedRoute);
     }
