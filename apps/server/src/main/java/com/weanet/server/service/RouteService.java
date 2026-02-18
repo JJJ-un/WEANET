@@ -19,6 +19,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final ExternalMapService externalMapService;
     private final RouteEnrichmentService enrichmentService;
+    private final RouteAdviceService adviceService;
 
     /**
      * 경로 검색: 외부 맵 서비스(Tmap)를 통해 경로 후보만 빠르게 가져옵니다.
@@ -47,7 +48,18 @@ public class RouteService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 경로를 찾을 수 없습니다. id=" + id));
 
         List<RouteStepResponse> stepResponses = route.getSteps().stream()
-                .map(RouteStep::toResponse)
+                .map(step -> RouteStepResponse.builder()
+                        .sequence(step.getSequence())
+                        .transportType(step.getTransportType())
+                        .lineName(step.getLineName())
+                        .lineId(step.getLineId())
+                        .startStationName(step.getStartStationName())
+                        .startStationId(step.getStartStationId())
+                        .endStationName(step.getEndStationName())
+                        .endStationId(step.getEndStationId())
+                        .lat(step.getLat())
+                        .lng(step.getLng())
+                        .build())
                 .collect(Collectors.toList());
 
         // 실시간 정보 보강
@@ -79,9 +91,7 @@ public class RouteService {
      */
     public RouteSearchResponse enrichRoutePreview(RouteSearchResponse routeResponse) {
         enrichmentService.enrichRoute(routeResponse.getSteps());
-        routeResponse.setIntegratedAdvice(Route.generateAdvice(routeResponse.getSteps()));
+        routeResponse.setIntegratedAdvice(adviceService.generateAdvice(routeResponse.getSteps()));
         return routeResponse;
     }
-
-    // convertToResponse 메소드 삭제됨 (RouteStep.toResponse로 대체)
 }
