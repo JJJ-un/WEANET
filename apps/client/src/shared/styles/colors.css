@@ -14,20 +14,20 @@
   /* -------------------------------- */
 
   /* 배경 및 텍스트 */
-  --background: #ffffff; /* 흰색 */
-  --foreground: #020817; /* 진한 남색 (Slate-950) */
+  --background: #F1F5F9; /* 배경색 */
+  --foreground: #020817; /* 기본 본문 글자색상 */
 
   /* Primary (브랜드 컬러: Blue-600) */
   --primary: #2563eb;
-  --primary-foreground: #f8fafc; /* Slate-50 */
+  --primary-foreground: #f8fafc; /* 색상위에 올라가는 글자 */
 
   /* Secondary (보조 버튼 등: Slate-100) */
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a; /* Slate-900 */
+  --secondary: #0FA4E9;
+  --secondary-foreground: #ffffff; /* 색상위에 올라가는 글자 */
 
   /* Muted (비활성, 설명 텍스트: Slate-100) */
   --muted: #f1f5f9;
-  --muted-foreground: #64748b; /* Slate-500 */
+  --muted-foreground: #64748b; /* 색상위에 올라가는 글자 */
 
   /* UI 요소 (테두리, 입력창: Slate-200) */
   --border: #e2e8f0;
@@ -39,32 +39,4 @@
   /* 상태 (Destructive: Red-500) */
   --destructive: #ef4444;
   --destructive-foreground: #f8fafc;
-}
-
-/* -------------------------------- */
-/* Dark Mode (다크 모드 오버라이드) */
-/* -------------------------------- */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #020817; /* Slate-950 */
-    --foreground: #f8fafc; /* Slate-50 */
-
-    --primary: #3b82f6; /* Blue-500 (다크모드용 밝은 블루) */
-    --primary-foreground: #0f172a;
-
-    --secondary: #1e293b; /* Slate-800 */
-    --secondary-foreground: #f8fafc;
-
-    --muted: #1e293b; /* Slate-800 */
-    --muted-foreground: #94a3b8; /* Slate-400 */
-
-    --border: #1e293b; /* Slate-800 */
-    --input: #1e293b;
-    --ring: #1d4ed8; /* Blue-700 (다크모드 포커스링) */
-    --card: #020817;
-    --card-foreground: #f8fafc;
-
-    --destructive: #7f1d1d; /* Red-900 */
-    --destructive-foreground: #f8fafc;
-  }
 }

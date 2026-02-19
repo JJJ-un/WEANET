@@ -35,6 +35,10 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
+  --color-white: var(--white);
+  --color-black: var(--black);
+
+
   /* 둥글기 연결 */
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: calc(var(--radius) - 2px);
