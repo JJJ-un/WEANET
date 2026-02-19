@@ -1,5 +1,5 @@
-import { useRouter } from "@tanstack/react-router";
-import BackArrow from "@/shared/assets/icons/back-arrow.svg?react";
+import { useRouter } from '@tanstack/react-router';
+import BackArrow from '@/shared/assets/icons/back-arrow.svg?react';
 
 const PathsSearchHeader = () => {
   const router = useRouter();

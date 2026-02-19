@@ -1,5 +1,5 @@
-import * as S from "@/shared/ui/card";
-import WeatherIcon from "@/shared/assets/icons/weather.svg?react";
+import * as S from '@/shared/ui/card';
+import WeatherIcon from '@/shared/assets/icons/weather.svg?react';
 
 const DailyForecast = () => {
   // wiget은 피그마 ui 컴포넌트와 제일 가깝나?

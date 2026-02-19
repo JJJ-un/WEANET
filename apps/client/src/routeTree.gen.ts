@@ -8,97 +8,97 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileIndexRouteImport } from './routes/profile/index'
-import { Route as PathSearchIndexRouteImport } from './routes/path-search/index'
-import { Route as CommunityIndexRouteImport } from './routes/community/index'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as IndexRouteImport } from './routes/index';
+import { Route as ProfileIndexRouteImport } from './routes/profile/index';
+import { Route as PathSearchIndexRouteImport } from './routes/path-search/index';
+import { Route as CommunityIndexRouteImport } from './routes/community/index';
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ProfileIndexRoute = ProfileIndexRouteImport.update({
   id: '/profile/',
   path: '/profile/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PathSearchIndexRoute = PathSearchIndexRouteImport.update({
   id: '/path-search/',
   path: '/path-search/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const CommunityIndexRoute = CommunityIndexRouteImport.update({
   id: '/community/',
   path: '/community/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/community': typeof CommunityIndexRoute
-  '/path-search': typeof PathSearchIndexRoute
-  '/profile': typeof ProfileIndexRoute
+  '/': typeof IndexRoute;
+  '/community': typeof CommunityIndexRoute;
+  '/path-search': typeof PathSearchIndexRoute;
+  '/profile': typeof ProfileIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/community': typeof CommunityIndexRoute
-  '/path-search': typeof PathSearchIndexRoute
-  '/profile': typeof ProfileIndexRoute
+  '/': typeof IndexRoute;
+  '/community': typeof CommunityIndexRoute;
+  '/path-search': typeof PathSearchIndexRoute;
+  '/profile': typeof ProfileIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/community/': typeof CommunityIndexRoute
-  '/path-search/': typeof PathSearchIndexRoute
-  '/profile/': typeof ProfileIndexRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/community/': typeof CommunityIndexRoute;
+  '/path-search/': typeof PathSearchIndexRoute;
+  '/profile/': typeof ProfileIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/community' | '/path-search' | '/profile'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/community' | '/path-search' | '/profile'
-  id: '__root__' | '/' | '/community/' | '/path-search/' | '/profile/'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/community' | '/path-search' | '/profile';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/community' | '/path-search' | '/profile';
+  id: '__root__' | '/' | '/community/' | '/path-search/' | '/profile/';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CommunityIndexRoute: typeof CommunityIndexRoute
-  PathSearchIndexRoute: typeof PathSearchIndexRoute
-  ProfileIndexRoute: typeof ProfileIndexRoute
+  IndexRoute: typeof IndexRoute;
+  CommunityIndexRoute: typeof CommunityIndexRoute;
+  PathSearchIndexRoute: typeof PathSearchIndexRoute;
+  ProfileIndexRoute: typeof ProfileIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/profile/': {
-      id: '/profile/'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/profile/';
+      path: '/profile';
+      fullPath: '/profile';
+      preLoaderRoute: typeof ProfileIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/path-search/': {
-      id: '/path-search/'
-      path: '/path-search'
-      fullPath: '/path-search'
-      preLoaderRoute: typeof PathSearchIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/path-search/';
+      path: '/path-search';
+      fullPath: '/path-search';
+      preLoaderRoute: typeof PathSearchIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/community/': {
-      id: '/community/'
-      path: '/community'
-      fullPath: '/community'
-      preLoaderRoute: typeof CommunityIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/community/';
+      path: '/community';
+      fullPath: '/community';
+      preLoaderRoute: typeof CommunityIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -107,7 +107,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityIndexRoute: CommunityIndexRoute,
   PathSearchIndexRoute: PathSearchIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

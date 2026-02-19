@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import PathsSearchHeader from "@/widget/path-search-header/ui/PathSearchHeader";
-import PathsSearchBar from "@/widget/path-search/ui/PathSearchBar";
+import { createFileRoute } from '@tanstack/react-router';
+import PathsSearchHeader from '@/widget/path-search-header/ui/PathSearchHeader';
+import PathsSearchBar from '@/widget/path-search/ui/PathSearchBar';
 
-export const Route = createFileRoute("/path-search/")({
+export const Route = createFileRoute('/path-search/')({
   component: PathSearchPage,
 });
 

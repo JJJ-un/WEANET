@@ -1,11 +1,11 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import react from 'eslint-plugin-react'
-import tseslint from 'typescript-eslint'
-import prettierPlugin from 'eslint-plugin-prettier'
-import prettierConfig from 'eslint-config-prettier'
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import react from 'eslint-plugin-react';
+import tseslint from 'typescript-eslint';
+import prettierPlugin from 'eslint-plugin-prettier';
+import prettierConfig from 'eslint-config-prettier';
 
 export default [
   // 1. 공통 무시 파일 설정
@@ -34,22 +34,29 @@ export default [
     rules: {
       // React Hooks 추천 규칙
       ...reactHooks.configs.recommended.rules,
-      
+
       // React 추천 규칙
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
 
-      // Prettier 규칙 위반을 에러로 표시
-      'prettier/prettier': 'error',
+      // Prettier 규칙 위반을 에러로 표시하고, 홑따옴표 설정을 명시적으로 지정
+      'prettier/prettier': ['error', {
+        singleQuote: true,
+        jsxSingleQuote: false,
+        semi: true,
+        tabWidth: 2,
+        useTabs: false,
+        trailingComma: 'all',
+        printWidth: 100,
+        arrowParens: 'always',
+        endOfLine: 'auto',
+      }],
 
       // React 17+ import React 불필요
       'react/react-in-jsx-scope': 'off',
 
       // shadcn/ui 스타일 상수 export 허용
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
     settings: {
       react: {
@@ -60,4 +67,4 @@ export default [
 
   // 4. Prettier 설정 (맨 마지막)
   prettierConfig,
-]
+];

@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
-import { Input } from "@/shared/ui/input";
-import DestinationIcon from "@/shared/assets/icons/destination.svg?react";
-import DepartureIcon from "@/shared/assets/icons/departure.svg?react";
-import SEARCH_LIST_MOCK from "@/shared/mock/searchData.mock";
+import { useState, useEffect, useMemo } from 'react';
+import { Input } from '@/shared/ui/input';
+import DestinationIcon from '@/shared/assets/icons/destination.svg?react';
+import DepartureIcon from '@/shared/assets/icons/departure.svg?react';
+import SEARCH_LIST_MOCK from '@/shared/mock/searchData.mock';
 
 // 1. 타입 정의: 필드 확장에 유연하게 대응
-type SearchField = "departure" | "destination" | null;
+type SearchField = 'departure' | 'destination' | null;
 
 interface PathState {
   departure: string;
@@ -15,14 +15,14 @@ interface PathState {
 const PathsSearchBar = () => {
   // 2. 상태 통합: 출발지와 도착지를 하나의 객체로 관리
   const [paths, setPaths] = useState<PathState>({
-    departure: "",
-    destination: "",
+    departure: '',
+    destination: '',
   });
 
   const [activeField, setActiveField] = useState<SearchField>(null);
 
   // 3. 파생 상태: 현재 입력 중인 값 계산
-  const activeValue = activeField ? paths[activeField] : "";
+  const activeValue = activeField ? paths[activeField] : '';
 
   // 4. 연산 최적화: useMemo를 사용하여 불필요한 필터링 방지
   const filteredSearchList = useMemo(() => {
@@ -30,7 +30,7 @@ const PathsSearchBar = () => {
     if (!keyword) return [];
 
     return SEARCH_LIST_MOCK.filter((item) =>
-      item.name.toLowerCase().includes(keyword.toLowerCase())
+      item.name.toLowerCase().includes(keyword.toLowerCase()),
     );
   }, [activeValue]);
 
@@ -38,7 +38,7 @@ const PathsSearchBar = () => {
   const isShowList = activeField !== null && activeValue.trim().length > 0;
 
   // 6. 핸들러 통합: 동적 키([])를 사용하여 if문 제거
-  const handleInputChange = (field: "departure" | "destination", value: string) => {
+  const handleInputChange = (field: 'departure' | 'destination', value: string) => {
     setPaths((prev) => ({
       ...prev,
       [field]: value,
@@ -59,7 +59,7 @@ const PathsSearchBar = () => {
   // 2. 자동 실행 로직 (Side Effect)
   useEffect(() => {
     if (isReady && !activeField) {
-      console.log("자동 검색 실행!", paths);
+      console.log('자동 검색 실행!', paths);
     }
   }, [isReady, activeField, paths]);
   // activeField를 의존성에 넣어, 입력을 마친 후(Blur) 실행되도록 조절
@@ -73,8 +73,8 @@ const PathsSearchBar = () => {
           <p className="text-xs text-gray-500 mb-1">출발지</p>
           <Input
             value={paths.departure}
-            onChange={(e) => handleInputChange("departure", e.target.value)}
-            onFocus={() => setActiveField("departure")}
+            onChange={(e) => handleInputChange('departure', e.target.value)}
+            onFocus={() => setActiveField('departure')}
             onBlur={() => setActiveField(null)}
             placeholder="출발지를 입력하세요"
             className="w-full"
@@ -89,8 +89,8 @@ const PathsSearchBar = () => {
           <p className="text-xs text-gray-500 mb-1">도착지</p>
           <Input
             value={paths.destination}
-            onChange={(e) => handleInputChange("destination", e.target.value)}
-            onFocus={() => setActiveField("destination")}
+            onChange={(e) => handleInputChange('destination', e.target.value)}
+            onFocus={() => setActiveField('destination')}
             onBlur={() => setActiveField(null)}
             placeholder="도착지를 입력하세요"
             className="w-full"
