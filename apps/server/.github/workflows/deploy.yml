@@ -19,6 +19,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Build with Gradle
+      working-directory: apps/server # 폴더 경로 명시
       run: ./gradlew build -x test
 
     - name: Login to Docker Hub
@@ -30,6 +31,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
-        context: .
+        context: apps/server # Docker 컨텍스트를 하위 폴더로 지정
+        file: apps/server/Dockerfile # Dockerfile 위치 명시
         push: true
-        tags: bbumbbum/ddubuk:latest # Docker ID와 Repository 이름 확인!
+        tags: bbumbbum/ddubuk:latest
