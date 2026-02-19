@@ -1,0 +1,35 @@
+services:
+  # 1. Database (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: ddubuk-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ddubuk
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: ddubuk_user
+      MYSQL_PASSWORD: ddubuk_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  # 2. Spring Boot Application
+  app:
+    build: .
+    container_name: ddubuk-server
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ddubuk?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: ddubuk_user
+      SPRING_DATASOURCE_PASSWORD: ddubuk_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # 외부 API 키 등은 서버의 환경변수나 .env 파일로 관리합니다.
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
+      TMAP_API_KEY: ${TMAP_API_KEY}
+      PUBLIC_DATA_API_KEY: ${PUBLIC_DATA_API_KEY}
+      SEOUL_DATA_API_KEY: ${SEOUL_DATA_API_KEY}
