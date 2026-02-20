@@ -39,4 +39,10 @@
   /* 상태 (Destructive: Red-500) */
   --destructive: #ef4444;
   --destructive-foreground: #f8fafc;
+
+  /* 날씨 관련 색상 */
+  --weather-clear: #f59e0b; /* 맑음: Amber-500 */
+  --weather-rain: #3b82f6; /* 비: Blue-500 */
+  --weather-snow: #94a3b8; /* 눈: Slate-400 */
+  --weather-cloudy: #64748b; /* 흐림: Slate-500 */
 }

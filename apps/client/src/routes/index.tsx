@@ -50,14 +50,14 @@ function RouteComponent() {
         </S.CardContent>
       </S.Card>
       <div>
-        <p className="text-lg text-background mb-4">날씨 뉴스 피드</p>
+        <p className="text-lg text-foreground mb-4 font-bold">날씨 뉴스 피드</p>
 
         {/* 날씨 뉴스 피드 */}
         <div>
           <div className="flex items-center gap-4 mt-8">
             <WarningIcon className="inline" />
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-background">
+              <span className="text-sm text-foreground">
                 서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
               </span>
               <span className="text-xs text-muted-foreground">연합뉴스</span>
@@ -66,7 +66,7 @@ function RouteComponent() {
           <div className="flex items-center gap-4 mt-8">
             <WarningIcon className="inline" />
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-background">
+              <span className="text-sm text-foreground">
                 서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
               </span>
               <span className="text-xs text-muted-foreground">연합뉴스</span>
@@ -75,7 +75,7 @@ function RouteComponent() {
           <div className="flex items-center gap-4 mt-8">
             <WarningIcon className="inline" />
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-background">
+              <span className="text-sm text-foreground">
                 서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
               </span>
               <span className="text-xs text-muted-foreground">연합뉴스</span>

@@ -1,17 +1,17 @@
-import * as S from '@/shared/ui/card';
-import WeatherIcon from '@/shared/assets/icons/weather.svg?react';
+import * as S from '@/shared/ui/Card';
+import { WeatherIcon } from '@/entities/weather/ui/WeatherIcon';
 
 const DailyForecast = () => {
-  // wiget은 피그마 ui 컴포넌트와 제일 가깝나?
   return (
-    <S.Card className="w-[100%] h-[73px] flex-col items-center justify-center">
-      <S.CardContent className="flex flex-col items-center justify-center gap-2">
-        <S.CardTitle className="text-xs">지금</S.CardTitle>
-        <div className=" flex flex-col items-center justify-center w-[20px] h-[20px]">
-          <WeatherIcon />
-        </div>
-        <S.CardDescription className="text-xs">24°C</S.CardDescription>
-      </S.CardContent>
+    <S.Card className="flex flex-col items-center min-w-[4rem] py-4 gap-3 bg-transparent border-none shadow-none">
+      {/* 시간 */}
+      <S.CardTitle className="text-sm font-medium text-foreground">지금</S.CardTitle>
+      {/* 아이콘 */}
+      <div className="flex justify-center">
+        <WeatherIcon status="Clear" className="w-8 h-8" />
+      </div>
+      {/* 기온 */}
+      <span className="text-base font-semibold">24°</span>
     </S.Card>
   );
 };
