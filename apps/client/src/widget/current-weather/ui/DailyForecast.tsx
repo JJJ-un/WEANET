@@ -4,7 +4,7 @@ import { type HourlyForecast } from '@/entities/weather/model/types';
 
 const DailyForecast = ({ time, status, temp }: HourlyForecast) => {
     return (
-        <S.Card className="flex flex-col items-center min-w-[4.8rem] py-4 px-2 gap-3 bg-white border border-border shadow-sm">
+        <S.Card className="flex flex-col items-center min-w-[6.5rem] py-5 px-2 gap-4 bg-white border border-border shadow-sm snap-center">
             {/* 시간 */}
             <S.CardTitle className="text-sm font-medium text-foreground">{time}</S.CardTitle>
             {/* 아이콘 */}

@@ -7,8 +7,8 @@ import TabMenu from '@/shared/ui/TabMenu';
 // 여기에 탭메뉴를 구현하면 될 것 같다.
 export const Route = createRootRoute({
     component: () => (
-        <div className="flex justify-center items-center">
-            <div className="max-w-[39rem] w-full bg-background px-6 min-h-screen pt-[env(safe-area-inset-top)] mt-4">
+        <div className="flex justify-center items-center bg-white min-h-screen">
+            <div className="max-w-[39rem] w-full bg-background px-6 min-h-screen pt-[calc(env(safe-area-inset-top)+1.6rem)]">
                 <Outlet />
                 <TabMenu />
             </div>
