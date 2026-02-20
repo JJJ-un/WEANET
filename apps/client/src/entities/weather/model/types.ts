@@ -13,6 +13,12 @@ export interface WeatherData {
   precipitation: number; // 강수 확률 (%)
 }
 
+export interface HourlyForecast {
+  time: string;
+  status: WeatherStatus;
+  temp: number;
+}
+
 export const WEATHER_CONFIG: Record<WeatherStatus, WeatherConfig> = {
   Clear: {
     label: '맑음',

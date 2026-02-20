@@ -12,16 +12,22 @@ export const Route = createFileRoute('/')({
 });
 
 function RouteComponent() {
+  const hourlyData = [
+    { time: '지금', status: 'Clear', temp: 24 },
+    { time: '13시', status: 'Clear', temp: 25 },
+    { time: '14시', status: 'Cloudy', temp: 25 },
+    { time: '15시', status: 'Cloudy', temp: 24 },
+    { time: '16시', status: 'Rain', temp: 22 },
+    { time: '17시', status: 'Rain', temp: 21 },
+  ] as const;
+
   return (
     <div className="flex flex-col gap-8">
       <CurrentWeather />
-      <div className="flex gap-4">
-        <DailyForecast />
-        <DailyForecast />
-        <DailyForecast />
-        <DailyForecast />
-        <DailyForecast />
-        <DailyForecast />
+      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+        {hourlyData.map((data, index) => (
+          <DailyForecast key={index} {...data} />
+        ))}
       </div>
       <S.Card className="p-6 mb-8">
         <S.CardHeader className="flex items-center justify-between gap-4">
