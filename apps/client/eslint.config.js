@@ -39,18 +39,21 @@ export default [
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
 
-      // Prettier 규칙 위반을 에러로 표시하고, 홑따옴표 설정을 명시적으로 지정
-      'prettier/prettier': ['error', {
-        singleQuote: true,
-        jsxSingleQuote: false,
-        semi: true,
-        tabWidth: 2,
-        useTabs: false,
-        trailingComma: 'all',
-        printWidth: 100,
-        arrowParens: 'always',
-        endOfLine: 'auto',
-      }],
+      // Prettier 규칙 위반을 에러로 표시하고, 설정을 .prettierrc와 동기화
+      'prettier/prettier': [
+        'error',
+        {
+          singleQuote: true,
+          jsxSingleQuote: false,
+          semi: true,
+          tabWidth: 4,
+          useTabs: false,
+          trailingComma: 'all',
+          printWidth: 140,
+          arrowParens: 'always',
+          endOfLine: 'lf',
+        },
+      ],
 
       // React 17+ import React 불필요
       'react/react-in-jsx-scope': 'off',

@@ -1,94 +1,35 @@
 import { createFileRoute } from '@tanstack/react-router';
 import CurrentWeather from '@/widget/current-weather/ui/CurrentWeather';
 import DailyForecast from '@/widget/current-weather/ui/DailyForecast';
-import * as S from '@/shared/ui/Card';
-import InfoIcon from '@/shared/assets/icons/info.svg?react';
-import SubwayIcon from '@/shared/assets/icons/subway.svg?react';
-import KebabMenuIcon from '@/shared/assets/icons/kebab-menu.svg?react';
-import WarningIcon from '@/shared/assets/icons/warning.svg?react';
+import GroupInfo from '@/widget/group-info/ui/GroupInfo';
 
 export const Route = createFileRoute('/')({
-  component: RouteComponent,
+    component: RouteComponent,
 });
 
 function RouteComponent() {
-  const hourlyData = [
-    { time: '지금', status: 'Clear', temp: 24 },
-    { time: '13시', status: 'Clear', temp: 25 },
-    { time: '14시', status: 'Cloudy', temp: 25 },
-    { time: '15시', status: 'Cloudy', temp: 24 },
-    { time: '16시', status: 'Rain', temp: 22 },
-    { time: '17시', status: 'Rain', temp: 21 },
-  ] as const;
+    const hourlyData = [
+        { time: '지금', status: 'Clear', temp: 24 },
+        { time: '13시', status: 'Clear', temp: 25 },
+        { time: '14시', status: 'Cloudy', temp: 25 },
+        { time: '15시', status: 'Cloudy', temp: 24 },
+        { time: '16시', status: 'Rain', temp: 22 },
+        { time: '17시', status: 'Rain', temp: 21 },
+    ] as const;
 
-  return (
-    <div className="flex flex-col gap-8">
-      <CurrentWeather />
-      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-        {hourlyData.map((data, index) => (
-          <DailyForecast key={index} {...data} />
-        ))}
-      </div>
-      <S.Card className="p-6 mb-8">
-        <S.CardHeader className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <SubwayIcon />
-            <div>
-              <S.CardTitle className="text-xl">출근길</S.CardTitle>
-              <S.CardTitle className="text-xs text-muted-foreground">예상 혼잡도</S.CardTitle>
-            </div>
-          </div>
-          <KebabMenuIcon />
-        </S.CardHeader>
-        <S.CardContent className="flex items-center justify-between gap-4 max-w-[33rem] bg-foreground rounded-xl p-4">
-          <div className="flex items-center gap-4">
-            <InfoIcon />
-            <div className="text-sm">사용자 집단 정보, 우산 챙겨가세요</div>
-          </div>
-          <div className="text-xs text-muted-foreground">[34명 참여]</div>
-        </S.CardContent>
-        <S.CardContent className="flex items-center justify-between gap-4 max-w-[33rem] bg-foreground rounded-xl p-4">
-          <div className="flex items-center gap-4">
-            <InfoIcon />
-            <div className="text-sm text-destructive">사고 발생: 강남대로 정체</div>
-          </div>
-          <div className="text-xs text-muted-foreground">[34명 참여]</div>
-        </S.CardContent>
-      </S.Card>
-      <div>
-        <p className="text-lg text-foreground mb-4 font-bold">날씨 뉴스 피드</p>
+    return (
+        <div className="flex flex-col gap-8 pb-32">
+            {/* 1. 현재 날씨 정보 */}
+            <CurrentWeather />
 
-        {/* 날씨 뉴스 피드 */}
-        <div>
-          <div className="flex items-center gap-4 mt-8">
-            <WarningIcon className="inline" />
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-foreground">
-                서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
-              </span>
-              <span className="text-xs text-muted-foreground">연합뉴스</span>
+            {/* 2. 시간별 예보 리스트 (가로 스크롤) */}
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                {hourlyData.map((data, index) => (
+                    <DailyForecast key={index} {...data} />
+                ))}
             </div>
-          </div>
-          <div className="flex items-center gap-4 mt-8">
-            <WarningIcon className="inline" />
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-foreground">
-                서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
-              </span>
-              <span className="text-xs text-muted-foreground">연합뉴스</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 mt-8">
-            <WarningIcon className="inline" />
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-foreground">
-                서울시, 미세먼지 주의보 발령. 외출 시 마스크 착용 권장
-              </span>
-              <span className="text-xs text-muted-foreground">연합뉴스</span>
-            </div>
-          </div>
+            {/* 3. 출근길 혼잡도 및 사용자 제보 */}
+            <GroupInfo />
         </div>
-      </div>
-    </div>
-  );
+    );
 }
