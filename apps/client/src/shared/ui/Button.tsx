@@ -9,9 +9,14 @@ const buttonVariants = cva(
         variants: {
             variant: {
                 default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+                secondary: 'bg-muted text-muted-foreground hover:bg-muted/80',
+                outline: 'border border-border bg-transparent hover:bg-muted text-foreground',
+                selected: 'bg-secondary text-white shadow-sm', // 선택된 상태용
             },
             size: {
                 default: 'w-[36rem] h-[5.5rem] px-4 py-2 has-[>svg]:px-3',
+                sm: 'h-9 rounded-md px-3 has-[>svg]:px-2.5',
+                badge: 'h-12 px-7 py-3 rounded-full text-base', // 크기를 키우고 텍스트도 약간 키움
             },
         },
         defaultVariants: {

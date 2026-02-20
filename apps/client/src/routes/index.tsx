@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import LocationSelector from '@/features/select-location/ui/LocationSelector';
 import CurrentWeather from '@/widget/current-weather/ui/CurrentWeather';
 import DailyForecast from '@/widget/current-weather/ui/DailyForecast';
 import GroupInfo from '@/widget/group-info/ui/GroupInfo';
@@ -19,6 +20,9 @@ function RouteComponent() {
 
     return (
         <div className="flex flex-col gap-8 pb-32">
+            {/* 0. 지역 선택 버튼 리스트 */}
+            <LocationSelector />
+
             {/* 1. 현재 날씨 정보 */}
             <CurrentWeather />
 
