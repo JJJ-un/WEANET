@@ -27,7 +27,7 @@ const TabMenu = () => {
                         to={tab.to}
                         className={cn('flex flex-col justify-center items-center gap-2', {
                             'text-muted-foreground hover:text-gray-700': !isActive,
-                            'text-background font-semibold': isActive,
+                            'text-primary font-semibold': isActive,
                         })}
                     >
                         {/* Icon 파일 currentColor로 수정 */}
