@@ -22,6 +22,7 @@ public class WeatherService {
 
     private final RestTemplate restTemplate;
     private final KmaCoordinateConverter coordinateConverter;
+    private final ExternalMapService externalMapService;
 
     @Value("${weather.api.key}")
     private String apiKey;
@@ -33,12 +34,8 @@ public class WeatherService {
      * 도시 이름을 기반으로 날씨 정보를 조회합니다.
      */
     public WeatherResponse getWeather(String city) {
-        // 간단한 도시별 좌표 매핑 (현업에선 DB 연동 권장)
-        double lat = 37.5665; double lng = 126.9780; // 서울 기본
-        if ("Busan".equalsIgnoreCase(city)) { lat = 35.1796; lng = 129.0756; }
-        else if ("Incheon".equalsIgnoreCase(city)) { lat = 37.4563; lng = 126.7052; }
-
-        return getWeatherByCoordinates(lat, lng);
+        double[] coords = externalMapService.getCoordinates(city);
+        return getWeatherByCoordinates(coords[0], coords[1]);
     }
 
     /**
