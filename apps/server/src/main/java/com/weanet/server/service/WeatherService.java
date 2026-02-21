@@ -34,8 +34,15 @@ public class WeatherService {
      * 도시 이름을 기반으로 날씨 정보를 조회합니다.
      */
     public WeatherResponse getWeather(String city) {
-        double[] coords = externalMapService.getCoordinates(city);
+        double[] coords = getCoordinates(city);
         return getWeatherByCoordinates(coords[0], coords[1]);
+    }
+
+    /**
+     * 명칭 기반으로 좌표를 검색합니다.
+     */
+    public double[] getCoordinates(String keyword) {
+        return externalMapService.getCoordinates(keyword);
     }
 
     /**
