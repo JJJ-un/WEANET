@@ -24,7 +24,7 @@ export const SearchField = ({ type, value, onChange, onFocus, onBlur }: SearchFi
 
     return (
         <div className="flex items-center gap-4 group">
-            <Icon className={cn('shrink-0 transition-colors', isDeparture ? 'text-primary' : 'text-secondary')} />
+            <Icon className={cn('shrink-0 transition-colors size-10', isDeparture ? 'text-primary' : 'text-secondary')} />
             <div className="flex-1">
                 <p className="text-[11px] font-bold text-muted-foreground mb-1 ml-1 uppercase tracking-wider">{label}</p>
                 <Input

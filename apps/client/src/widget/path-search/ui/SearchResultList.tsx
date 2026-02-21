@@ -1,11 +1,8 @@
-interface SearchItem {
-    id: number | string;
-    name: string;
-    address: string;
-}
+import { LocationItem } from '@/entities/location/ui/LocationItem';
+import { type LocationItem as LocationItemType } from '@/entities/location/model/useLocationSearch';
 
 interface SearchResultListProps {
-    results: SearchItem[];
+    results: LocationItemType[];
     onSelect: (name: string) => void;
 }
 
@@ -18,14 +15,7 @@ export const SearchResultList = ({ results, onSelect }: SearchResultListProps) =
             {results.length > 0 ? (
                 <div className="flex flex-col">
                     {results.map((item) => (
-                        <button
-                            key={item.id}
-                            onMouseDown={() => onSelect(item.name)}
-                            className="flex flex-col items-start p-4 hover:bg-muted/50 transition-colors border-b last:border-0 text-left w-full"
-                        >
-                            <span className="font-bold text-sm text-foreground">{item.name}</span>
-                            <span className="text-xs text-muted-foreground mt-1">{item.address}</span>
-                        </button>
+                        <LocationItem key={item.id} location={item} onSelect={onSelect} />
                     ))}
                 </div>
             ) : (

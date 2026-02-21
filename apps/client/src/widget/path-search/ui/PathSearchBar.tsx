@@ -18,7 +18,6 @@ const PathsSearchBar = () => {
     });
     const [activeField, setActiveField] = useState<FieldType | null>(null);
 
-    // 1. 장소 검색 훅 사용 (로직 분리 완료)
     const activeValue = activeField ? paths[activeField] : '';
     const { results } = useLocationSearch(activeValue);
 
@@ -42,6 +41,7 @@ const PathsSearchBar = () => {
 
     return (
         <div className="relative w-full max-w-[35rem] mx-auto">
+            {/* 메인 입력 카드 */}
             <div className="flex flex-col gap-5 p-6 bg-white rounded-3xl shadow-xl border border-border/50 relative">
                 <SearchField
                     type="departure"
@@ -51,10 +51,11 @@ const PathsSearchBar = () => {
                     onBlur={() => setTimeout(() => setActiveField(null), 200)}
                 />
 
-                <div className="relative h-px bg-border/60 mx-10">
+                {/* 구분선 및 스왑 버튼 */}
+                <div className="relative h-px bg-border/60 mx-10 z-10">
                     <button
                         onClick={handleSwap}
-                        className="absolute right-[-12px] top-1/2 -translate-y-1/2 bg-white border border-border p-1.5 rounded-full shadow-sm hover:rotate-180 transition-transform duration-300 active:scale-90 z-10"
+                        className="absolute right-[-12px] top-1/2 -translate-y-1/2 bg-white border border-border p-1.5 rounded-full shadow-sm hover:rotate-180 transition-transform duration-300 active:scale-90 z-20"
                         title="출발지/도착지 전환"
                     >
                         <svg
@@ -82,6 +83,7 @@ const PathsSearchBar = () => {
                 />
             </div>
 
+            {/* 검색 결과 리스트 (팝업) */}
             {isShowList && <SearchResultList results={results} onSelect={handleSelect} />}
         </div>
     );
