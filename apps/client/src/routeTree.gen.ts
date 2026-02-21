@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as PathSearchIndexRouteImport } from './routes/path-search/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
+import { Route as PathSearchResultRouteImport } from './routes/path-search/result'
+import { Route as PathSearchDetailPathIdRouteImport } from './routes/path-search/detail.$pathId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,39 +36,76 @@ const CommunityIndexRoute = CommunityIndexRouteImport.update({
   path: '/community/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PathSearchResultRoute = PathSearchResultRouteImport.update({
+  id: '/path-search/result',
+  path: '/path-search/result',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathSearchDetailPathIdRoute = PathSearchDetailPathIdRouteImport.update({
+  id: '/path-search/detail/$pathId',
+  path: '/path-search/detail/$pathId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/path-search/result': typeof PathSearchResultRoute
   '/community': typeof CommunityIndexRoute
   '/path-search': typeof PathSearchIndexRoute
   '/profile': typeof ProfileIndexRoute
+  '/path-search/detail/$pathId': typeof PathSearchDetailPathIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/path-search/result': typeof PathSearchResultRoute
   '/community': typeof CommunityIndexRoute
   '/path-search': typeof PathSearchIndexRoute
   '/profile': typeof ProfileIndexRoute
+  '/path-search/detail/$pathId': typeof PathSearchDetailPathIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/path-search/result': typeof PathSearchResultRoute
   '/community/': typeof CommunityIndexRoute
   '/path-search/': typeof PathSearchIndexRoute
   '/profile/': typeof ProfileIndexRoute
+  '/path-search/detail/$pathId': typeof PathSearchDetailPathIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/community' | '/path-search' | '/profile'
+  fullPaths:
+    | '/'
+    | '/path-search/result'
+    | '/community'
+    | '/path-search'
+    | '/profile'
+    | '/path-search/detail/$pathId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/community' | '/path-search' | '/profile'
-  id: '__root__' | '/' | '/community/' | '/path-search/' | '/profile/'
+  to:
+    | '/'
+    | '/path-search/result'
+    | '/community'
+    | '/path-search'
+    | '/profile'
+    | '/path-search/detail/$pathId'
+  id:
+    | '__root__'
+    | '/'
+    | '/path-search/result'
+    | '/community/'
+    | '/path-search/'
+    | '/profile/'
+    | '/path-search/detail/$pathId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PathSearchResultRoute: typeof PathSearchResultRoute
   CommunityIndexRoute: typeof CommunityIndexRoute
   PathSearchIndexRoute: typeof PathSearchIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
+  PathSearchDetailPathIdRoute: typeof PathSearchDetailPathIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,14 +138,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/path-search/result': {
+      id: '/path-search/result'
+      path: '/path-search/result'
+      fullPath: '/path-search/result'
+      preLoaderRoute: typeof PathSearchResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/path-search/detail/$pathId': {
+      id: '/path-search/detail/$pathId'
+      path: '/path-search/detail/$pathId'
+      fullPath: '/path-search/detail/$pathId'
+      preLoaderRoute: typeof PathSearchDetailPathIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PathSearchResultRoute: PathSearchResultRoute,
   CommunityIndexRoute: CommunityIndexRoute,
   PathSearchIndexRoute: PathSearchIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
+  PathSearchDetailPathIdRoute: PathSearchDetailPathIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
