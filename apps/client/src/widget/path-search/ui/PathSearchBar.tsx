@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import { useLocationSearch } from '@/entities/location/model/useLocationSearch';
 import { SearchField, type FieldType } from './SearchField';
 import { SearchList } from './SearchList';
@@ -9,11 +8,15 @@ interface PathState {
     destination: string;
 }
 
+interface PathsSearchBarProps {
+    onSearch?: (paths: PathState) => void;
+    onClear?: () => void;
+}
+
 /**
  * 메인 경로 탐색 바 위젯
  */
-const PathsSearchBar = () => {
-    const navigate = useNavigate();
+const PathsSearchBar = ({ onSearch, onClear }: PathsSearchBarProps) => {
     const [paths, setPaths] = useState<PathState>({
         departure: '',
         destination: '',
@@ -25,6 +28,7 @@ const PathsSearchBar = () => {
 
     const handleInputChange = (field: FieldType, value: string) => {
         setPaths((prev) => ({ ...prev, [field]: value }));
+        if (value === '' && onClear) onClear();
     };
 
     const handleSelect = (name: string) => {
@@ -39,21 +43,19 @@ const PathsSearchBar = () => {
         });
     };
 
-    // 두 필드가 모두 채워지면 자동으로 결과 페이지로 이동
+    // 두 필드가 모두 채워지면 부모에게 검색 실행 알림
     useEffect(() => {
         const isReady = paths.departure.trim().length > 0 && paths.destination.trim().length > 0;
         
-        // 입력 중이 아닐 때(목록이 닫혔을 때) 이동하도록 처리
         if (isReady && !activeField) {
-            navigate({ to: '/path-search/result' });
+            if (onSearch) onSearch(paths);
         }
-    }, [paths, activeField, navigate]);
+    }, [paths, activeField, onSearch]);
 
     const isShowList = activeField !== null && activeValue.trim().length > 0;
 
     return (
         <div className="relative w-full max-w-[35rem] mx-auto">
-            {/* 메인 입력 카드 */}
             <div className="flex flex-col gap-5 p-6 bg-white rounded-3xl shadow-xl border border-border/50 relative">
                 <SearchField
                     type="departure"
@@ -63,12 +65,10 @@ const PathsSearchBar = () => {
                     onBlur={() => setTimeout(() => setActiveField(null), 200)}
                 />
 
-                {/* 구분선 및 스왑 버튼 */}
                 <div className="relative h-px bg-border/60 mx-10 z-10">
                     <button
                         onClick={handleSwap}
                         className="absolute right-[-12px] top-1/2 -translate-y-1/2 bg-white border border-border p-1.5 rounded-full shadow-sm hover:rotate-180 transition-transform duration-300 active:scale-90 z-20"
-                        title="출발지/도착지 전환"
                     >
                         <svg
                             width="16"
@@ -95,7 +95,6 @@ const PathsSearchBar = () => {
                 />
             </div>
 
-            {/* 검색 결과 리스트 (팝업) */}
             {isShowList && <SearchList results={results} onSelect={handleSelect} />}
         </div>
     );
