@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useLocationSearch } from '@/entities/location/model/useLocationSearch';
 import { SearchField, type FieldType } from './SearchField';
 import { SearchList } from './SearchList';
@@ -12,6 +13,7 @@ interface PathState {
  * 메인 경로 탐색 바 위젯
  */
 const PathsSearchBar = () => {
+    const navigate = useNavigate();
     const [paths, setPaths] = useState<PathState>({
         departure: '',
         destination: '',
@@ -36,6 +38,16 @@ const PathsSearchBar = () => {
             destination: paths.departure,
         });
     };
+
+    // 두 필드가 모두 채워지면 자동으로 결과 페이지로 이동
+    useEffect(() => {
+        const isReady = paths.departure.trim().length > 0 && paths.destination.trim().length > 0;
+        
+        // 입력 중이 아닐 때(목록이 닫혔을 때) 이동하도록 처리
+        if (isReady && !activeField) {
+            navigate({ to: '/path-search/result' });
+        }
+    }, [paths, activeField, navigate]);
 
     const isShowList = activeField !== null && activeValue.trim().length > 0;
 
