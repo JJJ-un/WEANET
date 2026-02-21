@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocationSearch } from '@/entities/location/model/useLocationSearch';
 import { SearchField, type FieldType } from './SearchField';
-import { SearchResultList } from './SearchResultList';
+import { SearchList } from './SearchList';
 
 interface PathState {
     departure: string;
@@ -84,7 +84,7 @@ const PathsSearchBar = () => {
             </div>
 
             {/* 검색 결과 리스트 (팝업) */}
-            {isShowList && <SearchResultList results={results} onSelect={handleSelect} />}
+            {isShowList && <SearchList results={results} onSelect={handleSelect} />}
         </div>
     );
 };
