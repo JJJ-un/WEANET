@@ -27,6 +27,40 @@ public class ExternalMapService {
     @Value("${tmap.api.url}")
     private String apiUrl;
 
+    @Value("${tmap.api.poi.url}")
+    private String poiApiUrl;
+
+    /**
+     * 장소 명칭(keyword)을 기반으로 좌표(위도, 경도)를 조회합니다.
+     */
+    public double[] getCoordinates(String keyword) {
+        try {
+            String url = UriComponentsBuilder.fromUriString(poiApiUrl)
+                    .queryParam("version", 1)
+                    .queryParam("searchKeyword", keyword)
+                    .queryParam("count", 1)
+                    .queryParam("appKey", apiKey)
+                    .build().toUriString();
+
+            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+            if (response != null && response.containsKey("searchPoiInfo")) {
+                Map<String, Object> searchPoiInfo = (Map<String, Object>) response.get("searchPoiInfo");
+                Map<String, Object> pois = (Map<String, Object>) searchPoiInfo.get("pois");
+                List<Map<String, Object>> poiList = (List<Map<String, Object>>) pois.get("poi");
+
+                if (!poiList.isEmpty()) {
+                    Map<String, Object> firstPoi = poiList.get(0);
+                    double lat = Double.parseDouble((String) firstPoi.get("frontLat"));
+                    double lon = Double.parseDouble((String) firstPoi.get("frontLon"));
+                    return new double[]{lat, lon};
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error searching coordinates for " + keyword + ": " + e.getMessage());
+        }
+        return new double[]{37.5665, 126.9780}; // 기본값 서울
+    }
+
     /**
      * Tmap 대중교통 경로 검색 API를 호출합니다.
      */
