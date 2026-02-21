@@ -7,37 +7,37 @@ import { useRouterState } from '@tanstack/react-router';
 import { cn } from '@/shared/lib/utils';
 
 const Tab = [
-  { to: '/', label: '홈', icon: HomeIcon },
-  { to: '/path-search/', label: '경로 검색', icon: MapIcon },
-  { to: '/community/', label: '커뮤니티', icon: CommunityIcon },
-  { to: '/my/', label: 'My', icon: ProfileIcon },
+    { to: '/', label: '홈', icon: HomeIcon },
+    { to: '/path-search/', label: '경로 검색', icon: MapIcon },
+    { to: '/community/', label: '커뮤니티', icon: CommunityIcon },
+    { to: '/my/', label: 'My', icon: ProfileIcon },
 ];
 
 const TabMenu = () => {
-  const routerState = useRouterState();
-  const currentPath = routerState.location.pathname;
+    const routerState = useRouterState();
+    const currentPath = routerState.location.pathname;
 
-  return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[39rem] w-full flex justify-around items-center py-4">
-      {Tab.map((tab) => {
-        const isActive = currentPath === tab.to;
-        return (
-          <Link
-            key={tab.to}
-            to={tab.to}
-            className={cn('flex flex-col justify-center items-center gap-2', {
-              'text-muted-foreground hover:text-gray-700': !isActive,
-              'text-background font-semibold': isActive,
+    return (
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[39rem] w-full flex justify-around items-center py-4">
+            {Tab.map((tab) => {
+                const isActive = currentPath === tab.to;
+                return (
+                    <Link
+                        key={tab.to}
+                        to={tab.to}
+                        className={cn('flex flex-col justify-center items-center gap-2', {
+                            'text-muted-foreground hover:text-gray-700': !isActive,
+                            'text-primary font-semibold': isActive,
+                        })}
+                    >
+                        {/* Icon 파일 currentColor로 수정 */}
+                        <tab.icon />
+                        <span className="text-xs font-medium">{tab.label}</span>
+                    </Link>
+                );
             })}
-          >
-            {/* Icon 파일 currentColor로 수정 */}
-            <tab.icon />
-            <span className="text-xs font-medium">{tab.label}</span>
-          </Link>
-        );
-      })}
-    </nav>
-  );
+        </nav>
+    );
 };
 
 export default TabMenu;
