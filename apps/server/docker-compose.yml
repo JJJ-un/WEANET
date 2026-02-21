@@ -16,7 +16,7 @@ services:
 
   # 2. Spring Boot Application
   app:
-    build: .
+    image: bbumbbum/ddubuk:latest
     container_name: ddubuk-server
     restart: always
     ports:
