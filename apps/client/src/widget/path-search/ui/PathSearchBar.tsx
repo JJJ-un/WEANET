@@ -46,7 +46,6 @@ const PathsSearchBar = ({ onSearch, onClear }: PathsSearchBarProps) => {
     // 두 필드가 모두 채워지면 부모에게 검색 실행 알림
     useEffect(() => {
         const isReady = paths.departure.trim().length > 0 && paths.destination.trim().length > 0;
-        
         if (isReady && !activeField) {
             if (onSearch) onSearch(paths);
         }

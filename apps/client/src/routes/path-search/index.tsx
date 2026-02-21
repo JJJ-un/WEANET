@@ -11,17 +11,20 @@ export const Route = createFileRoute('/path-search/')({
 });
 
 /**
- * 페이지 내에서 보여줄 검색 결과 Mock 데이터
+ * 최신 인터페이스(PathResult)에 맞춘 Mock 데이터
  */
 const MOCK_RESULTS: PathResult[] = [
     {
         id: '1',
         totalDuration: 42,
+        arrivalTime: '16:42',
         fare: 1550,
         transferCount: 1,
-        isRecommended: true,
+        walkDuration: 5,
+        labels: ['최적', '추천'],
         steps: [
             { type: 'subway', duration: 15, lineName: '2호선' },
+            { type: 'walk', duration: 5 },
             { type: 'subway', duration: 22, lineName: '9호선' },
         ],
         weatherTip: '이동 경로 중 비가 오지 않아 쾌적합니다.',
@@ -29,9 +32,15 @@ const MOCK_RESULTS: PathResult[] = [
     {
         id: '2',
         totalDuration: 55,
+        arrivalTime: '16:55',
         fare: 1250,
         transferCount: 0,
-        steps: [{ type: 'bus', duration: 45, lineName: '9401번' }],
+        walkDuration: 10,
+        labels: ['최소환승'],
+        steps: [
+            { type: 'bus', duration: 45, lineName: '9401번' },
+            { type: 'walk', duration: 10 },
+        ],
         weatherTip: '현재 경로 구간에 소나기 예보가 있으니 우산을 챙기세요.',
     },
 ];
@@ -62,9 +71,9 @@ function PathSearchPage() {
                     <div className="flex flex-col gap-5 mt-4">
                         <div className="flex justify-between items-center px-1">
                             <h2 className="text-lg font-bold text-foreground">경로 검색 결과</h2>
-                            <button 
+                            <button
                                 onClick={() => setShowResults(false)}
-                                className="text-xs text-muted-foreground hover:text-primary"
+                                className="text-xs text-muted-foreground hover:text-primary transition-colors"
                             >
                                 닫기
                             </button>
