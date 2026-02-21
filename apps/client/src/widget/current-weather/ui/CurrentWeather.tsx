@@ -1,31 +1,25 @@
 import * as S from '@/shared/ui/Card';
 import { WeatherIcon } from '@/entities/weather/ui/WeatherIcon';
-import { WEATHER_CONFIG, type WeatherData } from '@/entities/weather/model/types';
+import { WEATHER_CONFIG } from '@/entities/weather/model/types';
 import { useWeatherStore } from '@/entities/weather/model/useWeatherStore';
-
-/**
- * 지역별 Mock 데이터 매핑
- */
-const MOCK_WEATHER_DATA: Record<string, WeatherData> = {
-    강남구: { status: 'Clear', currentTemp: 25, maxTemp: 28, minTemp: 18, precipitation: 10 },
-    서초구: { status: 'Cloudy', currentTemp: 23, maxTemp: 26, minTemp: 17, precipitation: 20 },
-    송파구: { status: 'Rain', currentTemp: 21, maxTemp: 24, minTemp: 16, precipitation: 80 },
-    마포구: { status: 'Clear', currentTemp: 26, maxTemp: 29, minTemp: 19, precipitation: 0 },
-    용산구: { status: 'Cloudy', currentTemp: 24, maxTemp: 27, minTemp: 18, precipitation: 15 },
-    성동구: { status: 'Snow', currentTemp: -2, maxTemp: 1, minTemp: -5, precipitation: 90 },
-    종로구: { status: 'Clear', currentTemp: 22, maxTemp: 25, minTemp: 15, precipitation: 5 },
-};
+import { useWeather } from '@/entities/weather/model/queries';
 
 const CurrentWeather = () => {
     const { selectedLocation } = useWeatherStore();
 
-    // 선택된 지역의 데이터를 가져옴 (없으면 기본값 강남구)
-    const weatherData = MOCK_WEATHER_DATA[selectedLocation] || MOCK_WEATHER_DATA['강남구'];
+    // 1. 실제 API 데이터 호출 (선택된 지역 이름 전달)
+    // TODO: 지역 이름(강남구 등)을 서버가 이해하는 City 이름(Seoul 등)으로 변환하는 로직이 필요할 수 있습니다.
+    const { data: weatherData, isLoading, isError } = useWeather(selectedLocation);
+
+    // 2. 로딩 및 에러 상태 처리
+    if (isLoading) return <div className="py-20 text-center text-muted-foreground animate-pulse">날씨 정보를 불러오는 중...</div>;
+    if (isError || !weatherData) return <div className="py-20 text-center text-destructive">날씨 정보를 가져오지 못했습니다.</div>;
+
     const config = WEATHER_CONFIG[weatherData.status];
 
     return (
         <S.Card className="w-full flex flex-col items-center py-6 gap-2 bg-transparent shadow-none border-none text-foreground">
-            {/* 지역명 표시 (추가됨) */}
+            {/* 지역명 표시 */}
             <div className="text-sm font-medium text-muted-foreground mb-1">{selectedLocation} 현재 날씨</div>
 
             {/* 1. WeatherIcon: 컴포넌트 중앙 상단 */}
