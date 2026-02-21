@@ -68,14 +68,23 @@ public class WeatherService {
 
     private WeatherResponse fetchAndParseWeather(String url) {
         try {
+            log.info("기상청 API 호출 URL: {}", url);
             KmaWeatherApiResponse response = restTemplate.getForObject(url, KmaWeatherApiResponse.class);
             
-            if (response != null && response.getResponse().getBody() != null) {
-                List<KmaWeatherApiResponse.Item> items = response.getResponse().getBody().getItems().getItem();
-                return buildWeatherResponse(items);
+            if (response != null && response.getResponse() != null) {
+                if (response.getResponse().getHeader().getResultCode().equals("00")) {
+                    List<KmaWeatherApiResponse.Item> items = response.getResponse().getBody().getItems().getItem();
+                    return buildWeatherResponse(items);
+                } else {
+                    log.warn("기상청 API 응답 에러: {} - {}", 
+                        response.getResponse().getHeader().getResultCode(), 
+                        response.getResponse().getHeader().getResultMsg());
+                }
+            } else {
+                log.warn("기상청 API 응답이 null입니다.");
             }
         } catch (Exception e) {
-            log.error("기상청 API 호출 중 오류 발생: {}", e.getMessage());
+            log.error("기상청 API 호출 중 오류 발생: {}", e.getMessage(), e);
         }
         
         return buildEmptyWeatherResponse();
