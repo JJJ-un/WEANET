@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -29,4 +31,7 @@ public class WeatherResponse {
 
     @Schema(description = "날씨 맞춤형 조언", example = "비 소식이 있어요. 우산 꼭 챙기세요! ☂️")
     private String advice;
+
+    @Schema(description = "시간대별 예보 리스트")
+    private List<HourlyWeatherResponse> hourlyForecast;
 }

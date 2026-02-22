@@ -12,8 +12,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -91,55 +91,78 @@ public class WeatherService {
     }
 
     private WeatherResponse buildWeatherResponse(List<KmaWeatherApiResponse.Item> items) {
+        // 1. 시간대별 데이터 그룹화
+        Map<String, List<KmaWeatherApiResponse.Item>> groupedByTime = items.stream()
+                .collect(Collectors.groupingBy(item -> item.getFcstDate() + item.getFcstTime(), 
+                        TreeMap::new, Collectors.toList()));
+
+        List<com.weanet.server.dto.HourlyWeatherResponse> hourlyForecast = new ArrayList<>();
         double currentTemp = Double.NaN;
-        double pop = Double.NaN;
+        double currentPop = 0.0;
         double minTemp = Double.NaN;
         double maxTemp = Double.NaN;
-        String skyStatus = "1";
-        String ptyStatus = "0";
+        String currentSky = "1";
+        String currentPty = "0";
+
         String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        for (KmaWeatherApiResponse.Item item : items) {
-            String category = item.getCategory();
-            String value = item.getFcstValue();
+        // 2. 그룹화된 데이터를 기반으로 HourlyWeatherResponse 생성
+        for (Map.Entry<String, List<KmaWeatherApiResponse.Item>> entry : groupedByTime.entrySet()) {
+            List<KmaWeatherApiResponse.Item> timeItems = entry.getValue();
+            String date = timeItems.get(0).getFcstDate();
+            String time = timeItems.get(0).getFcstTime();
 
-            switch (category) {
-                case "TMP" -> {
-                    // 첫 번째로 만나는 TMP(현재 시각과 가장 가까운 예보)를 선택
-                    if (Double.isNaN(currentTemp)) currentTemp = Double.parseDouble(value);
-                }
-                case "POP" -> {
-                    if (Double.isNaN(pop)) pop = Double.parseDouble(value) / 100.0;
-                }
-                case "SKY" -> {
-                    if (skyStatus.equals("1")) skyStatus = value;
-                }
-                case "PTY" -> {
-                    if (ptyStatus.equals("0")) ptyStatus = value;
-                }
-                case "TMN" -> {
-                    if (today.equals(item.getFcstDate())) minTemp = Double.parseDouble(value);
-                }
-                case "TMX" -> {
-                    if (today.equals(item.getFcstDate())) maxTemp = Double.parseDouble(value);
+            double temp = 0.0;
+            double pop = 0.0;
+            String sky = "1";
+            String pty = "0";
+
+            for (KmaWeatherApiResponse.Item item : timeItems) {
+                String value = item.getFcstValue();
+                switch (item.getCategory()) {
+                    case "TMP" -> temp = Double.parseDouble(value);
+                    case "POP" -> pop = Double.parseDouble(value) / 100.0;
+                    case "SKY" -> sky = value;
+                    case "PTY" -> pty = value;
+                    case "TMN" -> {
+                        if (date.equals(today)) minTemp = Double.parseDouble(value);
+                    }
+                    case "TMX" -> {
+                        if (date.equals(today)) maxTemp = Double.parseDouble(value);
+                    }
                 }
             }
+
+            // 현재 시간과 가장 가까운 예보를 메인 정보로 사용
+            if (Double.isNaN(currentTemp) && !Double.isNaN(temp)) {
+                currentTemp = temp;
+                currentPop = pop;
+                currentSky = sky;
+                currentPty = pty;
+            }
+
+            hourlyForecast.add(com.weanet.server.dto.HourlyWeatherResponse.builder()
+                    .fcstDate(date)
+                    .fcstTime(time)
+                    .temp(temp)
+                    .weather(interpretSky(sky, pty))
+                    .precipitationProbability(pop)
+                    .build());
         }
 
-        // 데이터 보완 (기본값 설정)
-        if (Double.isNaN(currentTemp)) currentTemp = 0.0;
-        if (Double.isNaN(pop)) pop = 0.0;
-        if (Double.isNaN(minTemp)) minTemp = currentTemp - 2;
-        if (Double.isNaN(maxTemp)) maxTemp = currentTemp + 5;
+        // 3. 데이터 보강 (오늘의 최저/최고 기온이 없을 경우 전체 예보에서 계산)
+        if (Double.isNaN(minTemp)) minTemp = hourlyForecast.stream().mapToDouble(com.weanet.server.dto.HourlyWeatherResponse::getTemp).min().orElse(0.0);
+        if (Double.isNaN(maxTemp)) maxTemp = hourlyForecast.stream().mapToDouble(com.weanet.server.dto.HourlyWeatherResponse::getTemp).max().orElse(0.0);
 
-        String weatherDesc = interpretSky(skyStatus, ptyStatus);
+        String weatherDesc = interpretSky(currentSky, currentPty);
         return WeatherResponse.builder()
                 .weather(weatherDesc)
                 .currentTemp(currentTemp)
                 .maxTemp(maxTemp)
                 .minTemp(minTemp)
-                .precipitationProbability(pop)
-                .advice(generateAdvice(weatherDesc, currentTemp, pop))
+                .precipitationProbability(currentPop)
+                .advice(generateAdvice(weatherDesc, currentTemp, currentPop))
+                .hourlyForecast(hourlyForecast)
                 .build();
     }
 
