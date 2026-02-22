@@ -4,7 +4,7 @@ import axios from 'axios';
  * 프로젝트 전체에서 사용할 공통 Axios 인스턴스
  */
 export const apiClient = axios.create({
-    baseURL: 'http://3.107.106.122:8080/api',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',

@@ -1,5 +1,4 @@
 import { apiClient } from '@/shared/api/base';
-import { type WeatherStatus } from '../model/types';
 
 /**
  * 서버 응답 데이터 인터페이스
