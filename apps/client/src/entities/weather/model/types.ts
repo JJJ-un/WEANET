@@ -1,4 +1,4 @@
-export type WeatherStatus = 'Clear' | 'Rain' | 'Snow' | 'Cloudy';
+export type WeatherStatus = 'Clear' | 'Rain' | 'Snow' | 'Cloudy' | 'Overcast';
 
 export interface WeatherConfig {
     label: string;
@@ -11,6 +11,8 @@ export interface WeatherData {
     maxTemp: number;
     minTemp: number;
     precipitation: number; // 강수 확률 (%)
+    advice: string;
+    hourlyForecast: HourlyForecast[];
 }
 
 export interface HourlyForecast {
@@ -33,7 +35,11 @@ export const WEATHER_CONFIG: Record<WeatherStatus, WeatherConfig> = {
         color: 'var(--weather-snow)',
     },
     Cloudy: {
-        label: '흐림',
+        label: '구름 많음',
         color: 'var(--weather-cloudy)',
+    },
+    Overcast: {
+        label: '흐림',
+        color: 'var(--weather-overcast, #94a3b8)',
     },
 };
