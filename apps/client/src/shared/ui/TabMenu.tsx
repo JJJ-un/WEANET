@@ -18,7 +18,7 @@ const TabMenu = () => {
     const currentPath = routerState.location.pathname;
 
     return (
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[39rem] w-full flex justify-around items-center py-4">
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[39rem] w-full flex justify-around items-center py-4 bg-white border-t border-border z-50">
             {Tab.map((tab) => {
                 const isActive = currentPath === tab.to;
                 return (

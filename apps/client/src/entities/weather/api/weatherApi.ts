@@ -4,12 +4,19 @@ import { apiClient } from '@/shared/api/base';
  * 서버 응답 데이터 인터페이스
  */
 export interface WeatherResponse {
-    weather: string; // "Clear", "Rain", "Snow", "Cloudy", "Unknown" 등
+    weather: string; // "Clear", "Rain", "Snow", "Cloudy", "Overcast" 등
     currentTemp: number;
     maxTemp: number;
     minTemp: number;
     precipitationProbability: number;
     advice: string;
+    hourlyForecast: Array<{
+        fcstDate: string;
+        fcstTime: string;
+        temp: number;
+        weather: string;
+        precipitationProbability: number;
+    }>;
 }
 
 /**

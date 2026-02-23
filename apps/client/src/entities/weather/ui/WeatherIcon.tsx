@@ -14,6 +14,7 @@ const STATUS_COLORS: Record<WeatherStatus, string> = {
     Rain: 'text-[var(--weather-rain)]',
     Snow: 'text-[var(--weather-snow)]',
     Cloudy: 'text-[var(--weather-cloudy)]',
+    Overcast: 'text-[var(--weather-overcast, #94a3b8)]',
 };
 
 /**
