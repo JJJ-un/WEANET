@@ -47,7 +47,7 @@ public class RouteEnrichmentService {
         if (weatherCache.containsKey(gridKey)) {
             step.setWeather(weatherCache.get(gridKey));
         } else {
-            WeatherResponse weather = weatherService.getWeatherByCoordinates(step.getLat(), step.getLng());
+            WeatherResponse weather = weatherService.getCurrentWeatherByCoordinates(step.getLat(), step.getLng());
             step.setWeather(weather);
             weatherCache.put(gridKey, weather);
         }

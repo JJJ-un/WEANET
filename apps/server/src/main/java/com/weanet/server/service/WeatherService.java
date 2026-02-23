@@ -2,6 +2,7 @@ package com.weanet.server.service;
 
 import com.weanet.server.dto.KmaWeatherApiResponse;
 import com.weanet.server.dto.WeatherResponse;
+import com.weanet.server.dto.HourlyWeatherResponse;
 import com.weanet.server.util.KmaCoordinateConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class WeatherService {
     private String apiUrl;
 
     /**
-     * 도시 이름을 기반으로 날씨 정보를 조회합니다.
+     * 도시 이름을 기반으로 날씨 정보를 조회합니다. (시간대별 예보 포함)
      */
     public WeatherResponse getWeather(String city) {
         double[] coords = getCoordinates(city);
@@ -46,13 +47,26 @@ public class WeatherService {
     }
 
     /**
-     * 좌표(위도, 경도)를 기반으로 기상청 날씨 정보를 조회합니다.
+     * 좌표(위도, 경도)를 기반으로 날씨 정보를 조회합니다. (시간대별 예보 포함)
      */
     public WeatherResponse getWeatherByCoordinates(double lat, double lng) {
+        String url = buildKmaUrl(lat, lng);
+        return fetchAndParseWeather(url, true);
+    }
+
+    /**
+     * 좌표를 기반으로 현재 날씨 정보만 조회합니다. (시간대별 예보 제외 - 경로 보강용)
+     */
+    public WeatherResponse getCurrentWeatherByCoordinates(double lat, double lng) {
+        String url = buildKmaUrl(lat, lng);
+        return fetchAndParseWeather(url, false);
+    }
+
+    private String buildKmaUrl(double lat, double lng) {
         KmaCoordinateConverter.Grid grid = coordinateConverter.convertToGrid(lat, lng);
         String[] baseDateTime = calculateBaseDateTime();
 
-        String url = UriComponentsBuilder.fromUriString(apiUrl)
+        return UriComponentsBuilder.fromUriString(apiUrl)
                 .queryParam("serviceKey", apiKey)
                 .queryParam("pageNo", 1)
                 .queryParam("numOfRows", 1000)
@@ -61,52 +75,44 @@ public class WeatherService {
                 .queryParam("base_time", baseDateTime[1])
                 .queryParam("nx", grid.nx)
                 .queryParam("ny", grid.ny)
-                .build(true).toUriString(); // 서비스키 인코딩 방지를 위해 build(true) 사용
-
-        return fetchAndParseWeather(url);
+                .build(true).toUriString();
     }
 
-    private WeatherResponse fetchAndParseWeather(String url) {
+    private WeatherResponse fetchAndParseWeather(String url, boolean includeHourly) {
         try {
             log.info("기상청 API 호출 URL: {}", url);
             KmaWeatherApiResponse response = restTemplate.getForObject(url, KmaWeatherApiResponse.class);
             
             if (response != null && response.getResponse() != null) {
-                if (response.getResponse().getHeader().getResultCode().equals("00")) {
+                if ("00".equals(response.getResponse().getHeader().getResultCode())) {
                     List<KmaWeatherApiResponse.Item> items = response.getResponse().getBody().getItems().getItem();
-                    return buildWeatherResponse(items);
+                    return buildWeatherResponse(items, includeHourly);
                 } else {
                     log.warn("기상청 API 응답 에러: {} - {}", 
                         response.getResponse().getHeader().getResultCode(), 
                         response.getResponse().getHeader().getResultMsg());
                 }
-            } else {
-                log.warn("기상청 API 응답이 null입니다.");
             }
         } catch (Exception e) {
-            log.error("기상청 API 호출 중 오류 발생: {}", e.getMessage(), e);
+            log.error("기상청 API 호출 중 오류 발생: {}", e.getMessage());
         }
-        
         return buildEmptyWeatherResponse();
     }
 
-    private WeatherResponse buildWeatherResponse(List<KmaWeatherApiResponse.Item> items) {
-        // 1. 시간대별 데이터 그룹화
+    private WeatherResponse buildWeatherResponse(List<KmaWeatherApiResponse.Item> items, boolean includeHourly) {
         Map<String, List<KmaWeatherApiResponse.Item>> groupedByTime = items.stream()
                 .collect(Collectors.groupingBy(item -> item.getFcstDate() + item.getFcstTime(), 
                         TreeMap::new, Collectors.toList()));
 
-        List<com.weanet.server.dto.HourlyWeatherResponse> hourlyForecast = new ArrayList<>();
+        List<HourlyWeatherResponse> hourlyForecast = new ArrayList<>();
         double currentTemp = Double.NaN;
         double currentPop = 0.0;
         double minTemp = Double.NaN;
         double maxTemp = Double.NaN;
         String currentSky = "1";
         String currentPty = "0";
-
         String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        // 2. 그룹화된 데이터를 기반으로 HourlyWeatherResponse 생성
         for (Map.Entry<String, List<KmaWeatherApiResponse.Item>> entry : groupedByTime.entrySet()) {
             List<KmaWeatherApiResponse.Item> timeItems = entry.getValue();
             String date = timeItems.get(0).getFcstDate();
@@ -124,46 +130,46 @@ public class WeatherService {
                     case "POP" -> pop = Double.parseDouble(value) / 100.0;
                     case "SKY" -> sky = value;
                     case "PTY" -> pty = value;
-                    case "TMN" -> {
-                        if (date.equals(today)) minTemp = Double.parseDouble(value);
-                    }
-                    case "TMX" -> {
-                        if (date.equals(today)) maxTemp = Double.parseDouble(value);
-                    }
+                    case "TMN" -> { if (date.equals(today)) minTemp = Double.parseDouble(value); }
+                    case "TMX" -> { if (date.equals(today)) maxTemp = Double.parseDouble(value); }
                 }
             }
 
-            // 현재 시간과 가장 가까운 예보를 메인 정보로 사용
-            if (Double.isNaN(currentTemp) && !Double.isNaN(temp)) {
+            if (Double.isNaN(currentTemp)) {
                 currentTemp = temp;
                 currentPop = pop;
                 currentSky = sky;
                 currentPty = pty;
             }
 
-            hourlyForecast.add(com.weanet.server.dto.HourlyWeatherResponse.builder()
-                    .fcstDate(date)
-                    .fcstTime(time)
-                    .temp(temp)
-                    .weather(interpretSky(sky, pty))
-                    .precipitationProbability(pop)
-                    .build());
+            if (includeHourly) {
+                hourlyForecast.add(HourlyWeatherResponse.builder()
+                        .fcstDate(date)
+                        .fcstTime(time)
+                        .temp(temp)
+                        .weather(interpretSky(sky, pty))
+                        .precipitationProbability(pop)
+                        .build());
+            }
         }
 
-        // 3. 데이터 보강 (오늘의 최저/최고 기온이 없을 경우 전체 예보에서 계산)
-        if (Double.isNaN(minTemp)) minTemp = hourlyForecast.stream().mapToDouble(com.weanet.server.dto.HourlyWeatherResponse::getTemp).min().orElse(0.0);
-        if (Double.isNaN(maxTemp)) maxTemp = hourlyForecast.stream().mapToDouble(com.weanet.server.dto.HourlyWeatherResponse::getTemp).max().orElse(0.0);
+        if (Double.isNaN(minTemp)) minTemp = currentTemp - 2;
+        if (Double.isNaN(maxTemp)) maxTemp = currentTemp + 5;
 
         String weatherDesc = interpretSky(currentSky, currentPty);
-        return WeatherResponse.builder()
+        WeatherResponse.WeatherResponseBuilder builder = WeatherResponse.builder()
                 .weather(weatherDesc)
                 .currentTemp(currentTemp)
                 .maxTemp(maxTemp)
                 .minTemp(minTemp)
                 .precipitationProbability(currentPop)
-                .advice(generateAdvice(weatherDesc, currentTemp, currentPop))
-                .hourlyForecast(hourlyForecast)
-                .build();
+                .advice(generateAdvice(weatherDesc, currentTemp, currentPop));
+
+        if (includeHourly && !hourlyForecast.isEmpty()) {
+            builder.hourlyForecast(hourlyForecast);
+        }
+
+        return builder.build();
     }
 
     private String interpretSky(String sky, String pty) {
@@ -187,11 +193,7 @@ public class WeatherService {
     private String[] calculateBaseDateTime() {
         LocalDateTime now = LocalDateTime.now();
         int[] announcementHours = {2, 5, 8, 11, 14, 17, 20, 23};
-        
-        // 기상청 업데이트 지연 고려 (15분)
-        if (now.getMinute() < 15) {
-            now = now.minusHours(1);
-        }
+        if (now.getMinute() < 15) now = now.minusHours(1);
 
         int currentHour = now.getHour();
         int lastAnnouncement = 2;
