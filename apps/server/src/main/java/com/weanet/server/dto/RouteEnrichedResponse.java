@@ -1,6 +1,5 @@
 package com.weanet.server.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,9 +13,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "경로 검색 결과 응답")
-public class RouteSearchResponse {
+@Schema(description = "경로 상세 정보 보강 결과 (실시간 정보 포함)")
+public class RouteEnrichedResponse {
     @Schema(description = "총 소요 시간 (분)", example = "30")
     private int totalTime;
 
@@ -29,9 +27,9 @@ public class RouteSearchResponse {
     @Schema(description = "경로 요약", example = "2호선 -> 신분당선")
     private String summary;
 
-    @Schema(description = "통합 조언 (상세 조회 시에만 제공)", example = "비가 오고 구간이 혼잡하니 평소보다 15분 일찍 출발하세요! ☔️🔴")
+    @Schema(description = "실시간 기반 통합 조언", example = "비가 오고 구간이 혼잡하니 평소보다 15분 일찍 출발하세요! ☔️🔴")
     private String integratedAdvice;
 
-    @Schema(description = "상세 구간 리스트")
-    private List<RouteSearchStepResponse> steps;
+    @Schema(description = "실시간 정보가 포함된 상세 구간 리스트")
+    private List<RouteStepResponse> steps;
 }

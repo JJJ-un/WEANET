@@ -25,7 +25,7 @@ public class RouteController {
 
     @PostMapping("/details")
     @Operation(summary = "검색 결과 상세 조회", description = "검색 결과 중 선택한 특정 경로에 대해 실시간 날씨, 혼잡도 정보를 보강하여 상세 정보를 제공합니다.")
-    public RouteSearchResponse getRouteDetails(@RequestBody RouteSearchResponse request) {
+    public RouteEnrichedResponse getRouteDetails(@RequestBody RouteEnrichedResponse request) {
         return routeService.enrichRouteDetails(request);
     }
 

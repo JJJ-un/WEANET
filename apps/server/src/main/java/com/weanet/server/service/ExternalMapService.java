@@ -1,7 +1,7 @@
 package com.weanet.server.service;
 
-import com.weanet.server.domain.TransportType;
 import com.weanet.server.dto.RouteSearchResponse;
+import com.weanet.server.dto.RouteSearchStepResponse;
 import com.weanet.server.dto.RouteStepResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -120,14 +120,14 @@ public class ExternalMapService {
                 int transferCount = ((Number) itinerary.get("transferCount")).intValue();
                 
                 List<Map<String, Object>> legs = (List<Map<String, Object>>) itinerary.get("legs");
-                List<RouteStepResponse> steps = new ArrayList<>();
+                List<RouteSearchStepResponse> steps = new ArrayList<>();
                 StringBuilder summary = new StringBuilder();
 
                 int seq = 1;
                 for (Map<String, Object> leg : legs) {
                     String mode = (String) leg.get("mode");
                     TransportType transportType = convertToTransportType(mode);
-                    String lineName = (String) leg.get("route"); // Tmap은 route 필드에 노선명을 담습니다.
+                    String lineName = (String) leg.get("route");
                     String lineId = (String) leg.get("routeId");
                     
                     if (lineName != null && transportType != TransportType.WALK) {
@@ -138,15 +138,13 @@ public class ExternalMapService {
                     Map<String, Object> start = (Map<String, Object>) leg.get("start");
                     Map<String, Object> end = (Map<String, Object>) leg.get("end");
 
-                    steps.add(RouteStepResponse.builder()
+                    steps.add(RouteSearchStepResponse.builder()
                             .sequence(seq++)
                             .transportType(transportType)
                             .lineName(lineName != null ? lineName : (transportType == TransportType.WALK ? "도보" : "정보 없음"))
                             .lineId(lineId)
                             .startStationName(start != null ? (String) start.get("name") : "출발지")
-                            .startStationId(start != null ? (String) start.get("stationId") : null)
                             .endStationName(end != null ? (String) end.get("name") : "도착지")
-                            .endStationId(end != null ? (String) end.get("stationId") : null)
                             .sectionTime(((Number) leg.get("sectionTime")).intValue() / 60)
                             .lat(start != null ? ((Number) start.get("lat")).doubleValue() : 0.0)
                             .lng(start != null ? ((Number) start.get("lon")).doubleValue() : 0.0)
