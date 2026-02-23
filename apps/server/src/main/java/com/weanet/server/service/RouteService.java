@@ -24,12 +24,19 @@ public class RouteService {
     private final RouteAdviceService adviceService;
 
     /**
-     * 경로 검색: 외부 맵 서비스(Tmap)를 통해 경로 후보만 빠르게 가져옵니다.
+     * 경로 검색: 명칭을 위도/경도로 변환한 뒤 Tmap을 통해 경로 후보를 가져옵니다.
      */
     public List<RouteSearchResponse> searchRoutes(RouteSearchRequest request) {
+        // 1. 출발지 명칭 -> 좌표 변환
+        double[] startCoords = externalMapService.getCoordinates(request.getDepartureName());
+        
+        // 2. 도착지 명칭 -> 좌표 변환
+        double[] endCoords = externalMapService.getCoordinates(request.getDestinationName());
+
+        // 3. 변환된 좌표로 경로 검색
         return externalMapService.searchRoutes(
-                request.getDepartureLat(), request.getDepartureLng(),
-                request.getDestinationLat(), request.getDestinationLng());
+                startCoords[0], startCoords[1],
+                endCoords[0], endCoords[1]);
     }
 
     /**
