@@ -1,5 +1,6 @@
 package com.weanet.server.service;
 
+import com.weanet.server.domain.TransportType;
 import com.weanet.server.dto.RouteSearchResponse;
 import com.weanet.server.dto.RouteSearchStepResponse;
 import com.weanet.server.dto.RouteStepResponse;
