@@ -96,9 +96,9 @@ public class RouteService {
     }
 
     /**
-     * 경로 미리보기: 실시간 데이터와 통합 조언을 보강합니다.
+     * 검색 결과 상세 조회: 선택된 경로에 실시간 데이터와 통합 조언을 보강합니다.
      */
-    public RouteSearchResponse enrichRoutePreview(RouteSearchResponse routeResponse) {
+    public RouteSearchResponse enrichRouteDetails(RouteSearchResponse routeResponse) {
         enrichmentService.enrichRoute(routeResponse.getSteps());
         routeResponse.setIntegratedAdvice(adviceService.generateAdvice(routeResponse.getSteps()));
         return routeResponse;
