@@ -19,30 +19,34 @@ public class SubwayService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${seoul.api.key}")
-    private String apiKey;
+    @Value("${public.data.api.key}")
+    private String publicApiKey;
 
     /**
-     * 서울교통공사 공식 지하철 알림(사고, 지연 등)을 조회합니다.
+     * 철도종합정보시스템 공지사항(사고, 지연 등)을 조회합니다.
      */
     public List<SubwayRealtimeResponse> getSubwayAlerts(String lineName) {
         try {
-            String url = UriComponentsBuilder.fromUriString("http://apis.data.go.kr/B553766/smt-notice/subway-notice")
-                    .queryParam("serviceKey", apiKey)
+            // 사용자 요청에 따른 정확한 주소로 변경
+            String url = UriComponentsBuilder.fromUriString("https://apis.data.go.kr/B553766/ntce/getNotiList")
+                    .queryParam("serviceKey", publicApiKey)
                     .queryParam("numOfRows", 10)
                     .queryParam("pageNo", 1)
+                    .queryParam("_type", "json")
                     .toUriString();
 
+            log.info("지하철 공지사항 호출 URL: {}", url);
+
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-            return parseSeoulAlertData(response, lineName);
+            return parseSubwayNoticeData(response, lineName);
 
         } catch (Exception e) {
-            log.error("Subway Alert API 호출 실패: {}", e.getMessage());
+            log.error("Subway Notice API 호출 실패: {}", e.getMessage());
             return new ArrayList<>();
         }
     }
 
-    private List<SubwayRealtimeResponse> parseSeoulAlertData(Map<String, Object> response, String lineName) {
+    private List<SubwayRealtimeResponse> parseSubwayNoticeData(Map<String, Object> response, String lineName) {
         List<SubwayRealtimeResponse> results = new ArrayList<>();
         
         try {
@@ -52,25 +56,29 @@ public class SubwayService {
             Map<String, Object> body = (Map<String, Object>) resMap.get("body");
             if (body == null || !body.containsKey("items")) return results;
             
-            List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("items");
+            Object itemsObj = body.get("items");
+            List<Map<String, Object>> itemsList = new ArrayList<>();
+            
+            if (itemsObj instanceof Map) {
+                itemsList = (List<Map<String, Object>>) ((Map) itemsObj).get("item");
+            } else if (itemsObj instanceof List) {
+                itemsList = (List<Map<String, Object>>) itemsObj;
+            }
 
-            for (Map<String, Object> item : items) {
-                String content = (String) item.get("cont");
-                String title = (String) item.get("title");
-                
-                // title이나 content가 null인 경우 안전하게 건너뜀
-                if (title == null || content == null) continue;
+            for (Map<String, Object> item : itemsList) {
+                String content = String.valueOf(item.get("drCont")); // 공지 내용
+                String title = String.valueOf(item.get("drTitle"));   // 공지 제목
                 
                 if (title.contains(lineName) || content.contains(lineName)) {
                     results.add(SubwayRealtimeResponse.builder()
                             .lineName(lineName)
-                            .arrivalMessage(content)
-                            .isDelayed(content.contains("지연") || content.contains("장애"))
+                            .arrivalMessage(title + ": " + content)
+                            .isDelayed(content.contains("지연") || content.contains("장애") || content.contains("사고"))
                             .build());
                 }
             }
         } catch (Exception e) {
-            log.error("Subway Alert 파싱 에러: {}", e.getMessage());
+            log.error("Subway Notice 파싱 에러: {}", e.getMessage());
         }
 
         return results;
