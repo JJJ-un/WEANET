@@ -5,6 +5,7 @@ import com.weanet.server.dto.RouteSearchResponse;
 import com.weanet.server.dto.RouteSearchStepResponse;
 import com.weanet.server.dto.RouteStepResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExternalMapService {
@@ -57,7 +59,7 @@ public class ExternalMapService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error searching coordinates for " + keyword + ": " + e.getMessage());
+            log.error("Error searching coordinates for {}: {}", keyword, e.getMessage());
         }
         return new double[]{37.5665, 126.9780}; // 기본값 서울
     }
@@ -77,9 +79,9 @@ public class ExternalMapService {
                     "startY", String.valueOf(startLat),
                     "endX", String.valueOf(endLng),
                     "endY", String.valueOf(endLat),
-                    "lang", 0, // 한국어
+                    "lang", 0, 
                     "format", "json",
-                    "count", 5 // 5개의 추천 경로
+                    "count", 5 
             );
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
@@ -88,7 +90,7 @@ public class ExternalMapService {
             return parseTmapResponse(response);
 
         } catch (Exception e) {
-            System.err.println("Error calling Tmap API: " + e.getMessage());
+            log.error("Error calling Tmap API: {}", e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -97,6 +99,7 @@ public class ExternalMapService {
         List<RouteSearchResponse> results = new ArrayList<>();
         
         try {
+            log.info("DEBUG - Tmap Raw Response: {}", response);
             if (response == null || !response.containsKey("metaData")) return results;
             
             Map<String, Object> metaData = (Map<String, Object>) response.get("metaData");
@@ -108,7 +111,6 @@ public class ExternalMapService {
             for (Map<String, Object> itinerary : itineraries) {
                 int totalTime = ((Number) itinerary.get("totalTime")).intValue() / 60;
                 
-                // Fare 정보 파싱
                 int totalFare = 0;
                 Object fareObj = itinerary.get("fare");
                 if (fareObj instanceof Map<?, ?> fareMap) {
@@ -139,15 +141,31 @@ public class ExternalMapService {
                     Map<String, Object> start = (Map<String, Object>) leg.get("start");
                     Map<String, Object> end = (Map<String, Object>) leg.get("end");
 
+                    // 상세 문서에 따라 passStopList에서 정확한 stationID 추출
+                    String startStationId = null;
+                    String endStationId = null;
+                    
+                    if (leg.containsKey("passStopList")) {
+                        Map<String, Object> passStopList = (Map<String, Object>) leg.get("passStopList");
+                        if (passStopList != null && passStopList.containsKey("stations")) {
+                            List<Map<String, Object>> stations = (List<Map<String, Object>>) passStopList.get("stations");
+                            if (stations != null && !stations.isEmpty()) {
+                                // 첫 번째 정거장이 시작점 ID, 마지막 정거장이 종료점 ID
+                                startStationId = String.valueOf(stations.get(0).get("stationID"));
+                                endStationId = String.valueOf(stations.get(stations.size() - 1).get("stationID"));
+                            }
+                        }
+                    }
+
                     steps.add(RouteSearchStepResponse.builder()
                             .sequence(seq++)
                             .transportType(transportType)
                             .lineName(lineName != null ? lineName : (transportType == TransportType.WALK ? "도보" : "정보 없음"))
                             .lineId(lineId)
                             .startStationName(start != null ? (String) start.get("name") : "출발지")
-                            .startStationId(start != null && start.get("stationId") != null ? String.valueOf(start.get("stationId")) : null)
+                            .startStationId(startStationId)
                             .endStationName(end != null ? (String) end.get("name") : "도착지")
-                            .endStationId(end != null && end.get("stationId") != null ? String.valueOf(end.get("stationId")) : null)
+                            .endStationId(endStationId)
                             .sectionTime(((Number) leg.get("sectionTime")).intValue() / 60)
                             .lat(start != null ? ((Number) start.get("lat")).doubleValue() : 0.0)
                             .lng(start != null ? ((Number) start.get("lon")).doubleValue() : 0.0)
@@ -163,7 +181,7 @@ public class ExternalMapService {
                         .build());
             }
         } catch (Exception e) {
-            System.err.println("Error parsing Tmap response: " + e.getMessage());
+            log.error("Error parsing Tmap response: {}", e.getMessage());
         }
 
         return results;
