@@ -30,6 +30,9 @@ public class CongestionService {
     @Value("${bus.congestion.api.url}")
     private String busApiUrl;
 
+    @Value("${subway.congestion.api.url}")
+    private String subwayApiUrl;
+
     /**
      * 지하철 또는 버스의 실시간 혼잡도를 반환합니다.
      */
@@ -48,8 +51,8 @@ public class CongestionService {
         }
 
         try {
-            // SKT Puzzle 실시간 역 기준 혼잡도 API URL
-            String url = UriComponentsBuilder.fromUriString("https://apis.openapi.sk.com/puzzle/subway/congestion/rltm/stat/stations")
+            // 설정 파일에서 가져온 URL 사용
+            String url = UriComponentsBuilder.fromUriString(subwayApiUrl)
                     .pathSegment(stationId)
                     .toUriString();
 
