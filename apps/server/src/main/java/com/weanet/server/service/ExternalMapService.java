@@ -61,7 +61,7 @@ public class ExternalMapService {
         } catch (Exception e) {
             log.error("Error searching coordinates for {}: {}", keyword, e.getMessage());
         }
-        return new double[]{37.5665, 126.9780}; // 기본값 서울
+        return new double[]{37.5665, 126.9780}; 
     }
 
     /**
@@ -79,9 +79,9 @@ public class ExternalMapService {
                     "startY", String.valueOf(startLat),
                     "endX", String.valueOf(endLng),
                     "endY", String.valueOf(endLat),
-                    "lang", 0, 
+                    "lang", 0,
                     "format", "json",
-                    "count", 5 
+                    "count", 5
             );
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
@@ -99,7 +99,6 @@ public class ExternalMapService {
         List<RouteSearchResponse> results = new ArrayList<>();
         
         try {
-            log.info("DEBUG - Tmap Raw Response: {}", response);
             if (response == null || !response.containsKey("metaData")) return results;
             
             Map<String, Object> metaData = (Map<String, Object>) response.get("metaData");
@@ -141,7 +140,6 @@ public class ExternalMapService {
                     Map<String, Object> start = (Map<String, Object>) leg.get("start");
                     Map<String, Object> end = (Map<String, Object>) leg.get("end");
 
-                    // 상세 문서에 따라 passStopList에서 정확한 stationID 추출
                     String startStationId = null;
                     String endStationId = null;
                     
@@ -150,9 +148,10 @@ public class ExternalMapService {
                         if (passStopList != null && passStopList.containsKey("stations")) {
                             List<Map<String, Object>> stations = (List<Map<String, Object>>) passStopList.get("stations");
                             if (stations != null && !stations.isEmpty()) {
-                                // 첫 번째 정거장이 시작점 ID, 마지막 정거장이 종료점 ID
-                                startStationId = String.valueOf(stations.get(0).get("stationID"));
-                                endStationId = String.valueOf(stations.get(stations.size() - 1).get("stationID"));
+                                Object startIdObj = stations.get(0).get("stationID");
+                                Object endIdObj = stations.get(stations.size() - 1).get("stationID");
+                                startStationId = startIdObj != null ? String.valueOf(startIdObj) : null;
+                                endStationId = endIdObj != null ? String.valueOf(endIdObj) : null;
                             }
                         }
                     }
