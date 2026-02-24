@@ -91,25 +91,28 @@ public class CongestionService {
         if (stationCodeCache.containsKey(cacheKey)) return stationCodeCache.get(cacheKey);
 
         try {
-            // 정거장 정보 조회 API (이름으로 검색)
-            String url = UriComponentsBuilder.fromUriString("https://apis.openapi.sk.com/puzzle/subway/congestion/stat/train/stations")
-                    .queryParam("stationName", stationName.replace("역", "")) // "서울역" -> "서울"
+            // 공식 메타 데이터 검색 API 사용
+            String url = UriComponentsBuilder.fromUriString("https://apis.openapi.sk.com/puzzle/subway/meta/search")
+                    .queryParam("q", stationName.replace("역", ""))
                     .toUriString();
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("appKey", tmapApiKey);
+            headers.set("Accept", "application/json"); // 403 에러 방지를 위해 명시적 추가
             HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            log.info("역 코드 검색 시도: {} (URL: {})", stationName, url);
 
             Map<String, Object> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
             
             if (response != null && response.containsKey("contents")) {
-                Map<String, Object> contents = (Map<String, Object>) response.get("contents");
-                List<Map<String, Object>> stations = (List<Map<String, Object>>) contents.get("stations");
+                List<Map<String, Object>> stations = (List<Map<String, Object>>) response.get("contents");
                 
                 if (stations != null && !stations.isEmpty()) {
-                    // 가장 유사한 노선의 역 코드를 선택 (간단한 매칭)
+                    // 가장 유사한 노선의 역 코드를 선택
                     for (Map<String, Object> stat : stations) {
                         String code = String.valueOf(stat.get("stationCode"));
+                        log.info("역 코드 발견: {} -> {}", stationName, code);
                         stationCodeCache.put(cacheKey, code);
                         return code;
                     }
