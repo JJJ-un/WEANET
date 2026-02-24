@@ -54,14 +54,26 @@ public class RouteEnrichmentService {
 
         // 2. 교통수단별 혼잡도 및 알림 보강
         if (TransportType.SUBWAY.equals(step.getTransportType())) {
-            step.setCongestion(congestionService.getCongestion(step.getTransportType(), step.getLineId(), step.getStartStationId()));
+            step.setCongestion(congestionService.getCongestion(
+                step.getTransportType(), 
+                step.getLineId(), 
+                step.getStartStationId(),
+                step.getStartStationName(),
+                step.getLineName()
+            ));
             
             List<SubwayRealtimeResponse> alerts = subwayService.getSubwayAlerts(step.getLineName());
             if (!alerts.isEmpty()) {
                 step.setArrivalMessage(alerts.get(0).getArrivalMessage());
             }
         } else if (TransportType.BUS.equals(step.getTransportType())) {
-            step.setCongestion(congestionService.getCongestion(step.getTransportType(), step.getLineId(), step.getStartStationId()));
+            step.setCongestion(congestionService.getCongestion(
+                step.getTransportType(), 
+                step.getLineId(), 
+                step.getStartStationId(),
+                step.getStartStationName(),
+                step.getLineName()
+            ));
         }
     }
 
