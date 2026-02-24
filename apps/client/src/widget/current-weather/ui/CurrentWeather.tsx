@@ -44,13 +44,6 @@ const CurrentWeather = () => {
                     <span>강수 확률: {weatherData.precipitation}%</span>
                 </div>
             </div>
-
-            {/* 4. 날씨 조언 (Advice): 하단에 강조 */}
-            {weatherData.advice && (
-                <div className="mt-6 px-4 py-3 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/20 text-sm text-center text-slate-600 leading-relaxed shadow-sm">
-                    {weatherData.advice}
-                </div>
-            )}
         </S.Card>
     );
 };

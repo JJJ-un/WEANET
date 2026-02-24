@@ -1,68 +1,38 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
 import PathsSearchHeader from '@/widget/path-search-header/ui/PathSearchHeader';
 import { PathResultCard } from '@/widget/path-result/ui/PathResultCard';
-import { type PathResult } from '@/entities/path/model/types';
+import { searchRoutes } from '@/entities/path/api/pathApi';
+
+interface PathSearchQueryParams {
+    departureName: string;
+    destinationName: string;
+}
 
 export const Route = createFileRoute('/path-search/result')({
     component: PathSearchResultPage,
+    validateSearch: (search: Record<string, unknown>): PathSearchQueryParams => {
+        return {
+            departureName: (search.departureName as string) || '',
+            destinationName: (search.destinationName as string) || '',
+        };
+    },
 });
 
-/**
- * 확장된 타입에 맞춘 Mock 데이터
- */
-const MOCK_PATH_RESULTS: PathResult[] = [
-    {
-        id: '1',
-        totalDuration: 42,
-        arrivalTime: '16:42',
-        fare: 1550,
-        transferCount: 1,
-        walkDuration: 8,
-        labels: ['최적', '추천'],
-        steps: [
-            { type: 'walk', duration: 3 },
-            { type: 'subway', duration: 15, lineName: '2호선' },
-            { type: 'walk', duration: 2 },
-            { type: 'subway', duration: 17, lineName: '9호선' },
-            { type: 'walk', duration: 5 },
-        ],
-        weatherTip: '이동 경로 중 비가 오지 않아 쾌적합니다.',
-    },
-    {
-        id: '2',
-        totalDuration: 55,
-        arrivalTime: '16:55',
-        fare: 1250,
-        transferCount: 0,
-        walkDuration: 15,
-        labels: ['최소환승'],
-        steps: [
-            { type: 'walk', duration: 5 },
-            { type: 'bus', duration: 45, lineName: '9401번' },
-            { type: 'walk', duration: 10 },
-        ],
-        weatherTip: '현재 경로 구간에 소나기 예보가 있으니 우산을 챙기세요.',
-    },
-    {
-        id: '3',
-        totalDuration: 38,
-        arrivalTime: '16:38',
-        fare: 1550,
-        transferCount: 2,
-        walkDuration: 5,
-        labels: ['최단시간'],
-        steps: [
-            { type: 'walk', duration: 2 },
-            { type: 'subway', duration: 10, lineName: '3호선' },
-            { type: 'subway', duration: 15, lineName: '신분당선' },
-            { type: 'bus', duration: 8, lineName: '서초03' },
-            { type: 'walk', duration: 3 },
-        ],
-        weatherTip: '환승 구간이 실외이므로 강한 바람에 주의하세요.',
-    },
-];
-
 function PathSearchResultPage() {
+    const { departureName, destinationName } = Route.useSearch();
+
+    const { data: pathResults, isLoading, isError } = useQuery({
+        queryKey: ['pathSearch', departureName, destinationName],
+        queryFn: () => searchRoutes({ departureName, destinationName }),
+        enabled: !!departureName && !!destinationName,
+    });
+
+    if (isLoading) return <div className="py-20 text-center text-muted-foreground animate-pulse font-medium">최적의 경로를 찾고 있어요...</div>;
+    if (isError) return <div className="py-20 text-center text-destructive font-medium">경로를 불러오는데 실패했습니다.</div>;
+
+    const results = pathResults || [];
+
     return (
         <div className="flex flex-col gap-6 pb-32">
             {/* 상단 헤더 */}
@@ -85,12 +55,16 @@ function PathSearchResultPage() {
             {/* 결과 리스트 */}
             <div className="flex flex-col gap-5 mt-2">
                 <div className="flex justify-between items-center px-1">
-                    <p className="text-sm font-bold text-foreground">총 {MOCK_PATH_RESULTS.length}개의 경로</p>
+                    <p className="text-sm font-bold text-foreground">총 {results.length}개의 경로</p>
                 </div>
 
-                {MOCK_PATH_RESULTS.map((path) => (
-                    <PathResultCard key={path.id} path={path} />
-                ))}
+                {results.length > 0 ? (
+                    results.map((path, index) => (
+                        <PathResultCard key={index} path={path} />
+                    ))
+                ) : (
+                    <div className="py-20 text-center text-muted-foreground">검색 결과가 없습니다.</div>
+                )}
             </div>
         </div>
     );

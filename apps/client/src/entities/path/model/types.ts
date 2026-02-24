@@ -1,22 +1,34 @@
-export type TransportType = 'subway' | 'bus' | 'walk';
+export type TransportType = 'SUBWAY' | 'BUS' | 'WALK';
 
 export interface PathStep {
-    type: TransportType;
-    duration: number; // 해당 단계의 소요 시간 (분)
-    lineName?: string; // 노선명 (ex: '2호선', '9401번')
-    color?: string; // 노선 색상 (선택 사항)
+    sequence: number;
+    transportType: TransportType;
+    lineName: string;
+    lineId?: string | null;
+    startStationName: string;
+    startStationId?: string | null;
+    endStationName: string;
+    endStationId?: string | null;
+    lat?: number;
+    lng?: number;
+    sectionTime: number; // 해당 단계의 소요 시간 (분)
 }
 
 export type PathLabel = '최적' | '최소환승' | '최단시간' | '최소도보' | '추천';
 
+/**
+ * 경로 검색 결과 요약 인터페이스 (검색 결과 리스트용)
+ */
 export interface PathResult {
-    id: string;
-    totalDuration: number; // 총 소요 시간 (분)
-    arrivalTime: string; // 도착 예정 시간 (ex: '14:25')
-    fare: number; // 요금
+    totalTime: number; // 총 소요 시간 (분)
+    totalFare: number; // 요금
     transferCount: number; // 환승 횟수
-    walkDuration: number; // 총 도보 시간 (분)
+    summary: string; // 예: "수도권4호선 -> 수도권2호선"
     steps: PathStep[];
-    labels: PathLabel[]; // 여러 라벨 가능 (ex: ['최적', '추천'])
+    // UI 전용 확장 필드
+    id?: string;
+    arrivalTime?: string;
+    walkDuration?: number;
+    labels?: PathLabel[];
     weatherTip?: string;
 }
