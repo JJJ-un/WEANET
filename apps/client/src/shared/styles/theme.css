@@ -15,9 +15,11 @@
      hsl() 함수를 제거하여 HEX 코드를 그대로 통과시킵니다.
   */
   --color-background: var(--background);
+  --color-background-subtle: var(--background-subtle);
   --color-foreground: var(--foreground);
 
   --color-primary: var(--primary);
+  --color-primary-bold: var(--primary-bold);
   --color-primary-foreground: var(--primary-foreground);
 
   --color-secondary: var(--secondary);

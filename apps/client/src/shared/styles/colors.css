@@ -17,10 +17,12 @@
 
   /* 배경 및 텍스트 */
   --background: #F1F5F9; /* 배경색 */
+  --background-subtle: #EEF4FF; /* 연한 파란색 배경 */
   --foreground: #020817; /* 기본 본문 글자색상 */
 
   /* Primary (브랜드 컬러: Blue-600) */
   --primary: #2563eb;
+  --primary-bold: #2463EB; /* 세 번째 주요 색상 */
   --primary-foreground: #f8fafc; /* 색상위에 올라가는 글자 */
 
   /* Secondary (보조 버튼 등: Slate-100) */
