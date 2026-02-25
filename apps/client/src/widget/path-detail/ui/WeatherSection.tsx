@@ -9,7 +9,7 @@ export const WeatherSection = ({ steps }: WeatherSectionProps) => {
     return (
         <section className="flex flex-col gap-4">
             <div className="flex items-center gap-2 px-1">
-                <WeatherIcon status="Clear" className="w-8 h-8 text-secondary" />
+                <WeatherIcon status="Clear" className="w-8 h-8 text-primary" />
                 <h3 className="text-sm text-foreground">경로 구간별 날씨</h3>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 [ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6">

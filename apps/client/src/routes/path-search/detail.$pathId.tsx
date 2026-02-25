@@ -37,14 +37,6 @@ function PathSearchDetailPage() {
 
                     {/* 4. 상세 경로 안내 섹션 */}
                     <TimelineSection steps={detailData.steps} totalTime={detailData.totalTime} />
-
-                    {/* 5. 통합 조언 섹션 */}
-                    <div className="bg-primary/5 rounded-3xl p-6 border border-primary/10 mb-6">
-                        <p className="text-sm font-bold text-primary leading-relaxed flex gap-2">
-                            <span className="shrink-0 text-lg">💡</span>
-                            {detailData.integratedAdvice}
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
