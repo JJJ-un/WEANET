@@ -60,7 +60,7 @@ function PathSearchResultPage() {
 
                 {results.length > 0 ? (
                     results.map((path, index) => (
-                        <PathResultCard key={index} path={path} />
+                        <PathResultCard key={index} path={path} index={index} />
                     ))
                 ) : (
                     <div className="py-20 text-center text-muted-foreground">검색 결과가 없습니다.</div>

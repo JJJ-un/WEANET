@@ -38,6 +38,10 @@
   --color-white: var(--white);
   --color-black: var(--black);
 
+  --color-relaxed: var(--relaxed);
+  --color-normal: var(--normal);
+  --color-busy: var(--busy);
+
 
   /* 둥글기 연결 */
   --radius-sm: calc(var(--radius) - 2px);

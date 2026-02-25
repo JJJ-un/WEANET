@@ -48,7 +48,7 @@ function PathSearchPage() {
 
                         {!isLoading && results.length > 0 ? (
                             results.map((path, index) => (
-                                <PathResultCard key={index} path={path} />
+                                <PathResultCard key={index} path={path} index={index} />
                             ))
                         ) : (
                             !isLoading && <div className="py-20 text-center text-muted-foreground">일치하는 경로가 없습니다.</div>

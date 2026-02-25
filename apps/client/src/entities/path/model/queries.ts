@@ -1,22 +1,24 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { searchRoutes } from '../api/pathApi';
+import { useState, useEffect } from 'react';
+import { MOCK_PATH_RESULTS } from '@/shared/mock/pathData.mock';
 
 /**
- * 경로 검색 로직을 담당하는 커스텀 훅
+ * 경로 검색 로직을 담당하는 커스텀 훅 (디자인 작업을 위해 Mock 데이터 사용)
  */
 export const usePathSearch = () => {
     const [searchParams, setSearchParams] = useState<{ departure: string; destination: string } | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [mockResults, setMockResults] = useState<typeof MOCK_PATH_RESULTS>([]);
 
-    const { data: results, isLoading, isError } = useQuery({
-        queryKey: ['pathSearch', searchParams?.departure, searchParams?.destination],
-        queryFn: () =>
-            searchRoutes({
-                departureName: searchParams!.departure,
-                destinationName: searchParams!.destination,
-            }),
-        enabled: !!searchParams,
-    });
+    useEffect(() => {
+        if (searchParams) {
+            setIsLoading(true);
+            const timer = setTimeout(() => {
+                setMockResults(MOCK_PATH_RESULTS);
+                setIsLoading(false);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [searchParams]);
 
     const handleSearch = (paths: { departure: string; destination: string }) => {
         setSearchParams(paths);
@@ -24,12 +26,13 @@ export const usePathSearch = () => {
 
     const clearSearch = () => {
         setSearchParams(null);
+        setMockResults([]);
     };
 
     return {
-        results: results || [],
+        results: mockResults,
         isLoading,
-        isError,
+        isError: false,
         handleSearch,
         clearSearch,
         showResults: !!searchParams,

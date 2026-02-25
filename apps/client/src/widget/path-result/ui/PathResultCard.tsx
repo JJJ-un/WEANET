@@ -6,7 +6,8 @@ import { cn } from '@/shared/lib/utils';
 import { usePathStore } from '@/entities/path/model/usePathStore';
 
 interface PathResultCardProps {
-    path: PathResult;
+    path: any; // 다양한 경로 타입을 수용하기 위해 any로 완화하거나 공통 인터페이스 사용
+    index?: number;
 }
 
 /**
@@ -27,15 +28,34 @@ const TRANSPORT_COLORS: Record<string, string> = {
     WALK: 'bg-slate-300',
 };
 
-export const PathResultCard = ({ path }: PathResultCardProps) => {
+export const PathResultCard = ({ path, index = 0 }: PathResultCardProps) => {
     const navigate = useNavigate();
     const { setSelectedPath } = usePathStore();
+
+    // 도보 시간 계산 (steps 중 WALK 타입의 sectionTime 합계)
+    const walkDuration = path.steps
+        ? path.steps
+            .filter((step) => step.transportType === 'WALK')
+            .reduce((acc, step) => acc + (step.sectionTime || 0), 0)
+        : 0;
+
+    // 도착 시간 계산 (현재 시간 + totalTime)
+    const getArrivalTime = () => {
+        const now = new Date();
+        const arrival = new Date(now.getTime() + (path.totalTime || 0) * 60000);
+        return `${arrival.getHours().toString().padStart(2, '0')}:${arrival.getMinutes().toString().padStart(2, '0')}`;
+    };
+
+    const arrivalTime = getArrivalTime();
+
+    // 임시 라벨 부여 (API에 없으므로 첫 번째 경로만 '최적' 표시)
+    const labels = index === 0 ? ['최적'] : [];
 
     const handleCardClick = () => {
         setSelectedPath(path);
         navigate({
             to: '/path-search/detail/$pathId',
-            params: { pathId: path.id || 'current' },
+            params: { pathId: index.toString() },
         });
     };
 
@@ -51,7 +71,7 @@ export const PathResultCard = ({ path }: PathResultCardProps) => {
             <S.Card className="p-6 bg-white rounded-3xl shadow-sm border border-border/50 hover:border-primary/20 hover:shadow-md transition-all">
                 {/* 1. 라벨 섹션 */}
                 <div className="flex gap-2 mb-4">
-                    {(path.labels || ['추천']).map((label) => (
+                    {labels.map((label: string) => (
                         <span
                             key={label}
                             className={cn(
@@ -69,16 +89,14 @@ export const PathResultCard = ({ path }: PathResultCardProps) => {
                     <div className="flex items-end gap-2">
                         <span className="text-4xl font-bold text-foreground leading-none">{path.totalTime ?? 0}</span>
                         <span className="text-sm font-bold text-foreground mb-1">분</span>
-                        {path.arrivalTime && (
-                            <span className="text-base text-muted-foreground mb-1 ml-1 font-medium">{path.arrivalTime} 도착</span>
-                        )}
+                        <span className="text-base text-muted-foreground mb-1 ml-1 font-medium">{arrivalTime} 도착</span>
                     </div>
 
                     {/* 3. 요약 섹션 */}
                     <div className="flex items-center gap-2.5 text-xs font-bold text-muted-foreground">
-                        {path.walkDuration && (
+                        {walkDuration > 0 && (
                             <>
-                                <span>도보 {path.walkDuration}분</span>
+                                <span>도보 {walkDuration}분</span>
                                 <span className="text-border/60">|</span>
                             </>
                         )}
