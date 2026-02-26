@@ -44,6 +44,21 @@
   --color-normal: var(--normal);
   --color-busy: var(--busy);
 
+  /* 지하철 노선 색상 매핑 */
+  --color-line-1: var(--line-1);
+  --color-line-2: var(--line-2);
+  --color-line-3: var(--line-3);
+  --color-line-4: var(--line-4);
+  --color-line-5: var(--line-5);
+  --color-line-6: var(--line-6);
+  --color-line-7: var(--line-7);
+  --color-line-8: var(--line-8);
+  --color-line-9: var(--line-9);
+  --color-line-suin-bundang: var(--line-suin-bundang);
+  --color-line-shin-bundang: var(--line-shin-bundang);
+  --color-line-gyeongui-jungang: var(--line-gyeongui-jungang);
+  --color-line-gyeongchun: var(--line-gyeongchun);
+  --color-line-airport: var(--line-airport);
 
   /* 둥글기 연결 */
   --radius-sm: calc(var(--radius) - 2px);

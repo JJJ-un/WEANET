@@ -1,7 +1,7 @@
 import { cn } from '@/shared/lib/utils';
 import { type DetailPathStep } from '@/entities/path/model/types';
 import RouteIcon from '@/shared/assets/icons/route.svg?react';
-import { getLineColor } from '@/entities/path/lib/congestion';
+import { getSubwayStyle } from '@/entities/path/lib/congestion';
 
 interface TimelineSectionProps {
     steps: DetailPathStep[];
@@ -9,12 +9,11 @@ interface TimelineSectionProps {
 }
 
 export const TimelineSection = ({ steps, totalTime }: TimelineSectionProps) => {
-    // 전체 대비 비중을 계산하기 위한 총 가용 높이 (컴팩트하게 조정)
     const TOTAL_FLEXIBLE_HEIGHT = 120;
     const BASE_HEIGHT = 48;
 
     return (
-        <section className="flex flex-col gap-6 mb-20">
+        <section className="flex flex-col gap-6">
             <div className="flex items-center gap-2 px-1">
                 <RouteIcon className="w-8 h-8 text-primary" />
                 <h3 className="text-sm font-extrabold text-foreground">상세 경로 안내</h3>
@@ -23,10 +22,8 @@ export const TimelineSection = ({ steps, totalTime }: TimelineSectionProps) => {
             <div className="flex flex-col pb-10">
                 {steps.map((step, index) => {
                     const isSubway = step.transportType === 'SUBWAY';
-                    const lineColor = getLineColor(step.lineName);
-                    // 전체 시간 대비 해당 구간의 비중 계산 (0 ~ 1)
+                    const subwayStyle = getSubwayStyle(step.lineName);
                     const timeRatio = totalTime > 0 ? step.sectionTime / totalTime : 0;
-                    // 비중에 따른 동적 높이 결정 (컴팩트한 베이스 + 작은 가중치)
                     const dynamicHeight = BASE_HEIGHT + timeRatio * TOTAL_FLEXIBLE_HEIGHT;
 
                     return (
@@ -34,8 +31,8 @@ export const TimelineSection = ({ steps, totalTime }: TimelineSectionProps) => {
                             {/* 지점 마커 (승차/출발) */}
                             <div
                                 className={cn(
-                                    'absolute left-0 top-1 size-[17px] rounded-full border-[3.5px] border-white shadow-sm z-10',
-                                    index === 0 ? 'bg-slate-800' : isSubway ? lineColor : 'bg-slate-300',
+                                    'absolute left-0 size-[17px] rounded-full border-[3.5px] border-white shadow-sm z-10',
+                                    index === 0 ? 'bg-slate-800' : isSubway ? subwayStyle.bg : 'bg-slate-300',
                                 )}
                             />
                             {/* 구간 연결 선 (모든 단계에서 아래로 연장) */}
@@ -43,7 +40,7 @@ export const TimelineSection = ({ steps, totalTime }: TimelineSectionProps) => {
                                 className={cn(
                                     'absolute left-[7px] top-6 w-[3px] bottom-0 z-0',
                                     isSubway
-                                        ? lineColor // 지하철은 실선
+                                        ? subwayStyle.bg // 지하철은 실선
                                         : 'border-l-[3px] border-dashed border-border bg-transparent', // 도보는 점선
                                 )}
                             />
@@ -59,10 +56,10 @@ export const TimelineSection = ({ steps, totalTime }: TimelineSectionProps) => {
                                             <span
                                                 className={cn(
                                                     'flex items-center justify-center w-fit text-[9px] px-1.5 py-0.5 rounded-full text-white font-bold',
-                                                    lineColor,
+                                                    subwayStyle.bg,
                                                 )}
                                             >
-                                                {step.lineName}
+                                                {step.lineName.replace(/수도권|서울/g, '').trim()}
                                             </span>
                                         )}
                                     </div>
@@ -72,7 +69,7 @@ export const TimelineSection = ({ steps, totalTime }: TimelineSectionProps) => {
                                 </div>
                                 {isSubway && (
                                     <div className="flex flex-col gap-1 mt-1.5">
-                                        <span className="text-[10px] text-muted-foreground font-bold pl-0.5">
+                                        <span className={cn('text-[10px] font-bold pl-0.5', subwayStyle.text)}>
                                             {step.endStationName} 방면
                                         </span>
                                     </div>
