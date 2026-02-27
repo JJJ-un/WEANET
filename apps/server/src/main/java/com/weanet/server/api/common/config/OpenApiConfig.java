@@ -1,4 +1,4 @@
-package com.weanet.server.config;
+package com.weanet.server.api.common.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

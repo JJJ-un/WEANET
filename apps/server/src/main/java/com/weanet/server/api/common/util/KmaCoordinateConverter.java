@@ -1,4 +1,4 @@
-package com.weanet.server.util;
+package com.weanet.server.api.common.util;
 
 import org.springframework.stereotype.Component;
 

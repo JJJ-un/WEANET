@@ -1,4 +1,4 @@
-package com.weanet.server.config;
+package com.weanet.server.api.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

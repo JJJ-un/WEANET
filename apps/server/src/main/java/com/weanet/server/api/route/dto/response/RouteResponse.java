@@ -1,4 +1,4 @@
-package com.weanet.server.dto;
+package com.weanet.server.api.route.dto.response;
 
 import com.weanet.server.api.route.domain.Route;
 import io.swagger.v3.oas.annotations.media.Schema;

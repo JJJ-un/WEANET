@@ -1,4 +1,4 @@
-package com.weanet.server.dto;
+package com.weanet.server.api.route.dto.request;
 
 import com.weanet.server.api.common.domain.Location;
 import com.weanet.server.api.route.domain.Route;
