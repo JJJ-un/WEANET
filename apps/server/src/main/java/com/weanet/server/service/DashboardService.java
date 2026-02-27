@@ -39,12 +39,12 @@ public class DashboardService {
                         .transportType(step.getTransportType())
                         .lineName(step.getLineName())
                         .lineId(step.getLineId())
-                        .startStationName(step.getStartStationName())
+                        .startStationName(step.getStartLocation().getName())
                         .startStationId(step.getStartStationId())
                         .endStationName(step.getEndStationName())
                         .endStationId(step.getEndStationId())
-                        .lat(step.getLat())
-                        .lng(step.getLng())
+                        .lat(step.getStartLocation().getLat())
+                        .lng(step.getStartLocation().getLng())
                         .build())
                 .collect(Collectors.toList());
 
