@@ -1,6 +1,7 @@
 package com.weanet.server.api.route.controller;
 
-import com.weanet.server.api.route.dto.*;
+import com.weanet.server.api.route.dto.request.*;
+import com.weanet.server.api.route.dto.response.*;
 import com.weanet.server.api.route.service.RouteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

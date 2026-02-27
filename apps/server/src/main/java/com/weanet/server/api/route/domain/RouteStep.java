@@ -1,6 +1,7 @@
 package com.weanet.server.api.route.domain;
 
-import com.weanet.server.api.route.dto.RouteStepResponse;
+import com.weanet.server.api.route.dto.request.*;
+import com.weanet.server.api.route.dto.response.*;
 import com.weanet.server.global.common.BaseEntity;
 import com.weanet.server.global.common.Location;
 import jakarta.persistence.*;

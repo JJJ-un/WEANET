@@ -1,4 +1,4 @@
-package com.weanet.server.api.route.dto;
+package com.weanet.server.api.route.dto.response;
 
 import com.weanet.server.api.route.domain.TransportType;
 import com.weanet.server.api.weather.dto.WeatherResponse;
