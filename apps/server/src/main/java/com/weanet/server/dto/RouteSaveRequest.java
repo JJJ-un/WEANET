@@ -28,15 +28,11 @@ public class RouteSaveRequest {
     @Schema(description = "저장할 상세 구간 리스트")
     private List<RouteStepSaveRequest> steps;
 
-    public Route toEntity() {
+    public Route toEntity(Region departureRegion, Region destinationRegion) {
         Route route = Route.builder()
                 .name(name)
-                .departureName(departureName)
-                .departureLat(departureLat)
-                .departureLng(departureLng)
-                .destinationName(destinationName)
-                .destinationLat(destinationLat)
-                .destinationLng(destinationLng)
+                .departureRegion(departureRegion)
+                .destinationRegion(destinationRegion)
                 .totalTime(totalTime)
                 .totalFare(totalFare)
                 .transferCount(transferCount)
