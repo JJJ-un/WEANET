@@ -55,9 +55,9 @@ public class RouteAdviceService {
 
     private boolean hasDelay(List<RouteEnrichedStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
-                .filter(s -> s.getArrivalMessage() != null)
-                .anyMatch(s -> s.getArrivalMessage().contains("지연") || 
-                              s.getArrivalMessage().contains("장애") || 
-                              s.getArrivalMessage().contains("점검"));
+                .filter(s -> s.getStatusAlert() != null)
+                .anyMatch(s -> s.getStatusAlert().contains("지연") || 
+                              s.getStatusAlert().contains("장애") || 
+                              s.getStatusAlert().contains("점검"));
     }
 }

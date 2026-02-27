@@ -68,7 +68,7 @@ public class RouteEnrichmentService {
             
             List<SubwayRealtimeResponse> alerts = subwayService.getSubwayAlerts(step.getLineName());
             if (!alerts.isEmpty()) {
-                step.setArrivalMessage(alerts.get(0).getArrivalMessage());
+                step.setStatusAlert(alerts.get(0).getArrivalMessage());
             }
         } else if (TransportType.BUS.equals(step.getTransportType())) {
             step.setCongestion(congestionService.getCongestion(
