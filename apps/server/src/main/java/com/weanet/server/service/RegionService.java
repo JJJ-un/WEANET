@@ -1,5 +1,6 @@
 package com.weanet.server.service;
 
+import com.weanet.server.domain.Location;
 import com.weanet.server.domain.Region;
 import com.weanet.server.dto.PoiResponse;
 import com.weanet.server.dto.RegionResponse;
@@ -36,16 +37,15 @@ public class RegionService {
     @Transactional
     public RegionResponse saveRegion(String name, double lat, double lng) {
         KmaCoordinateConverter.Grid grid = coordinateConverter.convertToGrid(lat, lng);
+        Location location = Location.builder().name(name).lat(lat).lng(lng).build();
         
-        Region region = regionRepository.findByName(name)
+        Region region = regionRepository.findByLocationName(name)
                 .map(existingRegion -> {
-                    existingRegion.updateCoordinates(lat, lng, grid.nx, grid.ny);
+                    existingRegion.updateLocation(location, grid.nx, grid.ny);
                     return existingRegion;
                 })
                 .orElseGet(() -> Region.builder()
-                        .name(name)
-                        .lat(lat)
-                        .lng(lng)
+                        .location(location)
                         .nx(grid.nx)
                         .ny(grid.ny)
                         .build());

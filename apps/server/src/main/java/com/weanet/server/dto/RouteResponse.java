@@ -28,8 +28,8 @@ public class RouteResponse {
         return RouteResponse.builder()
                 .id(route.getId())
                 .name(route.getName())
-                .departureName(route.getDepartureName())
-                .destinationName(route.getDestinationName())
+                .departureName(route.getDepartureLocation().getName())
+                .destinationName(route.getDestinationLocation().getName())
                 .totalTime(route.getTotalTime())
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.weanet.server.dto;
 
+import com.weanet.server.domain.Location;
 import com.weanet.server.domain.Route;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -31,12 +32,16 @@ public class RouteSaveRequest {
     public Route toEntity() {
         Route route = Route.builder()
                 .name(name)
-                .departureName(departureName)
-                .departureLat(departureLat)
-                .departureLng(departureLng)
-                .destinationName(destinationName)
-                .destinationLat(destinationLat)
-                .destinationLng(destinationLng)
+                .departureLocation(Location.builder()
+                        .name(departureName)
+                        .lat(departureLat)
+                        .lng(departureLng)
+                        .build())
+                .destinationLocation(Location.builder()
+                        .name(destinationName)
+                        .lat(destinationLat)
+                        .lng(destinationLng)
+                        .build())
                 .totalTime(totalTime)
                 .totalFare(totalFare)
                 .transferCount(transferCount)

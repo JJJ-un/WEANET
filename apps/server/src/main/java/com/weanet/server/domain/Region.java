@@ -17,14 +17,8 @@ public class Region extends BaseEntity {
     @lombok.EqualsAndHashCode.Include
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name; // 지역 명칭 (예: 강남역, 우리집)
-
-    @Column(nullable = false)
-    private double lat; // 위도
-
-    @Column(nullable = false)
-    private double lng; // 경도
+    @Embedded
+    private Location location; // 지역 위치 정보 (명칭 + 좌표)
 
     @Column(nullable = false)
     private int nx; // 기상청 격자 X
@@ -33,26 +27,29 @@ public class Region extends BaseEntity {
     private int ny; // 기상청 격자 Y
 
     @Builder
-    public Region(String name, double lat, double lng, int nx, int ny) {
-        validate(name, lat, lng);
-        this.name = name;
-        this.lat = lat;
-        this.lng = lng;
+    public Region(Location location, int nx, int ny) {
+        if (location == null) throw new IllegalArgumentException("위치 정보는 필수입니다.");
+        this.location = location;
         this.nx = nx;
         this.ny = ny;
     }
 
-    private void validate(String name, double lat, double lng) {
-        if (name == null || name.isBlank()) throw new IllegalArgumentException("지역 이름은 필수입니다.");
-        if (lat < -90 || lat > 90) throw new IllegalArgumentException("위도 범위가 올바르지 않습니다.");
-        if (lng < -180 || lng > 180) throw new IllegalArgumentException("경도 범위가 올바르지 않습니다.");
-    }
-
-    public void updateCoordinates(double lat, double lng, int nx, int ny) {
-        validate(this.name, lat, lng);
-        this.lat = lat;
-        this.lng = lng;
+    public void updateLocation(Location location, int nx, int ny) {
+        if (location == null) throw new IllegalArgumentException("위치 정보는 필수입니다.");
+        this.location = location;
         this.nx = nx;
         this.ny = ny;
+    }
+
+    public String getName() {
+        return location.getName();
+    }
+
+    public double getLat() {
+        return location.getLat();
+    }
+
+    public double getLng() {
+        return location.getLng();
     }
 }
