@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "상세 구간 정보 응답")
-public class RouteStepResponse {
+public class RouteEnrichedStepResponse {
     @Schema(description = "구간 순서", example = "1")
     private int sequence;
 

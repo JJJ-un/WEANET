@@ -35,8 +35,8 @@ public class DashboardService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
         // 1. 구간별 실시간 정보 보강을 위한 DTO 변환 (서비스 레이어에서 수행)
-        List<RouteStepResponse> steps = route.getSteps().stream()
-                .map(step -> RouteStepResponse.builder()
+        List<RouteEnrichedStepResponse> steps = route.getSteps().stream()
+                .map(step -> RouteEnrichedStepResponse.builder()
                         .sequence(step.getSequence())
                         .transportType(step.getTransportType())
                         .lineName(step.getLineName())

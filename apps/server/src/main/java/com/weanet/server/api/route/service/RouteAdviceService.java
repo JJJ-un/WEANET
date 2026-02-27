@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class RouteAdviceService {
 
-    public String generateAdvice(List<RouteStepResponse> enrichedSteps) {
+    public String generateAdvice(List<RouteEnrichedStepResponse> enrichedSteps) {
         if (enrichedSteps == null || enrichedSteps.isEmpty()) {
             return "현재 경로의 상태가 대체로 양호합니다. 즐거운 이동 되세요! 😊";
         }
@@ -32,7 +32,7 @@ public class RouteAdviceService {
         return "현재 경로의 상태가 대체로 양호합니다. 즐거운 이동 되세요! 😊";
     }
 
-    public List<RouteIntegratedReportResponse.StepSummary> getStepSummaries(List<RouteStepResponse> enrichedSteps) {
+    public List<RouteIntegratedReportResponse.StepSummary> getStepSummaries(List<RouteEnrichedStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
                 .map(step -> RouteIntegratedReportResponse.StepSummary.builder()
                         .lineName(step.getLineName())
@@ -43,19 +43,19 @@ public class RouteAdviceService {
                 .collect(Collectors.toList());
     }
 
-    private boolean hasCongestion(List<RouteStepResponse> enrichedSteps) {
+    private boolean hasCongestion(List<RouteEnrichedStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
                 .filter(s -> s.getCongestion() != null)
                 .anyMatch(s -> "혼잡".equals(s.getCongestion()));
     }
 
-    private boolean hasRainySection(List<RouteStepResponse> enrichedSteps) {
+    private boolean hasRainySection(List<RouteEnrichedStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
                 .filter(s -> s.getWeather() != null && s.getWeather().getAdvice() != null)
                 .anyMatch(s -> s.getWeather().getAdvice().contains("비"));
     }
 
-    private boolean hasDelay(List<RouteStepResponse> enrichedSteps) {
+    private boolean hasDelay(List<RouteEnrichedStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
                 .filter(s -> s.getArrivalMessage() != null)
                 .anyMatch(s -> s.getArrivalMessage().contains("지연") || 

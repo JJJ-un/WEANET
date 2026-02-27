@@ -31,5 +31,5 @@ public class RouteEnrichedResponse {
     private String integratedAdvice;
 
     @Schema(description = "실시간 정보가 포함된 상세 구간 리스트")
-    private List<RouteStepResponse> steps;
+    private List<RouteEnrichedStepResponse> steps;
 }
