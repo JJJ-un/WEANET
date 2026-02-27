@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -52,7 +52,7 @@ public class RouteSearchStepResponse {
 
     @Schema(description = "예상 도착 시각", example = "15:44")
     @JsonFormat(pattern = "HH:mm")
-    private LocalDateTime expectArrivalTime;
+    private LocalTime expectArrivalTime;
 
     @Schema(description = "경유역 명칭 리스트", example = "[\"강남역\", \"역삼역\", \"선릉역\"]")
     private List<String> stations;

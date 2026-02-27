@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -137,12 +138,14 @@ public class ExternalMapService {
             if (plan == null || !plan.containsKey("itineraries")) return results;
             
             List<Map<String, Object>> itineraries = (List<Map<String, Object>>) plan.get("itineraries");
-            LocalDateTime now = LocalDateTime.now();
+            LocalTime now = LocalTime.now();
 
             for (Map<String, Object> itinerary : itineraries) {
                 int totalTime = ((Number) itinerary.get("totalTime")).intValue() / 60;
+                LocalTime expectArrivalTimeTotal = now.plusMinutes(totalTime);
                 
                 int totalFare = 0;
+                // ... (중략) ...
                 Object fareObj = itinerary.get("fare");
                 if (fareObj instanceof Map<?, ?> fareMap) {
                     Object regularObj = fareMap.get("regular");
@@ -156,7 +159,7 @@ public class ExternalMapService {
                 List<Map<String, Object>> legs = (List<Map<String, Object>>) itinerary.get("legs");
                 List<RouteSearchStepResponse> steps = new ArrayList<>();
                 StringBuilder summary = new StringBuilder();
-                LocalDateTime currentStepArrivalTime = now;
+                LocalTime currentStepArrivalTime = now;
 
                 int seq = 1;
                 for (Map<String, Object> leg : legs) {
