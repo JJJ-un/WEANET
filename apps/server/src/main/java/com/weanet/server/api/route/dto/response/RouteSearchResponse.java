@@ -1,5 +1,6 @@
 package com.weanet.server.api.route.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -26,11 +29,13 @@ public class RouteSearchResponse {
     @Schema(description = "환승 횟수", example = "1")
     private int transferCount;
 
-    @Schema(description = "예상 출발 시각", example = "2026-02-27T08:30:00")
-    private java.time.LocalDateTime expectDepartureTime;
+    @Schema(description = "예상 출발 시각", example = "15:44")
+    @JsonFormat(pattern = "HH:mm")
+    private LocalDateTime expectDepartureTime;
 
-    @Schema(description = "예상 도착 시각", example = "2026-02-27T09:15:00")
-    private java.time.LocalDateTime expectArrivalTime;
+    @Schema(description = "예상 도착 시각", example = "16:30")
+    @JsonFormat(pattern = "HH:mm")
+    private LocalDateTime expectArrivalTime;
 
     @Schema(description = "경로 요약", example = "2호선 -> 신분당선")
     private String summary;

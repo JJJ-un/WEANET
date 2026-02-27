@@ -1,5 +1,6 @@
 package com.weanet.server.api.route.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.weanet.server.api.route.domain.TransportType;
 import com.weanet.server.api.weather.dto.WeatherResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -51,8 +53,9 @@ public class RouteEnrichedStepResponse {
     @Schema(description = "소요 시간 (분)", example = "5")
     private int sectionTime;
 
-    @Schema(description = "예상 도착 시각", example = "2026-02-27T08:35:00")
-    private java.time.LocalDateTime expectArrivalTime;
+    @Schema(description = "예상 도착 시각", example = "15:44")
+    @JsonFormat(pattern = "HH:mm")
+    private LocalDateTime expectArrivalTime;
 
     @Schema(description = "경유역 명칭 리스트")
     private List<String> stations;
