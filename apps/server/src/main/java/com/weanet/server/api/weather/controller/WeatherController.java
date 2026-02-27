@@ -34,10 +34,4 @@ public class WeatherController {
             @RequestParam double lng) {
         return weatherService.getWeatherByCoordinates(lat, lng);
     }
-
-    @GetMapping("/search")
-    @Operation(summary = "지역 명칭으로 좌표 검색", description = "입력한 명칭(예: 강남구)에 해당하는 위도와 경도를 반환합니다.")
-    public double[] searchCoordinates(@RequestParam String keyword) {
-        return weatherService.getCoordinates(keyword);
-    }
 }
