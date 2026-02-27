@@ -1,6 +1,7 @@
 package com.weanet.server.service;
 
 import com.weanet.server.domain.TransportType;
+import com.weanet.server.dto.PoiResponse;
 import com.weanet.server.dto.RouteSearchResponse;
 import com.weanet.server.dto.RouteSearchStepResponse;
 import com.weanet.server.dto.RouteStepResponse;
@@ -16,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,14 +36,15 @@ public class ExternalMapService {
     private String poiApiUrl;
 
     /**
-     * 장소 명칭(keyword)을 기반으로 좌표(위도, 경도)를 조회합니다.
+     * 키워드로 장소 리스트를 검색합니다 (POI 검색 API).
      */
-    public double[] getCoordinates(String keyword) {
+    public List<PoiResponse> searchPoi(String keyword) {
+        List<PoiResponse> results = new ArrayList<>();
         try {
             String url = UriComponentsBuilder.fromUriString(poiApiUrl)
                     .queryParam("version", 1)
                     .queryParam("searchKeyword", keyword)
-                    .queryParam("count", 1)
+                    .queryParam("count", 10) // 상위 10개 검색
                     .queryParam("appKey", apiKey)
                     .build().toUriString();
 
@@ -51,17 +54,46 @@ public class ExternalMapService {
                 Map<String, Object> pois = (Map<String, Object>) searchPoiInfo.get("pois");
                 List<Map<String, Object>> poiList = (List<Map<String, Object>>) pois.get("poi");
 
-                if (!poiList.isEmpty()) {
-                    Map<String, Object> firstPoi = poiList.get(0);
-                    double lat = Double.parseDouble((String) firstPoi.get("frontLat"));
-                    double lon = Double.parseDouble((String) firstPoi.get("frontLon"));
-                    return new double[]{lat, lon};
+                if (poiList != null) {
+                    for (Map<String, Object> poi : poiList) {
+                        results.add(PoiResponse.builder()
+                                .name((String) poi.get("name"))
+                                .address(buildAddress(poi))
+                                .lat(Double.parseDouble((String) poi.get("frontLat")))
+                                .lng(Double.parseDouble((String) poi.get("frontLon")))
+                                .build());
+                    }
                 }
             }
         } catch (Exception e) {
-            log.error("Error searching coordinates for {}: {}", keyword, e.getMessage());
+            log.error("POI 검색 중 오류 발생 (키워드: {}): {}", keyword, e.getMessage());
         }
-        return new double[]{37.5665, 126.9780}; 
+        return results;
+    }
+
+    private String buildAddress(Map<String, Object> poi) {
+        String upperAddr = (String) poi.get("upperAddrName");
+        String middleAddr = (String) poi.get("middleAddrName");
+        String lowerAddr = (String) poi.get("lowerAddrName");
+        String detailAddr = (String) poi.get("detailAddrName");
+        
+        return String.format("%s %s %s %s", 
+                upperAddr != null ? upperAddr : "", 
+                middleAddr != null ? middleAddr : "", 
+                lowerAddr != null ? lowerAddr : "", 
+                detailAddr != null ? detailAddr : "").trim();
+    }
+
+    /**
+     * 장소 명칭(keyword)을 기반으로 첫 번째 좌표(위도, 경도)를 조회합니다.
+     */
+    public double[] getCoordinates(String keyword) {
+        List<PoiResponse> results = searchPoi(keyword);
+        if (!results.isEmpty()) {
+            PoiResponse first = results.get(0);
+            return new double[]{first.getLat(), first.getLng()};
+        }
+        return new double[]{37.5665, 126.9780}; // 서울시청 기본 좌표
     }
 
     /**

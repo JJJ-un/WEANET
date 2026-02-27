@@ -1,10 +1,12 @@
 package com.weanet.server.service;
 
+import com.weanet.server.domain.Region;
 import com.weanet.server.domain.Route;
 import com.weanet.server.domain.RouteStep;
 import com.weanet.server.dto.*;
 import com.weanet.server.exception.BusinessException;
 import com.weanet.server.exception.ErrorCode;
+import com.weanet.server.repository.RegionRepository;
 import com.weanet.server.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,9 +21,11 @@ import java.util.stream.Collectors;
 public class RouteService {
 
     private final RouteRepository routeRepository;
+    private final RegionRepository regionRepository;
     private final ExternalMapService externalMapService;
     private final RouteEnrichmentService enrichmentService;
     private final RouteAdviceService adviceService;
+    private final com.weanet.server.util.KmaCoordinateConverter coordinateConverter;
 
     /**
      * 경로 검색: 명칭을 위도/경도로 변환한 뒤 Tmap을 통해 경로 후보를 가져옵니다.
@@ -44,9 +48,34 @@ public class RouteService {
      */
     @Transactional
     public RouteResponse createRoute(RouteSaveRequest request) {
-        Route route = request.toEntity();
+        Region departureRegion = getOrCreateRegion(
+                request.getDepartureName(), 
+                request.getDepartureLat(), 
+                request.getDepartureLng());
+        
+        Region destinationRegion = getOrCreateRegion(
+                request.getDestinationName(), 
+                request.getDestinationLat(), 
+                request.getDestinationLng());
+
+        Route route = request.toEntity(departureRegion, destinationRegion);
         Route savedRoute = routeRepository.save(route);
         return RouteResponse.from(savedRoute);
+    }
+
+    private Region getOrCreateRegion(String name, double lat, double lng) {
+        return regionRepository.findByName(name)
+                .orElseGet(() -> {
+                    com.weanet.server.util.KmaCoordinateConverter.Grid grid = coordinateConverter.convertToGrid(lat, lng);
+                    Region region = Region.builder()
+                            .name(name)
+                            .lat(lat)
+                            .lng(lng)
+                            .nx(grid.nx)
+                            .ny(grid.ny)
+                            .build();
+                    return regionRepository.save(region);
+                });
     }
 
     /**
@@ -76,8 +105,8 @@ public class RouteService {
 
         return RouteDetailResponse.builder()
                 .name(route.getName())
-                .departureName(route.getDepartureName())
-                .destinationName(route.getDestinationName())
+                .departureName(route.getDepartureRegion().getName())
+                .destinationName(route.getDestinationRegion().getName())
                 .totalTime(route.getTotalTime())
                 .totalFare(route.getTotalFare())
                 .steps(stepResponses)
