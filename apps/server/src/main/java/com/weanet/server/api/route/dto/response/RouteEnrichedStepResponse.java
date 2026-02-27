@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -49,8 +51,11 @@ public class RouteEnrichedStepResponse {
     @Schema(description = "소요 시간 (분)", example = "5")
     private int sectionTime;
 
+    @Schema(description = "예상 도착 시각", example = "2026-02-27T08:35:00")
+    private java.time.LocalDateTime expectArrivalTime;
+
     @Schema(description = "경유역 명칭 리스트")
-    private java.util.List<String> stations;
+    private List<String> stations;
 
     @Schema(description = "실시간 날씨 정보")
     private WeatherResponse weather;
