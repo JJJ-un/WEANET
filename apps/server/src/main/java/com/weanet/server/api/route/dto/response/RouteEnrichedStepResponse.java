@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -55,7 +55,7 @@ public class RouteEnrichedStepResponse {
 
     @Schema(description = "예상 도착 시각", example = "15:44")
     @JsonFormat(pattern = "HH:mm")
-    private LocalDateTime expectArrivalTime;
+    private LocalTime expectArrivalTime;
 
     @Schema(description = "경유역 명칭 리스트")
     private List<String> stations;
