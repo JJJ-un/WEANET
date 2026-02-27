@@ -24,6 +24,6 @@ public class HourlyWeatherResponse {
     @Schema(description = "날씨 상태 (Clear, Cloudy, Overcast, Rain, Snow, Shower)", example = "Clear")
     private String weather;
 
-    @Schema(description = "강수 확률 (0.0 ~ 1.0)", example = "0.2")
-    private double precipitationProbability;
+    @Schema(description = "강수 확률 (0 ~ 100)", example = "20")
+    private int precipitationProbability;
 }

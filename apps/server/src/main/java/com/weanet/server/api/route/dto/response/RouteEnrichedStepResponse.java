@@ -66,6 +66,6 @@ public class RouteEnrichedStepResponse {
     @Schema(description = "실시간 혼잡도 정보", example = "보통")
     private String congestion;
 
-    @Schema(description = "실시간 도착 안내 메시지", example = "3분 45초 후 도착")
-    private String arrivalMessage;
+    @Schema(description = "실시간 상태 알림 (지연, 장애 등)", example = "열차 지연: 2호선 상행선 신호 장애로 인해 10분 지연 운행 중")
+    private String statusAlert;
 }
