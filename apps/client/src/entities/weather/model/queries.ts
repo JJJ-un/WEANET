@@ -37,7 +37,6 @@ export const useWeather = (city: string) => {
                 maxTemp: Math.round(data.maxTemp),
                 minTemp: Math.round(data.minTemp),
                 precipitation: Math.round(data.precipitationProbability * 100), // 0.3 -> 30%
-                advice: data.advice,
                 hourlyForecast: data.hourlyForecast.slice(0, 24).map((item) => ({
                     time: formatTime(item.fcstTime),
                     status: mapStatus(item.weather),

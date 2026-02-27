@@ -11,7 +11,6 @@ export interface WeatherData {
     maxTemp: number;
     minTemp: number;
     precipitation: number; // 강수 확률 (%)
-    advice: string;
     hourlyForecast: HourlyForecast[];
 }
 

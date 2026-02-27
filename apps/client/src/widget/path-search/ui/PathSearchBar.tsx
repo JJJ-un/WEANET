@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocationSearch } from '@/entities/location/model/useLocationSearch';
 import { SearchField, type FieldType } from './SearchField';
 import { SearchList } from './SearchList';
+import { cn } from '@/shared/lib/utils';
 
 interface PathState {
     departure: string;
@@ -43,15 +44,15 @@ const PathsSearchBar = ({ onSearch, onClear }: PathsSearchBarProps) => {
         });
     };
 
-    // 두 필드가 모두 채워지면 부모에게 검색 실행 알림
-    useEffect(() => {
+    const handleSearchClick = () => {
         const isReady = paths.departure.trim().length > 0 && paths.destination.trim().length > 0;
-        if (isReady && !activeField) {
-            if (onSearch) onSearch(paths);
+        if (isReady && onSearch) {
+            onSearch(paths);
         }
-    }, [paths, activeField, onSearch]);
+    };
 
     const isShowList = activeField !== null && activeValue.trim().length > 0;
+    const isReady = paths.departure.trim().length > 0 && paths.destination.trim().length > 0;
 
     return (
         <div className="relative w-full max-w-[35rem] mx-auto">
@@ -92,6 +93,20 @@ const PathsSearchBar = ({ onSearch, onClear }: PathsSearchBarProps) => {
                     onFocus={() => setActiveField('destination')}
                     onBlur={() => setTimeout(() => setActiveField(null), 200)}
                 />
+
+                {/* 검색 버튼 추가 */}
+                <button
+                    onClick={handleSearchClick}
+                    disabled={!isReady}
+                    className={cn(
+                        "w-full mt-2 py-4 rounded-2xl font-bold text-white transition-all duration-300 active:scale-[0.98] shadow-lg",
+                        isReady 
+                            ? "bg-primary shadow-primary/20 hover:bg-primary/90" 
+                            : "bg-slate-300 cursor-not-allowed shadow-none"
+                    )}
+                >
+                    경로 검색하기
+                </button>
             </div>
 
             {isShowList && <SearchList results={results} onSelect={handleSelect} />}

@@ -1,65 +1,46 @@
 import { createFileRoute } from '@tanstack/react-router';
 import PathsSearchHeader from '@/widget/path-search-header/ui/PathSearchHeader';
-import SubwayIcon from '@/shared/assets/icons/subway.svg?react';
-import InfoIcon from '@/shared/assets/icons/info.svg?react';
+import { usePathStore } from '@/entities/path/model/usePathStore';
+import { MOCK_DETAIL_PATH_RESULT } from '@/shared/mock/pathData.mock';
+import { type DetailPathResult } from '@/entities/path/model/types';
+import { PathResultCard } from '@/widget/path-result/ui/PathResultCard';
+import { CongestionSection } from '@/widget/path-detail/ui/CongestionSection';
+import { WeatherSection } from '@/widget/path-detail/ui/WeatherSection';
+import { TimelineSection } from '@/widget/path-detail/ui/TimelineSection';
 
 export const Route = createFileRoute('/path-search/detail/$pathId')({
     component: PathSearchDetailPage,
 });
 
 function PathSearchDetailPage() {
-    const { pathId } = Route.useParams();
+    const { selectedPath } = usePathStore();
+
+    // 현재는 API 연동 전이므로 Mock 상세 데이터를 사용합니다.
+    const detailData: DetailPathResult = MOCK_DETAIL_PATH_RESULT;
 
     return (
-        <div className="flex flex-col gap-8 pb-32">
-            {/* 상단 헤더: 상세 정보임을 나타냄 */}
+        <div className="flex flex-col gap-6 pb-32 bg-slate-50/50 min-h-screen">
             <PathsSearchHeader />
 
-            <div className="flex flex-col gap-6">
-                {/* 핵심 요약 영역 */}
-                <div className="bg-white rounded-3xl p-8 shadow-sm border border-border/40">
-                    <div className="flex items-end gap-2 mb-6">
-                        <span className="text-4xl font-bold text-foreground">42</span>
-                        <span className="text-lg font-medium text-foreground mb-1.5">분</span>
-                        <div className="ml-auto text-sm text-muted-foreground">최적 경로 (ID: {pathId})</div>
-                    </div>
+            <div className="flex flex-col gap-10">
+                {/* 1. 요약 카드 섹션 */}
+                <div className="px-1 pointer-events-none">
+                    <PathResultCard path={detailData} index={0} />
+                </div>
 
-                    {/* 상세 단계 (Timeline 형태 예시) */}
-                    <div className="flex flex-col gap-8 ml-2 border-l-2 border-dashed border-border pl-8 relative">
-                        {/* 단계 1 */}
-                        <div className="relative">
-                            <div className="absolute -left-[41px] top-0 size-5 rounded-full bg-primary border-4 border-white shadow-sm" />
-                            <div className="flex flex-col gap-1">
-                                <span className="font-bold text-base">강남역 승차</span>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <SubwayIcon className="size-4" />
-                                    <span>2호선 | 7개역 이동</span>
-                                </div>
-                            </div>
-                        </div>
+                <div className="flex flex-col gap-10 px-1">
+                    {/* 2. 실시간 혼잡도 섹션 */}
+                    <CongestionSection steps={detailData.steps} />
 
-                        {/* 단계 2 (날씨 경고가 있는 구간) */}
-                        <div className="relative">
-                            <div className="absolute -left-[41px] top-0 size-5 rounded-full bg-secondary border-4 border-white shadow-sm" />
-                            <div className="flex flex-col gap-2">
-                                <span className="font-bold text-base">당산역 환승</span>
-                                <div className="p-4 bg-secondary/10 rounded-2xl flex items-start gap-3">
-                                    <InfoIcon className="size-4 text-secondary shrink-0 mt-0.5" />
-                                    <p className="text-xs text-secondary-foreground leading-relaxed">
-                                        이 구간은 지상역입니다. 현재 강한 소나기가 내리고 있으니 환승 시 젖지 않게 주의하세요.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                    {/* 3. 구간별 날씨 섹션 */}
+                    <WeatherSection steps={detailData.steps} />
 
-                        {/* 단계 3 */}
-                        <div className="relative">
-                            <div className="absolute -left-[41px] top-0 size-5 rounded-full bg-slate-400 border-4 border-white shadow-sm" />
-                            <span className="font-bold text-base">홍대입구역 하차</span>
-                        </div>
-                    </div>
+                    {/* 4. 상세 경로 안내 섹션 */}
+                    <TimelineSection steps={detailData.steps} totalTime={detailData.totalTime} />
                 </div>
             </div>
         </div>
     );
 }
+
+export default PathSearchDetailPage;

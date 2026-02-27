@@ -9,7 +9,6 @@ export interface WeatherResponse {
     maxTemp: number;
     minTemp: number;
     precipitationProbability: number;
-    advice: string;
     hourlyForecast: Array<{
         fcstDate: string;
         fcstTime: string;

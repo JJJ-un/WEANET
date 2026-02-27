@@ -17,10 +17,12 @@
 
   /* 배경 및 텍스트 */
   --background: #F1F5F9; /* 배경색 */
+  --background-subtle: #EEF4FF; /* 연한 파란색 배경 */
   --foreground: #020817; /* 기본 본문 글자색상 */
 
   /* Primary (브랜드 컬러: Blue-600) */
   --primary: #2563eb;
+  --primary-bold: #2463EB; /* 세 번째 주요 색상 */
   --primary-foreground: #f8fafc; /* 색상위에 올라가는 글자 */
 
   /* Secondary (보조 버튼 등: Slate-100) */
@@ -42,9 +44,31 @@
   --destructive: #ef4444;
   --destructive-foreground: #f8fafc;
 
+  /* 혼잡도 관련 색상 */
+  --relaxed: #4ade80; /* Light Green */
+  --normal: #fbbf24;  /* Amber (Yellow-Orange) */
+  --busy: #ef4444;    /* Red */
+
   /* 날씨 관련 색상 */
   --weather-clear: #f59e0b; /* 맑음: Amber-500 */
   --weather-rain: #3b82f6; /* 비: Blue-500 */
   --weather-snow: #94a3b8; /* 눈: Slate-400 */
   --weather-cloudy: #64748b; /* 흐림: Slate-500 */
+
+  /* 지하철 노선 색상 */
+  --line-1: #0052A4;
+  --line-2: #00A84D;
+  --line-3: #EF7C1C;
+  --line-4: #00A4E3;
+  --line-5: #996CAC;
+  --line-6: #CD7C2F;
+  --line-7: #747F00;
+  --line-8: #E6186C;
+  --line-9: #BDB092;
+  --line-suin-bundang: #FABE00;
+  --line-shin-bundang: #D4003B;
+  --line-gyeongui-jungang: #77C4A3;
+  --line-gyeongchun: #178C72;
+  --line-airport: #0090D2;
 }
+
