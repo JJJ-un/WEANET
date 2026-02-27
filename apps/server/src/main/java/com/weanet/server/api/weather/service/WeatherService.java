@@ -110,7 +110,7 @@ public class WeatherService {
 
         List<HourlyWeatherResponse> hourlyForecast = new ArrayList<>();
         double currentTemp = Double.NaN;
-        double currentPop = 0.0;
+        int currentPop = 0;
         double minTemp = Double.NaN;
         double maxTemp = Double.NaN;
         String currentSky = "1";
@@ -123,7 +123,7 @@ public class WeatherService {
             String time = timeItems.get(0).getFcstTime();
 
             double temp = 0.0;
-            double pop = 0.0;
+            int pop = 0;
             String sky = "1";
             String pty = "0";
 
@@ -131,7 +131,7 @@ public class WeatherService {
                 String value = item.getFcstValue();
                 switch (item.getCategory()) {
                     case "TMP" -> temp = Double.parseDouble(value);
-                    case "POP" -> pop = Double.parseDouble(value) / 100.0;
+                    case "POP" -> pop = Integer.parseInt(value);
                     case "SKY" -> sky = value;
                     case "PTY" -> pty = value;
                     case "TMN" -> { if (date.equals(today)) minTemp = Double.parseDouble(value); }
@@ -212,12 +212,12 @@ public class WeatherService {
         };
     }
 
-    private String generateAdvice(String weather, double temp, double pop) {
+    private String generateAdvice(String weather, double temp, int pop) {
         String weatherLower = weather.toLowerCase();
         if (weatherLower.contains("snow")) return "눈이 내리고 있어요. 길이 미끄러울 수 있으니 주의하세요! ❄️";
         if (weatherLower.contains("thunderstorm")) return "천둥번개를 동반한 비가 내려요. 가급적 외출을 삼가세요! ⚡";
-        if (pop >= 0.5 || weatherLower.contains("rain")) return "비 소식이 있어요. 우산 꼭 챙기세요! ☂️";
-        if (pop >= 0.2) return "강수 확률이 있어요. 혹시 모르니 작은 우산을 챙겨보세요. ☁️";
+        if (pop >= 50 || weatherLower.contains("rain")) return "비 소식이 있어요. 우산 꼭 챙기세요! ☂️";
+        if (pop >= 20) return "강수 확률이 있어요. 혹시 모르니 작은 우산을 챙겨보세요. ☁️";
 
         if (temp < 4) return "날씨가 매우 추워요! 패딩이나 두꺼운 코트를 추천해요. ❄️🧥";
         if (temp < 12) return "쌀쌀한 날씨예요. 코트나 트렌치 코트를 입으세요. 🧥";
