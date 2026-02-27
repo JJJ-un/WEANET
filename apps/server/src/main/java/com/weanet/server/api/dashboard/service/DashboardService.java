@@ -7,7 +7,7 @@ import com.weanet.server.api.route.dto.response.RouteStepResponse;
 import com.weanet.server.api.common.exception.BusinessException;
 import com.weanet.server.api.common.exception.ErrorCode;
 import com.weanet.server.api.report.ReportRepository;
-import com.weanet.server.api.route.service.RouteRepository;
+import com.weanet.server.api.route.RouteRepository;
 import com.weanet.server.api.route.service.RouteEnrichmentService;
 import com.weanet.server.api.route.service.RouteAdviceService;
 import lombok.RequiredArgsConstructor;
