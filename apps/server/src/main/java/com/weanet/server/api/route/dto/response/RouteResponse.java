@@ -1,6 +1,6 @@
 package com.weanet.server.dto;
 
-import com.weanet.server.domain.Route;
+import com.weanet.server.api.route.domain.Route;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

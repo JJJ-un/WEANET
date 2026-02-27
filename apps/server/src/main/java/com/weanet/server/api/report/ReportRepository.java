@@ -1,6 +1,6 @@
 package com.weanet.server.api.report;
 
-import com.weanet.server.domain.Report;
+import com.weanet.server.api.report.domain.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.weanet.server.dto;
 
-import com.weanet.server.domain.TransportType;
+import com.weanet.server.api.route.domain.TransportType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

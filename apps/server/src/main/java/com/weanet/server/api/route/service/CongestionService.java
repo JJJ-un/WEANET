@@ -1,6 +1,6 @@
 package com.weanet.server.api.route.service;
 
-import com.weanet.server.domain.TransportType;
+import com.weanet.server.api.route.domain.TransportType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

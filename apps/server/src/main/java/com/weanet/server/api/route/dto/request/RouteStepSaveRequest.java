@@ -1,9 +1,9 @@
 package com.weanet.server.dto;
 
-import com.weanet.server.domain.Location;
-import com.weanet.server.domain.Route;
-import com.weanet.server.domain.RouteStep;
-import com.weanet.server.domain.TransportType;
+import com.weanet.server.api.common.domain.Location;
+import com.weanet.server.api.route.domain.Route;
+import com.weanet.server.api.route.domain.RouteStep;
+import com.weanet.server.api.route.domain.TransportType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

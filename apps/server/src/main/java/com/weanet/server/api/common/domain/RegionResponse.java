@@ -1,6 +1,6 @@
 package com.weanet.server.dto;
 
-import com.weanet.server.domain.Region;
+import com.weanet.server.api.common.domain.Region;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

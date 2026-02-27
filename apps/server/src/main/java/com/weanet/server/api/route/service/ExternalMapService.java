@@ -1,10 +1,10 @@
 package com.weanet.server.api.route.service;
 
-import com.weanet.server.domain.TransportType;
-import com.weanet.server.dto.PoiResponse;
-import com.weanet.server.dto.RouteSearchResponse;
-import com.weanet.server.dto.RouteSearchStepResponse;
-import com.weanet.server.dto.RouteStepResponse;
+import com.weanet.server.api.route.domain.TransportType;
+import com.weanet.server.api.route.dto.response.PoiResponse;
+import com.weanet.server.api.route.dto.response.RouteSearchResponse;
+import com.weanet.server.api.route.dto.response.RouteSearchStepResponse;
+import com.weanet.server.api.route.dto.response.RouteStepResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

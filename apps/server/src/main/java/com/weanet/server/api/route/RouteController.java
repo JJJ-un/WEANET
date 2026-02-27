@@ -7,7 +7,7 @@ import com.weanet.server.api.route.dto.response.RouteSearchResponse;
 import com.weanet.server.api.route.dto.response.RouteSummaryResponse;
 import com.weanet.server.api.route.dto.response.RouteResponse;
 import com.weanet.server.api.route.dto.response.RouteDetailResponse;
-import com.weanet.server.dto.RouteSearchRequest;
+import com.weanet.server.api.route.dto.request.RouteSearchRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

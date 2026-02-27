@@ -1,11 +1,11 @@
 package com.weanet.server.api.report.service;
 
-import com.weanet.server.domain.Report;
-import com.weanet.server.domain.Route;
-import com.weanet.server.dto.ReportRequest;
-import com.weanet.server.dto.ReportResponse;
-import com.weanet.server.repository.ReportRepository;
-import com.weanet.server.repository.RouteRepository;
+import com.weanet.server.api.report.domain.Report;
+import com.weanet.server.api.route.domain.Route;
+import com.weanet.server.api.report.dto.ReportRequest;
+import com.weanet.server.api.report.dto.ReportResponse;
+import com.weanet.server.api.report.ReportRepository;
+import com.weanet.server.api.route.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

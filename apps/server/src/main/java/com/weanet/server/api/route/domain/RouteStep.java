@@ -3,7 +3,7 @@ package com.weanet.server.api.route.domain;
 import com.weanet.server.api.common.domain.BaseEntity;
 import com.weanet.server.api.common.domain.Location;
 
-import com.weanet.server.dto.RouteStepResponse;
+import com.weanet.server.api.route.dto.response.RouteStepResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

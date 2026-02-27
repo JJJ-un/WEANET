@@ -1,6 +1,6 @@
 package com.weanet.server.api.report.dto;
 
-import com.weanet.server.domain.Report;
+import com.weanet.server.api.report.domain.Report;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

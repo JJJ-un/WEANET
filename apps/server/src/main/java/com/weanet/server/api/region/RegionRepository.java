@@ -1,6 +1,6 @@
 package com.weanet.server.repository;
 
-import com.weanet.server.domain.Region;
+import com.weanet.server.api.common.domain.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
 package com.weanet.server.api.route;
 
-import com.weanet.server.domain.Route;
+import com.weanet.server.api.route.domain.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RouteRepository extends JpaRepository<Route, Long> {
