@@ -2,8 +2,8 @@ package com.weanet.server.api.external.service;
 
 import com.weanet.server.api.external.dto.PoiResponse;
 import com.weanet.server.api.route.domain.TransportType;
-import com.weanet.server.api.route.dto.RouteSearchResponse;
-import com.weanet.server.api.route.dto.RouteSearchStepResponse;
+import com.weanet.server.api.route.dto.request.*;
+import com.weanet.server.api.route.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -136,6 +137,7 @@ public class ExternalMapService {
             if (plan == null || !plan.containsKey("itineraries")) return results;
             
             List<Map<String, Object>> itineraries = (List<Map<String, Object>>) plan.get("itineraries");
+            LocalDateTime now = LocalDateTime.now();
 
             for (Map<String, Object> itinerary : itineraries) {
                 int totalTime = ((Number) itinerary.get("totalTime")).intValue() / 60;
@@ -154,6 +156,7 @@ public class ExternalMapService {
                 List<Map<String, Object>> legs = (List<Map<String, Object>>) itinerary.get("legs");
                 List<RouteSearchStepResponse> steps = new ArrayList<>();
                 StringBuilder summary = new StringBuilder();
+                LocalDateTime currentStepArrivalTime = now;
 
                 int seq = 1;
                 for (Map<String, Object> leg : legs) {
@@ -162,6 +165,9 @@ public class ExternalMapService {
                     String lineName = (String) leg.get("route");
                     String lineId = (String) leg.get("routeId");
                     
+                    int sectionTime = ((Number) leg.get("sectionTime")).intValue() / 60;
+                    currentStepArrivalTime = currentStepArrivalTime.plusMinutes(sectionTime);
+
                     if (lineName != null && transportType != TransportType.WALK) {
                         if (summary.length() > 0) summary.append(" -> ");
                         summary.append(lineName);
@@ -172,6 +178,7 @@ public class ExternalMapService {
 
                     String startStationId = null;
                     String endStationId = null;
+                    List<String> stationNames = new ArrayList<>();
                     
                     if (leg.containsKey("passStopList")) {
                         Map<String, Object> passStopList = (Map<String, Object>) leg.get("passStopList");
@@ -182,6 +189,13 @@ public class ExternalMapService {
                                 Object endIdObj = stations.get(stations.size() - 1).get("stationID");
                                 startStationId = startIdObj != null ? String.valueOf(startIdObj) : null;
                                 endStationId = endIdObj != null ? String.valueOf(endIdObj) : null;
+
+                                for (Map<String, Object> station : stations) {
+                                    Object stationName = station.get("stationName");
+                                    if (stationName != null) {
+                                        stationNames.add(String.valueOf(stationName));
+                                    }
+                                }
                             }
                         }
                     }
@@ -195,9 +209,11 @@ public class ExternalMapService {
                             .startStationId(startStationId)
                             .endStationName(end != null ? (String) end.get("name") : "도착지")
                             .endStationId(endStationId)
-                            .sectionTime(((Number) leg.get("sectionTime")).intValue() / 60)
+                            .sectionTime(sectionTime)
+                            .expectArrivalTime(currentStepArrivalTime)
                             .lat(start != null ? ((Number) start.get("lat")).doubleValue() : 0.0)
                             .lng(start != null ? ((Number) start.get("lon")).doubleValue() : 0.0)
+                            .stations(stationNames)
                             .build());
                 }
 
@@ -205,6 +221,8 @@ public class ExternalMapService {
                         .totalTime(totalTime)
                         .totalFare(totalFare)
                         .transferCount(transferCount)
+                        .expectDepartureTime(now)
+                        .expectArrivalTime(now.plusMinutes(totalTime))
                         .summary(summary.toString())
                         .steps(steps)
                         .build());

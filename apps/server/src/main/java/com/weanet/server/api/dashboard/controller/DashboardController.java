@@ -1,7 +1,7 @@
 package com.weanet.server.api.dashboard.controller;
 
+import com.weanet.server.api.dashboard.dto.response.RouteIntegratedReportResponse;
 import com.weanet.server.api.dashboard.service.DashboardService;
-import com.weanet.server.api.route.dto.RouteIntegratedReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

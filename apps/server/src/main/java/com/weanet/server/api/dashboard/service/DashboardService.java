@@ -1,10 +1,10 @@
 package com.weanet.server.api.dashboard.service;
 
+import com.weanet.server.api.dashboard.dto.response.RouteIntegratedReportResponse;
 import com.weanet.server.api.report.dto.ReportResponse;
 import com.weanet.server.api.report.repository.ReportRepository;
 import com.weanet.server.api.route.domain.Route;
-import com.weanet.server.api.route.dto.RouteIntegratedReportResponse;
-import com.weanet.server.api.route.dto.RouteStepResponse;
+import com.weanet.server.api.route.dto.response.RouteEnrichedStepResponse;
 import com.weanet.server.api.route.repository.RouteRepository;
 import com.weanet.server.api.route.service.RouteAdviceService;
 import com.weanet.server.api.route.service.RouteEnrichmentService;
@@ -35,8 +35,8 @@ public class DashboardService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
         // 1. 구간별 실시간 정보 보강을 위한 DTO 변환 (서비스 레이어에서 수행)
-        List<RouteStepResponse> steps = route.getSteps().stream()
-                .map(step -> RouteStepResponse.builder()
+        List<RouteEnrichedStepResponse> steps = route.getSteps().stream()
+                .map(step -> RouteEnrichedStepResponse.builder()
                         .sequence(step.getSequence())
                         .transportType(step.getTransportType())
                         .lineName(step.getLineName())
@@ -47,6 +47,7 @@ public class DashboardService {
                         .endStationId(step.getEndStationId())
                         .lat(step.getStartLocation().getLat())
                         .lng(step.getStartLocation().getLng())
+                        .stations(step.getStations())
                         .build())
                 .collect(Collectors.toList());
 

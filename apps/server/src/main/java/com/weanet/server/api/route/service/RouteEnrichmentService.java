@@ -4,7 +4,8 @@ import com.weanet.server.api.external.service.CongestionService;
 import com.weanet.server.api.external.service.SubwayService;
 import com.weanet.server.api.external.util.KmaCoordinateConverter;
 import com.weanet.server.api.route.domain.TransportType;
-import com.weanet.server.api.route.dto.RouteStepResponse;
+import com.weanet.server.api.route.dto.request.*;
+import com.weanet.server.api.route.dto.response.*;
 import com.weanet.server.api.weather.dto.WeatherResponse;
 import com.weanet.server.api.weather.service.WeatherService;
 import com.weanet.server.api.external.dto.SubwayRealtimeResponse;
@@ -30,11 +31,11 @@ public class RouteEnrichmentService {
     /**
      * 경로 검색 결과나 저장된 경로 상세 정보에 실시간 데이터를 보강합니다.
      */
-    public void enrichRoute(List<RouteStepResponse> steps) {
+    public void enrichRoute(List<RouteEnrichedStepResponse> steps) {
         // 동일 경로 내 중복된 격자 좌표의 날씨 조회를 방지하기 위한 로컬 캐시
         Map<String, WeatherResponse> weatherCache = new HashMap<>();
 
-        for (RouteStepResponse step : steps) {
+        for (RouteEnrichedStepResponse step : steps) {
             enrichStepWithCache(step, weatherCache);
         }
     }
@@ -42,7 +43,7 @@ public class RouteEnrichmentService {
     /**
      * 캐시를 활용하여 단일 구간(Step)에 실시간 데이터를 채웁니다.
      */
-    private void enrichStepWithCache(RouteStepResponse step, Map<String, WeatherResponse> weatherCache) {
+    private void enrichStepWithCache(RouteEnrichedStepResponse step, Map<String, WeatherResponse> weatherCache) {
         // 1. 날씨 정보 보강 (격자 좌표 기반 캐싱 적용)
         KmaCoordinateConverter.Grid grid = coordinateConverter.convertToGrid(step.getLat(), step.getLng());
         String gridKey = grid.nx + "," + grid.ny;
@@ -83,7 +84,7 @@ public class RouteEnrichmentService {
     /**
      * 기존의 단일 보강 메서드 (필요 시 유지)
      */
-    public void enrichStep(RouteStepResponse step) {
+    public void enrichStep(RouteEnrichedStepResponse step) {
         enrichStepWithCache(step, new HashMap<>());
     }
 }

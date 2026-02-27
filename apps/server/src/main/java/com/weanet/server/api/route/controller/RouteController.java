@@ -1,6 +1,7 @@
 package com.weanet.server.api.route.controller;
 
-import com.weanet.server.api.route.dto.*;
+import com.weanet.server.api.route.dto.request.*;
+import com.weanet.server.api.route.dto.response.*;
 import com.weanet.server.api.route.service.RouteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,12 +40,6 @@ public class RouteController {
     @Operation(summary = "전체 경로 조회", description = "저장된 모든 경로 목록을 조회합니다.")
     public List<RouteResponse> getAllRoutes() {
         return routeService.getAllRoutes();
-    }
-
-    @GetMapping("/{id}/detail")
-    @Operation(summary = "저장된 경로 상세 조회", description = "ID를 기반으로 저장된 경로의 실시간 상세 상태를 조회합니다.")
-    public RouteDetailResponse getRouteDetail(@PathVariable Long id) {
-        return routeService.getRouteDetail(id);
     }
 
     @DeleteMapping("/{id}")
