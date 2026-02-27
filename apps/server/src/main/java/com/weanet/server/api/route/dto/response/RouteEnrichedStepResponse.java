@@ -49,6 +49,9 @@ public class RouteEnrichedStepResponse {
     @Schema(description = "소요 시간 (분)", example = "5")
     private int sectionTime;
 
+    @Schema(description = "경유역 명칭 리스트")
+    private java.util.List<String> stations;
+
     @Schema(description = "실시간 날씨 정보")
     private WeatherResponse weather;
 

@@ -174,16 +174,26 @@ public class ExternalMapService {
 
                     String startStationId = null;
                     String endStationId = null;
+                    List<String> stationNames = new ArrayList<>();
                     
                     if (leg.containsKey("passStopList")) {
                         Map<String, Object> passStopList = (Map<String, Object>) leg.get("passStopList");
                         if (passStopList != null && passStopList.containsKey("stations")) {
                             List<Map<String, Object>> stations = (List<Map<String, Object>>) passStopList.get("stations");
                             if (stations != null && !stations.isEmpty()) {
+                                // 시작/종료 ID 추출 (기존 로직)
                                 Object startIdObj = stations.get(0).get("stationID");
                                 Object endIdObj = stations.get(stations.size() - 1).get("stationID");
                                 startStationId = startIdObj != null ? String.valueOf(startIdObj) : null;
                                 endStationId = endIdObj != null ? String.valueOf(endIdObj) : null;
+
+                                // 모든 경유역 명칭 수집
+                                for (Map<String, Object> station : stations) {
+                                    Object stationName = station.get("stationName");
+                                    if (stationName != null) {
+                                        stationNames.add(String.valueOf(stationName));
+                                    }
+                                }
                             }
                         }
                     }
@@ -200,6 +210,7 @@ public class ExternalMapService {
                             .sectionTime(((Number) leg.get("sectionTime")).intValue() / 60)
                             .lat(start != null ? ((Number) start.get("lat")).doubleValue() : 0.0)
                             .lng(start != null ? ((Number) start.get("lon")).doubleValue() : 0.0)
+                            .stations(stationNames)
                             .build());
                 }
 

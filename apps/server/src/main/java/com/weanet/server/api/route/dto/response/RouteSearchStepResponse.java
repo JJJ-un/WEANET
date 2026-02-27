@@ -45,4 +45,7 @@ public class RouteSearchStepResponse {
 
     @Schema(description = "소요 시간 (분)", example = "5")
     private int sectionTime;
+
+    @Schema(description = "경유역 명칭 리스트", example = "[\"강남역\", \"역삼역\", \"선릉역\"]")
+    private java.util.List<String> stations;
 }
