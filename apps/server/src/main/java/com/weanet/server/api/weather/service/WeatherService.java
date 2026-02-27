@@ -13,6 +13,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public class WeatherService {
     private final RestTemplate restTemplate;
     private final KmaCoordinateConverter coordinateConverter;
     private final ExternalMapService externalMapService;
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
     @Value("${weather.api.key}")
     private String apiKey;
@@ -35,32 +38,20 @@ public class WeatherService {
     @Value("${weather.api.url}")
     private String apiUrl;
 
-    /**
-     * 도시 이름을 기반으로 날씨 정보를 조회합니다. (시간대별 예보 포함)
-     */
     public WeatherResponse getWeather(String city) {
         double[] coords = getCoordinates(city);
         return getWeatherByCoordinates(coords[0], coords[1]);
     }
 
-    /**
-     * 명칭 기반으로 좌표를 검색합니다.
-     */
     public double[] getCoordinates(String keyword) {
         return externalMapService.getCoordinates(keyword);
     }
 
-    /**
-     * 좌표(위도, 경도)를 기반으로 날씨 정보를 조회합니다. (시간대별 예보 포함)
-     */
     public WeatherResponse getWeatherByCoordinates(double lat, double lng) {
         String url = buildKmaUrl(lat, lng);
         return fetchAndParseWeather(url, true);
     }
 
-    /**
-     * 좌표를 기반으로 현재 날씨 정보만 조회합니다. (시간대별 예보 제외 - 경로 보강용)
-     */
     public WeatherResponse getCurrentWeatherByCoordinates(double lat, double lng) {
         String url = buildKmaUrl(lat, lng);
         return fetchAndParseWeather(url, false);
@@ -109,13 +100,15 @@ public class WeatherService {
                         TreeMap::new, Collectors.toList()));
 
         List<HourlyWeatherResponse> hourlyForecast = new ArrayList<>();
+        ZonedDateTime nowKst = ZonedDateTime.now(KST);
+        String today = nowKst.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String nowTime = nowKst.format(DateTimeFormatter.ofPattern("HHmm"));
+        
         double currentTemp = Double.NaN;
         int currentPop = 0;
-        double minTemp = Double.NaN;
-        double maxTemp = Double.NaN;
         String currentSky = "1";
         String currentPty = "0";
-        String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        List<Double> todaysTemps = new ArrayList<>();
 
         for (Map.Entry<String, List<KmaWeatherApiResponse.Item>> entry : groupedByTime.entrySet()) {
             List<KmaWeatherApiResponse.Item> timeItems = entry.getValue();
@@ -130,16 +123,18 @@ public class WeatherService {
             for (KmaWeatherApiResponse.Item item : timeItems) {
                 String value = item.getFcstValue();
                 switch (item.getCategory()) {
-                    case "TMP" -> temp = Double.parseDouble(value);
+                    case "TMP" -> {
+                        temp = Double.parseDouble(value);
+                        if (date.equals(today)) todaysTemps.add(temp);
+                    }
                     case "POP" -> pop = Integer.parseInt(value);
                     case "SKY" -> sky = value;
                     case "PTY" -> pty = value;
-                    case "TMN" -> { if (date.equals(today)) minTemp = Double.parseDouble(value); }
-                    case "TMX" -> { if (date.equals(today)) maxTemp = Double.parseDouble(value); }
                 }
             }
 
-            if (Double.isNaN(currentTemp)) {
+            // 현재 시각 이후의 가장 가까운 데이터를 현재 날씨로 설정
+            if (Double.isNaN(currentTemp) && date.equals(today) && time.compareTo(nowTime) >= 0) {
                 currentTemp = temp;
                 currentPop = pop;
                 currentSky = sky;
@@ -157,8 +152,14 @@ public class WeatherService {
             }
         }
 
-        if (Double.isNaN(minTemp)) minTemp = currentTemp - 2;
-        if (Double.isNaN(maxTemp)) maxTemp = currentTemp + 5;
+        // 폴백 로직: 현재 시각 이후 데이터가 없으면 첫 번째 데이터 사용
+        if (Double.isNaN(currentTemp) && !hourlyForecast.isEmpty()) {
+            currentTemp = hourlyForecast.get(0).getTemp();
+            currentPop = hourlyForecast.get(0).getPrecipitationProbability();
+        }
+
+        double minTemp = todaysTemps.stream().mapToDouble(Double::doubleValue).min().orElse(currentTemp - 2);
+        double maxTemp = todaysTemps.stream().mapToDouble(Double::doubleValue).max().orElse(currentTemp + 5);
 
         String weatherDesc = interpretSky(currentSky, currentPty);
         WeatherResponse.WeatherResponseBuilder builder = WeatherResponse.builder()
@@ -195,7 +196,7 @@ public class WeatherService {
     }
 
     private String[] calculateBaseDateTime() {
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(KST);
         int[] announcementHours = {2, 5, 8, 11, 14, 17, 20, 23};
         if (now.getMinute() < 15) now = now.minusHours(1);
 
