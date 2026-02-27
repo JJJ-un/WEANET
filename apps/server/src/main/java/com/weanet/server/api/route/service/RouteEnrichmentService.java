@@ -2,9 +2,6 @@ package com.weanet.server.api.route.service;
 
 import com.weanet.server.api.route.domain.TransportType;
 import com.weanet.server.api.route.dto.response.RouteStepResponse;
-import com.weanet.server.api.route.service.SubwayService;
-import com.weanet.server.api.route.service.CongestionService;
-import com.weanet.server.api.weather.service.WeatherService;
 import com.weanet.server.api.route.dto.response.SubwayRealtimeResponse;
 import com.weanet.server.api.weather.dto.WeatherResponse;
 import com.weanet.server.api.common.util.KmaCoordinateConverter;
