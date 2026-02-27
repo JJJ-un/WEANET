@@ -1,8 +1,5 @@
 package com.weanet.server.api.route.domain;
 
-import com.weanet.server.api.common.domain.BaseEntity;
-import com.weanet.server.api.common.domain.Location;
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

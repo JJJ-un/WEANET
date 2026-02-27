@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 보강된 데이터를 바탕으로 비즈니스 판단(조언, 요약)을 내리는 도메인 서비스
+ */
 @Service
 public class RouteAdviceService {
 

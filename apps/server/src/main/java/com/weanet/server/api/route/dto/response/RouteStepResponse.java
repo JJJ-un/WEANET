@@ -1,7 +1,6 @@
 package com.weanet.server.api.route.dto.response;
 
 import com.weanet.server.api.route.domain.TransportType;
-import com.weanet.server.api.weather.dto.WeatherResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
