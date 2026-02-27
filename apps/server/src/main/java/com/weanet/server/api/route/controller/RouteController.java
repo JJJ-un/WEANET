@@ -42,12 +42,6 @@ public class RouteController {
         return routeService.getAllRoutes();
     }
 
-    @GetMapping("/{id}/detail")
-    @Operation(summary = "저장된 경로 상세 조회", description = "ID를 기반으로 저장된 경로의 실시간 상세 상태를 조회합니다.")
-    public RouteDetailResponse getRouteDetail(@PathVariable Long id) {
-        return routeService.getRouteDetail(id);
-    }
-
     @DeleteMapping("/{id}")
     @Operation(summary = "경로 삭제", description = "ID를 기반으로 저장된 경로를 삭제합니다.")
     public void deleteRoute(@PathVariable Long id) {

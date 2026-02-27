@@ -50,41 +50,6 @@ public class RouteService {
         return RouteResponse.from(savedRoute);
     }
 
-    /**
-     * 상세 조회: 저장된 경로의 실시간 상태를 보강하여 반환합니다.
-     */
-    public RouteDetailResponse getRouteDetail(Long id) {
-        Route route = routeRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
-
-        List<RouteStepResponse> stepResponses = route.getSteps().stream()
-                .map(step -> RouteStepResponse.builder()
-                        .sequence(step.getSequence())
-                        .transportType(step.getTransportType())
-                        .lineName(step.getLineName())
-                        .lineId(step.getLineId())
-                        .startStationName(step.getStartLocation().getName())
-                        .startStationId(step.getStartStationId())
-                        .endStationName(step.getEndStationName())
-                        .endStationId(step.getEndStationId())
-                        .lat(step.getStartLocation().getLat())
-                        .lng(step.getStartLocation().getLng())
-                        .build())
-                .collect(Collectors.toList());
-
-        // 실시간 정보 보강
-        enrichmentService.enrichRoute(stepResponses);
-
-        return RouteDetailResponse.builder()
-                .name(route.getName())
-                .departureName(route.getDepartureLocation().getName())
-                .destinationName(route.getDestinationLocation().getName())
-                .totalTime(route.getTotalTime())
-                .totalFare(route.getTotalFare())
-                .steps(stepResponses)
-                .build();
-    }
-
     public List<RouteResponse> getAllRoutes() {
         return routeRepository.findAll().stream()
                 .map(RouteResponse::from)
