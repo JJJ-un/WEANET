@@ -47,7 +47,6 @@ public class DashboardService {
                         .endStationId(step.getEndStationId())
                         .lat(step.getStartLocation().getLat())
                         .lng(step.getStartLocation().getLng())
-                        .stations(step.getStations())
                         .build())
                 .collect(Collectors.toList());
 
