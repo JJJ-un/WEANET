@@ -1,9 +1,0 @@
-package com.weanet.server.repository;
-
-import com.weanet.server.domain.Report;
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
-
-public interface ReportRepository extends JpaRepository<Report, Long> {
-    List<Report> findByRouteIdOrderByCreatedAtDesc(Long routeId);
-}
