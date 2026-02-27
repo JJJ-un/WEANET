@@ -1,4 +1,4 @@
-package com.weanet.server.api.route;
+package com.weanet.server.api.route.service;
 
 import com.weanet.server.domain.TransportType;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.weanet.server.api.report;
+package com.weanet.server.api.report.service;
 
 import com.weanet.server.domain.Report;
 import com.weanet.server.domain.Route;

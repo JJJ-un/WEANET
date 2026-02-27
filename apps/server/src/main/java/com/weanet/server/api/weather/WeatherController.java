@@ -1,5 +1,6 @@
 package com.weanet.server.api.weather;
 
+import com.weanet.server.api.weather.service.WeatherService;
 import com.weanet.server.api.weather.dto.WeatherResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

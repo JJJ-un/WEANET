@@ -1,5 +1,6 @@
 package com.weanet.server.api.report;
 
+import com.weanet.server.api.report.service.ReportService;
 import com.weanet.server.api.report.dto.ReportRequest;
 import com.weanet.server.api.report.dto.ReportResponse;
 import io.swagger.v3.oas.annotations.Operation;

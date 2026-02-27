@@ -1,4 +1,4 @@
-package com.weanet.server.api.weather;
+package com.weanet.server.api.weather.service;
 
 import com.weanet.server.api.weather.dto.HourlyWeatherResponse;
 import com.weanet.server.api.weather.dto.KmaWeatherApiResponse;

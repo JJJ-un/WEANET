@@ -1,4 +1,4 @@
-package com.weanet.server.api.dashboard;
+package com.weanet.server.api.dashboard.service;
 
 import com.weanet.server.api.route.domain.Route;
 import com.weanet.server.api.report.dto.ReportResponse;
@@ -7,9 +7,9 @@ import com.weanet.server.api.route.dto.response.RouteStepResponse;
 import com.weanet.server.api.common.exception.BusinessException;
 import com.weanet.server.api.common.exception.ErrorCode;
 import com.weanet.server.api.report.ReportRepository;
-import com.weanet.server.api.route.RouteRepository;
-import com.weanet.server.api.route.RouteEnrichmentService;
-import com.weanet.server.api.route.RouteAdviceService;
+import com.weanet.server.api.route.service.RouteRepository;
+import com.weanet.server.api.route.service.RouteEnrichmentService;
+import com.weanet.server.api.route.service.RouteAdviceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

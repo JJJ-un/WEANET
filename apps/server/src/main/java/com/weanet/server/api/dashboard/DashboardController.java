@@ -1,5 +1,6 @@
 package com.weanet.server.api.dashboard;
 
+import com.weanet.server.api.dashboard.service.DashboardService;
 import com.weanet.server.api.dashboard.dto.RouteIntegratedReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

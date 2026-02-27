@@ -1,5 +1,6 @@
 package com.weanet.server.api.region;
 
+import com.weanet.server.api.region.service.RegionService;
 import com.weanet.server.api.common.domain.RegionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
