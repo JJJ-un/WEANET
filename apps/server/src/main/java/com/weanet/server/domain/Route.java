@@ -22,13 +22,19 @@ public class Route extends BaseEntity {
     @Column(nullable = false)
     private String name; // 경로 별명 (예: 집-회사)
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "departure_region_id", nullable = false)
-    private Region departureRegion;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "destination_region_id", nullable = false)
-    private Region destinationRegion;
+    @Column(nullable = false)
+    private String departureName; // 출발지 명칭
+    @Column(nullable = false)
+    private double departureLat; // 출발지 위도
+    @Column(nullable = false)
+    private double departureLng; // 출발지 경도
+    
+    @Column(nullable = false)
+    private String destinationName; // 도착지 명칭
+    @Column(nullable = false)
+    private double destinationLat; // 도착지 위도
+    @Column(nullable = false)
+    private double destinationLng; // 도착지 경도
 
     private int totalTime; // 총 소요 시간 (분)
     private int totalFare; // 총 요금
@@ -38,26 +44,40 @@ public class Route extends BaseEntity {
     private List<RouteStep> steps = new ArrayList<>();
 
     @Builder
-    public Route(String name, Region departureRegion, Region destinationRegion, 
+    public Route(String name, String departureName, double departureLat, double departureLng, 
+                 String destinationName, double destinationLat, double destinationLng, 
                  int totalTime, int totalFare, int transferCount) {
-        validate(name, departureRegion, destinationRegion, totalTime, totalFare, transferCount);
+        validate(name, departureName, departureLat, departureLng, destinationName, destinationLat, destinationLng, totalTime, totalFare, transferCount);
         this.name = name;
-        this.departureRegion = departureRegion;
-        this.destinationRegion = destinationRegion;
+        this.departureName = departureName;
+        this.departureLat = departureLat;
+        this.departureLng = departureLng;
+        this.destinationName = destinationName;
+        this.destinationLat = destinationLat;
+        this.destinationLng = destinationLng;
         this.totalTime = totalTime;
         this.totalFare = totalFare;
         this.transferCount = transferCount;
     }
 
-    private void validate(String name, Region departureRegion, Region destinationRegion, 
+    private void validate(String name, String departureName, double departureLat, double departureLng, 
+                          String destinationName, double destinationLat, double destinationLng, 
                           int totalTime, int totalFare, int transferCount) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("경로 이름은 필수입니다.");
-        if (departureRegion == null) throw new IllegalArgumentException("출발지 지역 정보는 필수입니다.");
-        if (destinationRegion == null) throw new IllegalArgumentException("도착지 지역 정보는 필수입니다.");
+        if (departureName == null || departureName.isBlank()) throw new IllegalArgumentException("출발지 이름은 필수입니다.");
+        if (destinationName == null || destinationName.isBlank()) throw new IllegalArgumentException("도착지 이름은 필수입니다.");
+        
+        validateCoordinates(departureLat, departureLng);
+        validateCoordinates(destinationLat, destinationLng);
         
         if (totalTime < 0) throw new IllegalArgumentException("총 소요 시간은 음수일 수 없습니다.");
         if (totalFare < 0) throw new IllegalArgumentException("총 요금은 음수일 수 없습니다.");
         if (transferCount < 0) throw new IllegalArgumentException("환승 횟수는 음수일 수 없습니다.");
+    }
+
+    private void validateCoordinates(double lat, double lng) {
+        if (lat < -90 || lat > 90) throw new IllegalArgumentException("위도 범위가 올바르지 않습니다 (-90 ~ 90).");
+        if (lng < -180 || lng > 180) throw new IllegalArgumentException("경도 범위가 올바르지 않습니다 (-180 ~ 180).");
     }
 
     public void addStep(RouteStep step) {
