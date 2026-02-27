@@ -1,5 +1,6 @@
 package com.weanet.server.dto;
 
+import com.weanet.server.domain.Location;
 import com.weanet.server.domain.Route;
 import com.weanet.server.domain.RouteStep;
 import com.weanet.server.domain.TransportType;
@@ -27,12 +28,14 @@ public class RouteStepSaveRequest {
                 .transportType(this.transportType)
                 .lineName(this.lineName)
                 .lineId(this.lineId)
-                .startStationName(this.startStationName)
+                .startLocation(Location.builder()
+                        .name(this.startStationName)
+                        .lat(this.lat)
+                        .lng(this.lng)
+                        .build())
                 .startStationId(this.startStationId)
                 .endStationName(this.endStationName)
                 .endStationId(this.endStationId)
-                .lat(this.lat)
-                .lng(this.lng)
                 .build();
     }
 }

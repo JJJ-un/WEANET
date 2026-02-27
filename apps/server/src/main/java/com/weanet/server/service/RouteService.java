@@ -1,5 +1,6 @@
 package com.weanet.server.service;
 
+import com.weanet.server.domain.Location;
 import com.weanet.server.domain.Route;
 import com.weanet.server.domain.RouteStep;
 import com.weanet.server.dto.*;
@@ -62,12 +63,12 @@ public class RouteService {
                         .transportType(step.getTransportType())
                         .lineName(step.getLineName())
                         .lineId(step.getLineId())
-                        .startStationName(step.getStartStationName())
+                        .startStationName(step.getStartLocation().getName())
                         .startStationId(step.getStartStationId())
                         .endStationName(step.getEndStationName())
                         .endStationId(step.getEndStationId())
-                        .lat(step.getLat())
-                        .lng(step.getLng())
+                        .lat(step.getStartLocation().getLat())
+                        .lng(step.getStartLocation().getLng())
                         .build())
                 .collect(Collectors.toList());
 
@@ -76,8 +77,8 @@ public class RouteService {
 
         return RouteDetailResponse.builder()
                 .name(route.getName())
-                .departureName(route.getDepartureName())
-                .destinationName(route.getDestinationName())
+                .departureName(route.getDepartureLocation().getName())
+                .destinationName(route.getDestinationLocation().getName())
                 .totalTime(route.getTotalTime())
                 .totalFare(route.getTotalFare())
                 .steps(stepResponses)
