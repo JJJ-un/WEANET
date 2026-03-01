@@ -1,4 +1,4 @@
-import { CongestionStatus } from '../model/types';
+import type { CongestionStatus } from '../model/types';
 
 /**
  * 혼잡도 문자열을 상태 키워드로 변환합니다.

@@ -1,8 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import PathsSearchHeader from '@/widget/path-search-header/ui/PathSearchHeader';
-import { usePathStore } from '@/entities/path/model/usePathStore';
 import { MOCK_DETAIL_PATH_RESULT } from '@/shared/mock/pathData.mock';
-import { type DetailPathResult } from '@/entities/path/model/types';
+import type { DetailPathResult } from '@/entities/path/model/types';
 import { PathResultCard } from '@/widget/path-result/ui/PathResultCard';
 import { CongestionSection } from '@/widget/path-detail/ui/CongestionSection';
 import { WeatherSection } from '@/widget/path-detail/ui/WeatherSection';
@@ -13,8 +12,6 @@ export const Route = createFileRoute('/path-search/detail/$pathId')({
 });
 
 function PathSearchDetailPage() {
-    const { selectedPath } = usePathStore();
-
     // 현재는 API 연동 전이므로 Mock 상세 데이터를 사용합니다.
     const detailData: DetailPathResult = MOCK_DETAIL_PATH_RESULT;
 

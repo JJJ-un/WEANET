@@ -1,6 +1,6 @@
 import * as S from '@/shared/ui/Card';
 import { useNavigate } from '@tanstack/react-router';
-import { type DetailPathResult } from '@/entities/path/model/types';
+import type { PathResult, DetailPathResult } from '@/entities/path/model/types';
 import { getArrivalTime } from '@/shared/lib/utils';
 import { usePathStore } from '@/entities/path/model/usePathStore';
 import { PathLabelSection } from './PathLabelSection';
@@ -8,7 +8,7 @@ import { PathSummaryInfo } from './PathSummaryInfo';
 import { PathProgressBar } from './PathProgressBar';
 
 interface PathResultCardProps {
-    path: DetailPathResult;
+    path: PathResult | DetailPathResult;
     index: number;
 }
 
