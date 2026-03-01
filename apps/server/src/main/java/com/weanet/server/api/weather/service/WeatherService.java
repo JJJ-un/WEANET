@@ -8,6 +8,7 @@ import com.weanet.server.api.weather.dto.WeatherResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -38,6 +39,7 @@ public class WeatherService {
     @Value("${weather.api.url}")
     private String apiUrl;
 
+    @Cacheable(value = "weather", key = "#city")
     public WeatherResponse getWeather(String city) {
         double[] coords = getCoordinates(city);
         return getWeatherByCoordinates(coords[0], coords[1]);
@@ -47,24 +49,26 @@ public class WeatherService {
         return externalMapService.getCoordinates(keyword);
     }
 
+    @Cacheable(value = "weather", key = "#lat + ',' + #lng")
     public WeatherResponse getWeatherByCoordinates(double lat, double lng) {
-        String url = buildKmaUrl(lat, lng);
+        String url = buildKmaUrl(lat, lng, 400);
         return fetchAndParseWeather(url, true);
     }
 
+    @Cacheable(value = "currentWeather", key = "#lat + ',' + #lng")
     public WeatherResponse getCurrentWeatherByCoordinates(double lat, double lng) {
-        String url = buildKmaUrl(lat, lng);
+        String url = buildKmaUrl(lat, lng, 20);
         return fetchAndParseWeather(url, false);
     }
 
-    private String buildKmaUrl(double lat, double lng) {
+    private String buildKmaUrl(double lat, double lng, int numOfRows) {
         KmaCoordinateConverter.Grid grid = coordinateConverter.convertToGrid(lat, lng);
         String[] baseDateTime = calculateBaseDateTime();
 
         return UriComponentsBuilder.fromUriString(apiUrl)
                 .queryParam("serviceKey", apiKey)
                 .queryParam("pageNo", 1)
-                .queryParam("numOfRows", 1000)
+                .queryParam("numOfRows", numOfRows)
                 .queryParam("dataType", "JSON")
                 .queryParam("base_date", baseDateTime[0])
                 .queryParam("base_time", baseDateTime[1])
