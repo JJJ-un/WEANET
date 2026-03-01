@@ -6,8 +6,6 @@ import com.weanet.server.api.external.util.KmaCoordinateConverter;
 import com.weanet.server.api.region.domain.Region;
 import com.weanet.server.api.region.dto.RegionResponse;
 import com.weanet.server.api.region.repository.RegionRepository;
-import com.weanet.server.api.weather.dto.WeatherResponse;
-import com.weanet.server.api.weather.service.WeatherService;
 import com.weanet.server.global.common.Location;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ public class RegionService {
 
     private final RegionRepository regionRepository;
     private final ExternalMapService externalMapService;
-    private final WeatherService weatherService;
     private final KmaCoordinateConverter coordinateConverter;
 
     /**
@@ -63,16 +60,6 @@ public class RegionService {
         return regionRepository.findAll().stream()
                 .map(RegionResponse::from)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * 특정 지역의 실시간 날씨 정보를 조회합니다.
-     */
-    public WeatherResponse getRegionWeather(Long regionId) {
-        Region region = regionRepository.findById(regionId)
-                .orElseThrow(() -> new IllegalArgumentException("저장된 지역 정보를 찾을 수 없습니다."));
-        
-        return weatherService.getWeatherByCoordinates(region.getLat(), region.getLng());
     }
 
     @Transactional
