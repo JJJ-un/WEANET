@@ -48,23 +48,23 @@ public class WeatherService {
     }
 
     public WeatherResponse getWeatherByCoordinates(double lat, double lng) {
-        String url = buildKmaUrl(lat, lng);
+        String url = buildKmaUrl(lat, lng, 400);
         return fetchAndParseWeather(url, true);
     }
 
     public WeatherResponse getCurrentWeatherByCoordinates(double lat, double lng) {
-        String url = buildKmaUrl(lat, lng);
+        String url = buildKmaUrl(lat, lng, 20);
         return fetchAndParseWeather(url, false);
     }
 
-    private String buildKmaUrl(double lat, double lng) {
+    private String buildKmaUrl(double lat, double lng, int numOfRows) {
         KmaCoordinateConverter.Grid grid = coordinateConverter.convertToGrid(lat, lng);
         String[] baseDateTime = calculateBaseDateTime();
 
         return UriComponentsBuilder.fromUriString(apiUrl)
                 .queryParam("serviceKey", apiKey)
                 .queryParam("pageNo", 1)
-                .queryParam("numOfRows", 1000)
+                .queryParam("numOfRows", numOfRows)
                 .queryParam("dataType", "JSON")
                 .queryParam("base_date", baseDateTime[0])
                 .queryParam("base_time", baseDateTime[1])
