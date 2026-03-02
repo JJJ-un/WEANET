@@ -4,9 +4,9 @@ import com.weanet.server.api.weather.dto.response.HourlyWeatherResponse;
 import com.weanet.server.api.weather.dto.response.KmaWeatherApiResponse;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,9 +15,21 @@ public class WeatherForecasts {
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
     private final List<ForecastUnit> forecasts;
+    private final DoubleSummaryStatistics todayStats;
 
     private WeatherForecasts(List<ForecastUnit> forecasts) {
-        this.forecasts = forecasts;
+        // 방어적 복사(Defensive Copy)를 통해 외부 리스트의 조작으로부터 데이터를 보호합니다.
+        // List.copyOf()는 Java 10+ 에서 제공하는 불변 리스트 생성 메서드입니다.
+        this.forecasts = List.copyOf(forecasts);
+        
+        // "오늘"의 기준을 한 번만 정의 (캡슐화: 시간의 기준점 통일)
+        LocalDate today = LocalDate.now(KST);
+        
+        // ForecastUnit에게 "오늘 데이터니?"라고 물어보며 통계 계산 (가독성 향상)
+        this.todayStats = forecasts.stream()
+                .filter(f -> f.isToday(today))
+                .mapToDouble(ForecastUnit::getTemp)
+                .summaryStatistics();
     }
 
     public static WeatherForecasts from(List<KmaWeatherApiResponse.Item> items) {
@@ -40,21 +52,11 @@ public class WeatherForecasts {
     }
 
     public double calculateMinTemp(double currentTemp) {
-        LocalDateTime today = LocalDateTime.now(KST).withHour(0).withMinute(0);
-        return forecasts.stream()
-                .filter(f -> f.dateTime.toLocalDate().isEqual(today.toLocalDate()))
-                .mapToDouble(f -> f.temp)
-                .min()
-                .orElse(currentTemp);
+        return todayStats.getCount() > 0 ? todayStats.getMin() : currentTemp;
     }
 
     public double calculateMaxTemp(double currentTemp) {
-        LocalDateTime today = LocalDateTime.now(KST).withHour(0).withMinute(0);
-        return forecasts.stream()
-                .filter(f -> f.dateTime.toLocalDate().isEqual(today.toLocalDate()))
-                .mapToDouble(f -> f.temp)
-                .max()
-                .orElse(currentTemp);
+        return todayStats.getCount() > 0 ? todayStats.getMax() : currentTemp;
     }
 
     public List<HourlyWeatherResponse> toHourlyResponses() {
@@ -91,6 +93,11 @@ public class WeatherForecasts {
                     values.getOrDefault("SKY", "1"),
                     values.getOrDefault("PTY", "0")
             );
+        }
+
+        // 오늘 날짜인지 판단하는 로직을 객체 내부로 캡슐화
+        public boolean isToday(LocalDate today) {
+            return this.dateTime.toLocalDate().isEqual(today);
         }
     }
 }
