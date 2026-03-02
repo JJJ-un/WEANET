@@ -6,7 +6,7 @@ import com.weanet.server.api.external.util.KmaCoordinateConverter;
 import com.weanet.server.api.route.domain.TransportType;
 import com.weanet.server.api.route.dto.request.*;
 import com.weanet.server.api.route.dto.response.*;
-import com.weanet.server.api.weather.dto.WeatherResponse;
+import com.weanet.server.api.weather.dto.response.*;
 import com.weanet.server.api.weather.service.WeatherService;
 import com.weanet.server.api.external.dto.SubwayRealtimeResponse;
 import lombok.RequiredArgsConstructor;

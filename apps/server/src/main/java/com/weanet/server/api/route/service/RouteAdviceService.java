@@ -35,8 +35,8 @@ public class RouteAdviceService {
                 .map(step -> RouteIntegratedReportResponse.StepSummary.builder()
                         .lineName(step.getLineName())
                         .status(step.getCongestion() != null ? step.getCongestion() : "정보 없음")
-                        .weatherIcon(step.getWeather() != null ? step.getWeather().getWeather() : "Unknown")
-                        .advice(step.getWeather() != null ? step.getWeather().getAdvice() : "")
+                        .weatherIcon(step.getWeather() != null ? step.getWeather().weather() : "Unknown")
+                        .advice(step.getWeather() != null ? step.getWeather().advice() : "")
                         .build())
                 .collect(Collectors.toList());
     }
@@ -49,8 +49,8 @@ public class RouteAdviceService {
 
     private boolean hasRainySection(List<RouteEnrichedStepResponse> enrichedSteps) {
         return enrichedSteps.stream()
-                .filter(s -> s.getWeather() != null && s.getWeather().getAdvice() != null)
-                .anyMatch(s -> s.getWeather().getAdvice().contains("비"));
+                .filter(s -> s.getWeather() != null && s.getWeather().advice() != null)
+                .anyMatch(s -> s.getWeather().advice().contains("비"));
     }
 
     private boolean hasDelay(List<RouteEnrichedStepResponse> enrichedSteps) {
