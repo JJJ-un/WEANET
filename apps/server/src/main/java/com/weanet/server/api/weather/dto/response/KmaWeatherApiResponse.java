@@ -1,4 +1,4 @@
-package com.weanet.server.api.weather.dto;
+package com.weanet.server.api.weather.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
