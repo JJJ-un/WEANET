@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class WeatherForecasts {
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+
     private final List<ForecastUnit> forecasts;
 
     private WeatherForecasts(List<ForecastUnit> forecasts) {
@@ -38,22 +39,22 @@ public class WeatherForecasts {
                 .orElse(forecasts.isEmpty() ? null : forecasts.get(0));
     }
 
-    public double calculateMinTemp(double fallback) {
+    public double calculateMinTemp(double currentTemp) {
         LocalDateTime today = LocalDateTime.now(KST).withHour(0).withMinute(0);
         return forecasts.stream()
                 .filter(f -> f.dateTime.toLocalDate().isEqual(today.toLocalDate()))
                 .mapToDouble(f -> f.temp)
                 .min()
-                .orElse(fallback);
+                .orElse(currentTemp);
     }
 
-    public double calculateMaxTemp(double fallback) {
+    public double calculateMaxTemp(double currentTemp) {
         LocalDateTime today = LocalDateTime.now(KST).withHour(0).withMinute(0);
         return forecasts.stream()
                 .filter(f -> f.dateTime.toLocalDate().isEqual(today.toLocalDate()))
                 .mapToDouble(f -> f.temp)
                 .max()
-                .orElse(fallback);
+                .orElse(currentTemp);
     }
 
     public List<HourlyWeatherResponse> toHourlyResponses() {

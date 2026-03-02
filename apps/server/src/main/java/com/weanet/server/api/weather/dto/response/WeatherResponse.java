@@ -45,8 +45,8 @@ public record WeatherResponse(
                 .weather(current.getWeatherStatus())
                 .currentTemp(current.getTemp())
                 .precipitationProbability(current.getPop())
-                .minTemp(forecasts.calculateMinTemp(current.getTemp() - 2))
-                .maxTemp(forecasts.calculateMaxTemp(current.getTemp() + 5))
+                .minTemp(forecasts.calculateMinTemp(current.getTemp()))
+                .maxTemp(forecasts.calculateMaxTemp(current.getTemp()))
                 .advice(advice);
 
         if (includeHourly) {
