@@ -35,13 +35,6 @@ public class WeatherService {
     }
 
     private WeatherResponse buildWeatherResponse(List<KmaWeatherApiResponse.Item> items, boolean includeHourly) {
-        if (items.isEmpty()) {
-            return WeatherResponse.builder()
-                    .weather("Unknown")
-                    .advice(adviceGenerator.generateEmptyAdvice())
-                    .build();
-        }
-
         WeatherForecasts forecasts = WeatherForecasts.from(items);
         WeatherForecasts.ForecastUnit current = forecasts.findCurrent();
         
