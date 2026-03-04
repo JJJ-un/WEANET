@@ -2,7 +2,7 @@ package com.weanet.server.api.route.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.weanet.server.api.route.domain.TransportType;
-import com.weanet.server.api.weather.dto.WeatherResponse;
+import com.weanet.server.api.weather.dto.response.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
