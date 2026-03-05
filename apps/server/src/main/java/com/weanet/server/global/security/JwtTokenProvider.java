@@ -18,9 +18,8 @@ public class JwtTokenProvider {
     private final long validityInMilliseconds;
 
     public JwtTokenProvider(
-            @Value("${jwt.secret:vmfhaltmskdlstkfkdgodyrhtnavmffhqkfrhradevex}") String secretKey,
+            @Value("${jwt.secret}") String secretKey,
             @Value("${jwt.expiration:3600000}") long validityInMilliseconds) {
-        // 256비트 이상의 키가 필요하므로 충분히 긴 기본값을 설정했습니다.
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         this.validityInMilliseconds = validityInMilliseconds;
     }
