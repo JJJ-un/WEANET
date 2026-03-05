@@ -20,11 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @Operation(summary = "회원가입", description = "이메일, 비밀번호, 닉네임을 사용하여 새로운 유저를 등록합니다.")
     @PostMapping("/signup")
     public ResponseEntity<Long> signup(@Valid @RequestBody UserSignupRequest request) {
         Long userId = userService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(userId);
+    }
+
+    @Operation(summary = "로그인", description = "이메일과 비밀번호를 사용하여 인증 토큰(JWT)을 발급받습니다.")
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
+        UserLoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 }
