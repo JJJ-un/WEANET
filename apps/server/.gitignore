@@ -37,3 +37,4 @@ out/
 .vscode/
 \n# MySQL data\nmysql_data/
 \nmysql_data/
+\n# Environment variables\n.env

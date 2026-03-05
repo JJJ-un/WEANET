@@ -29,6 +29,8 @@ services:
       SPRING_DATASOURCE_USERNAME: ddubuk_user
       SPRING_DATASOURCE_PASSWORD: ddubuk_password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      DB_HOST: db
+      JWT_SECRET: ${JWT_SECRET}
       # 외부 API 키 등은 서버의 환경변수나 .env 파일로 관리합니다.
       WEATHER_API_KEY: ${WEATHER_API_KEY}
       TMAP_API_KEY: ${TMAP_API_KEY}
