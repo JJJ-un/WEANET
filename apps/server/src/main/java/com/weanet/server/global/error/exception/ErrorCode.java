@@ -14,7 +14,13 @@ public enum ErrorCode {
     EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, "R002", "외부 API 연동 중 오류가 발생했습니다."),
 
     // 날씨/혼잡도 관련
-    WEATHER_DATA_NOT_FOUND(HttpStatus.NOT_FOUND, "W001", "날씨 정보를 불러올 수 없습니다.");
+    WEATHER_DATA_NOT_FOUND(HttpStatus.NOT_FOUND, "W001", "날씨 정보를 불러올 수 없습니다."),
+
+    // 유저/인증 관련
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "U001", "이미 가입된 이메일입니다."),
+    NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "U002", "이미 사용 중인 닉네임입니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U003", "해당 유저를 찾을 수 없습니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "U004", "비밀번호가 일치하지 않습니다.");
 
     private final HttpStatus status;
     private final String code;
